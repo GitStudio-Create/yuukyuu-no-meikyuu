@@ -195,3 +195,53 @@
 .map-layout>.audio-controls,.canvas-wrap>.audio-controls{display:none}
 @media(min-width:900px){.status-tools{width:100%;max-width:640px;margin-left:0;margin-right:0}}
 @media(max-width:680px){.status-tools{grid-template-columns:1fr auto;grid-template-areas:"theme map" "audio audio";gap:5px;padding:5px}.status-theme{grid-area:theme}.status-map-buttons{grid-area:map}.status-tools .full-map-toggle{padding:5px 7px;font-size:10px}.status-audio{grid-area:audio;justify-content:flex-start}.status-tools .audio-controls{justify-content:flex-start}.status-tools .audio-controls input{width:44px}.map-only-screen{padding:10px}.map-only-card{padding:10px}.map-only-heading h2{font-size:17px}.map-only-heading button{padding:8px 10px}.map-only-card canvas{max-height:calc(100vh - 130px)}}
+
+/* Mobile layout parity: keep the same PC information visible without collapsing the map. */
+@media(max-width:680px){
+  html,body{width:100%;overflow-x:hidden}
+  .game-shell{width:100%;max-width:100vw;margin:0;padding:10px 8px calc(18px + env(safe-area-inset-bottom))}
+  header{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:8px;margin-bottom:8px}
+  header>div:first-child{min-width:0}
+  h1{white-space:nowrap;font-size:clamp(32px,12vw,44px);letter-spacing:.06em;line-height:1.05}
+  .eyebrow{white-space:normal;line-height:1.25;max-width:9.5em}
+  .dungeon-start-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;justify-self:stretch;align-self:center}
+  .dungeon-start-buttons .text-button{min-height:42px;padding:8px 6px;font-size:14px;white-space:nowrap}
+  .status{width:100%;grid-template-columns:42px minmax(68px,1fr) minmax(68px,1fr) 44px 44px 58px;grid-auto-rows:minmax(34px,auto);gap:4px;padding:8px;border-radius:9px 9px 0 0}
+  .status span{white-space:nowrap;font-size:10px}
+  .status strong,.status .meter b{font-size:16px;line-height:1.05;white-space:nowrap}
+  .status .meter i{height:7px}
+  .status .gear-strength,.status .next-level-top{grid-column:auto;flex-direction:row;align-items:baseline;gap:4px;min-width:0;overflow:hidden}
+  .status .gear-strength:nth-of-type(7){grid-column:1 / span 2}
+  .status .gear-strength:nth-of-type(8){grid-column:3 / span 2}
+  .status .next-level-top{grid-column:5 / span 2}
+  .status .gear-strength strong,.status .next-level-top strong{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .status-tools,.map-layout,.floor-commands,.message-area,.inventory-panel,.controls{width:100%;max-width:640px;margin-left:auto;margin-right:auto}
+  .status-tools{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"theme map" "audio audio";align-items:center}
+  .status-theme strong{font-size:13px}
+  .status-map-buttons{justify-content:flex-end}
+  .status-tools .full-map-toggle{min-height:38px;font-size:12px}
+  .status-tools .audio-controls{gap:6px}
+  .status-tools .audio-controls button{min-height:30px;font-size:10px}
+  .status-tools .audio-controls input{width:58px}
+  .map-layout{display:block}
+  .map-layout .canvas-wrap{width:100%;height:auto!important;max-height:none!important;aspect-ratio:4/3;border-radius:6px}
+  #game{width:100%!important;height:auto!important;aspect-ratio:4/3;background:#020302}
+  .floor-commands{grid-template-columns:2fr 1fr 1fr 1fr}
+  .floor-commands button{min-height:44px;font-size:12px}
+  .message-area{height:78px;min-height:78px;max-height:78px}
+  .message-area p{font-size:13px}
+  .inventory-panel{padding:10px}
+  .section-title{align-items:center;gap:8px}
+  .section-title h2{font-size:16px}
+  .section-title span{font-size:11px}
+}
+@media(max-width:420px){
+  .game-shell{padding-left:6px;padding-right:6px}
+  h1{font-size:clamp(30px,11vw,40px)}
+  .dungeon-start-buttons .text-button{font-size:12px}
+  .status{grid-template-columns:38px minmax(58px,1fr) minmax(58px,1fr) 40px 40px 52px;gap:3px;padding:7px}
+  .status strong,.status .meter b{font-size:14px}
+  .status .gear-strength strong,.status .next-level-top strong{font-size:12px}
+  .status-tools .audio-controls input{width:46px}
+  .status-tools .full-map-toggle{font-size:11px;padding:5px 6px}
+}
