@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert');global.window=global;global.Kiri={};global.localStorage={getItem:()=>null,setItem:()=>{},removeItem:()=>{}};global.addEventListener=()=>{};
+function load(f){vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f});}
+['config','spawns','dungeons','themes','enemy-catalog','items','inventory','state','map','visibility','combat-rules','entities','item-actions','stage10-items','balance','traps'].forEach(n=>load('js/'+n+'.js'));
+function arena(){const s=Kiri.State.reset('normalDungeon');s.map=Array.from({length:24},()=>Array(32).fill(1));s.rooms=[{x:0,y:0,w:32,h:24,id:1}];s.player.x=2;s.player.y=2;s.player.hp=100;s.player.maxHp=100;s.stairs={x:30,y:22};s.enemies=[];s.groundItems=[];s.traps=[];s.inventory=[];s.spawnPolicy={nextSpawnTurn:999,maxEnemies:10,naturalSpawnInterval:30};Kiri.State.data=s;return s;}
+
+// A naturally waking fast enemy spends the entire current enemy turn.
+let s=arena(),enemy=Kiri.Entities.createEnemy(1,{x:3,y:2},Kiri.Dungeons.get(s.dungeonId),'fast');enemy.spawnSleep=true;enemy.awake=false;enemy.speed=2;s.enemies=[enemy];const random=Math.random;Math.random=()=>0;let hp=s.player.hp;s.turn=1;Kiri.Entities.takeEnemyTurns(s);assert.equal(s.player.hp,hp);assert(enemy.awake);assert.equal(enemy.wokeOnTurn,1);assert(s.log[0].includes(enemy.name+'は目を覚ました。'));s.turn=2;Kiri.Entities.takeEnemyTurns(s);assert(s.player.hp<hp);Math.random=random;
+
+// Scrollable log keeps ten complete entries, newest first, and does not force-scroll while browsing history.
+const spans=[],box={scrollHeight:300,scrollTop:250,clientHeight:50,listener:null,addEventListener(type,fn){if(type==='scroll')this.listener=fn;}},message={parentElement:box,children:spans,innerHTML:'',appendChild(node){this.children.push(node);}};let miniSawEnemy=null;global.document={querySelector:q=>q==='#message'?message:null,createElement:()=>({textContent:'',className:''})};Kiri.UI={draw:()=>{spans.length=0;},init:()=>{},renderStage16Minimap:state=>{miniSawEnemy=Kiri.Visibility.isEntityVisible(state,20,20);}};load('js/stage26-fixes.js');s=arena();for(let i=0;i<12;i++)Kiri.State.addLog('長い記録'+i+'：これは省略されず最後まで読めるメッセージです。');assert.equal(s.log.length,10);Kiri.UI.init();Kiri.UI.draw(s);assert.equal(spans.length,10);assert(spans.some(node=>node.textContent.includes('最後まで読める')));assert.equal(box.scrollTop,0);assert.equal(spans[0].textContent,s.log[0]);assert.equal(spans[0].className,'latest');box.scrollTop=30;box.listener();Kiri.State.addLog('閲覧中に追加された新しい記録');Kiri.UI.draw(s);assert.equal(box.scrollTop,30);assert(Kiri.UI.isBrowsingLog());
+
+// Map reveal exposes enemies on the main-map condition, while minimap rendering forces sight-only markers.
+s.vision.mapAll=true;s.entityVisible={'2,2':1};assert(Kiri.Visibility.isEntityVisible(s,20,20));Kiri.UI.renderStage16Minimap(s);assert.equal(miniSawEnemy,false);assert.equal(s.vision.mapAll,true);
+const css=fs.readFileSync('style.css','utf8'),html=fs.readFileSync('index.html','utf8');assert(css.includes('overflow-y:auto!important'));assert(css.includes('text-overflow:clip!important'));assert(css.includes('touch-action:pan-y'));assert(html.includes('js/stage26-fixes.js'));
+console.log('stage 26 smoke: wake-only turn, ten-entry scrolling log and split map visibility passed');

@@ -1,0 +1,25 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Logs / temporary files
+*.log
+*.tmp
+*.bak
+*.orig
+
+# Local dependency and build outputs
+node_modules/
+.cache/
+dist/
+build/
+coverage/
+
+# Local environment files
+.env
+.env.*
+!.env.example

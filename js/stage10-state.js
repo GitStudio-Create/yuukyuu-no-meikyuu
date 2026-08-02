@@ -1,0 +1,1 @@
+(function(K){'use strict';var oldLoad=K.State.load;K.State.load=function(){var ok=oldLoad.call(K.State);if(ok)K.State.data.enemies=(K.State.data.enemies||[]).map(function(e){return K.EnemyCatalog.normalize(e,K.State.data.floor);});return ok;};})(window.Kiri=window.Kiri||{});

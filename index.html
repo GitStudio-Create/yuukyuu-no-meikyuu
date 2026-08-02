@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#151712">
+  <title>悠久の迷宮</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header>
+      <div><p class="eyebrow">ORIGINAL MINI ROGUELIKE</p><h1>悠久の迷宮</h1></div>
+      <div class="dungeon-start-buttons" aria-label="冒険を始める迷宮">
+        <button id="newGame" class="text-button">最初から</button>
+        <button class="text-button" data-new-dungeon="tutorialDungeon">ちょっと不思議</button>
+        <button class="text-button" data-new-dungeon="normalDungeon">不思議</button>
+        <button class="text-button" data-new-dungeon="mysteryDungeon">もっと不思議</button>
+      </div>
+    </header>
+    <section class="status" aria-label="冒険者の状態">
+      <div><span>階層</span><strong id="floor">1F</strong></div>
+      <div class="meter"><span>体力 <b id="hpText"></b></span><i><em id="hpBar"></em></i></div>
+      <div class="meter"><span>満腹 <b id="foodText"></b></span><i><em id="foodBar"></em></i></div>
+      <div><span>ちから</span><strong id="power">8/8</strong></div>
+      <div><span>レベル</span><strong id="levelText">1</strong></div>
+      <div><span>所持金</span><strong id="goldText">0 G</strong></div>
+      <div class="gear-strength"><span>剣の強さ</span><strong id="weaponStrengthText">0</strong></div>
+      <div class="gear-strength"><span>盾の強さ</span><strong id="shieldStrengthText">0</strong></div>
+      <div class="next-level-top"><span>次のレベルまで</span><strong id="nextLevelTopText">-</strong></div>
+    </section>
+
+    <div class="map-layout">
+      <div class="canvas-wrap">
+        <div class="audio-controls"><button data-bgm-toggle aria-pressed="true">BGM ON</button><label>BGM <input data-bgm-volume type="range" min="0" max="100" value="35" aria-label="BGM音量"></label><button data-se-toggle aria-pressed="true">SE ON</button><label>SE <input data-se-volume type="range" min="0" max="100" value="45" aria-label="SE音量"></label></div>
+        <span id="miniLevel" class="legacy-hidden" aria-hidden="true"></span><span id="miniGold" class="legacy-hidden" aria-hidden="true"></span><span id="themeName" class="legacy-hidden" aria-hidden="true"></span>
+        <canvas id="game" width="640" height="480" aria-label="迷宮のゲーム画面"></canvas>
+        <div id="overlay" class="overlay hidden"><h2 id="overlayTitle"></h2><p id="overlayText"></p><div class="overlay-actions"><button id="overlaySuspend" class="secondary">中断</button><button id="overlayButton">もう一度</button></div></div>
+      </div>
+      <aside class="minimap-dock"><small>EXPLORED MAP</small><canvas id="minimap" width="160" height="120" aria-label="ミニマップ"></canvas></aside>
+    </div>
+    <aside id="enemyInfo" class="enemy-info hidden" aria-live="polite"><button id="closeEnemyInfo" aria-label="敵情報を閉じる">×</button><small>ENEMY</small><h2 id="enemyInfoName"></h2><p id="enemyInfoDescription"></p><div id="enemyInfoRows"></div></aside>
+
+    <nav class="floor-commands" aria-label="足元の操作"><button data-floor-pickup disabled>拾う</button><button data-floor-stairs disabled>階段</button><button data-floor-step>足踏み</button><button data-floor-suspend>中断</button></nav>
+
+    <section class="message-area">
+      <p id="message" aria-live="polite">古い王城の地下で、失われた歴史が目を覚ます。</p>
+    </section>
+
+    <section class="inventory-panel">
+      <div class="section-title"><h2>道具袋</h2><span>Iキー / タップで詳細　Rキー / 整理</span><button type="button" class="bag-sort-button" data-inventory-sort>整理</button></div>
+      <div id="inventory" class="inventory"></div>
+    </section>
+
+    <section class="controls" aria-label="移動操作">
+      <div class="touch-controls">
+        <div class="dpad">
+          <button data-dir="upLeft" aria-label="左上へ">↖</button><button data-dir="up" aria-label="上へ">▲</button><button data-dir="upRight" aria-label="右上へ">↗</button>
+          <button data-dir="left" aria-label="左へ">◀</button><button data-action="attack" class="attack" aria-label="攻撃">攻</button><button data-dir="right" aria-label="右へ">▶</button>
+          <button data-dir="downLeft" aria-label="左下へ">↙</button><button data-dir="down" aria-label="下へ">▼</button><button data-dir="downRight" aria-label="右下へ">↘</button>
+        </div>
+        <div class="action-pad"><button data-action="step">足踏み</button><button data-action="shoot-arrow">矢撃ち</button><button data-action="face" aria-pressed="false">向き変更</button><button data-action="diagonal" aria-pressed="false">斜め移動</button><button data-action="run" aria-pressed="false">走る</button><button data-action="status">ステータス</button></div>
+      </div>
+      <div class="legend"><p><b>移動</b> 矢印 / WASD</p><p><b>拾う</b> G（空きがあれば自動）</p><p><b>中断</b> Q</p><p><b>矢撃ち</b> F</p><p><b>走る</b> B + 方向</p><p><b>向き</b> Shift + 方向</p><p><b>攻撃</b> Space</p><p><b>足踏</b> Z</p><p><b>斜め</b> Ctrl + 2方向</p><p><b>詳細</b> X / I</p><p><b>閉じる</b> Esc</p><p><b>階段</b> 下りる / そのまま</p></div>
+    </section>
+    <section id="statusScreen" class="status-screen hidden" aria-label="ステータス画面">
+      <div class="status-card"><div class="status-heading"><div><small>ADVENTURER STATUS</small><h2>旅支度と記録</h2></div><button id="closeStatus">閉じる</button></div><div id="statusGrid" class="status-grid"></div></div>
+    </section>
+    <section id="itemMenu" class="item-menu-screen hidden" aria-label="道具の詳細と行動メニュー"><div class="item-menu-card"><small id="itemCategory">ITEM DETAIL</small><h2 id="itemMenuTitle">道具</h2><p id="itemDescription" class="item-description"></p><div id="itemMetadata" class="item-metadata"></div><p id="itemUsage" class="item-usage"></p><h3>どうする？</h3><div id="itemActions" class="item-actions"></div><p>PC: 矢印で選択 / Enterで決定 / Escで閉じる</p></div></section>
+    <section id="confirmScreen" class="confirm-screen hidden" aria-label="アイテム使用確認"><div class="confirm-card"><small>CONFIRM ACTION</small><h2 id="confirmText">実行しますか？</h2><div><button id="confirmExecute" data-confirm-execute>実行する</button><button data-confirm-cancel>キャンセル</button></div><p>PC: Enterで実行 / Escでキャンセル</p></div></section>
+    <section id="stairsScreen" class="stairs-screen hidden" aria-label="階段選択"><div class="stairs-card"><small>DOWN STAIRS</small><h2>下り階段が続いている</h2><p>次の階へ進みますか？</p><div><button data-stairs-descend>下りる</button><button data-stairs-stay>そのまま</button></div><small>PC: Enterで下りる / Escでそのまま</small></div></section>
+    <section id="suspendScreen" class="suspend-screen hidden" aria-label="中断セーブ"><div class="suspend-card"><small>SUSPEND SAVED</small><h2>冒険を中断しました</h2><p>現在の階・持ち物・状態を端末内に保存しました。</p><button data-resume>冒険を続ける</button><small>次回もこの端末のブラウザから再開できます</small></div></section>
+    <aside id="itemTooltip" class="item-tooltip hidden" role="tooltip"><strong id="tooltipTitle"></strong><span id="tooltipCategory"></span><p id="tooltipDescription"></p><small id="tooltipActions"></small></aside>
+  </main>
+  <audio id="bgmAudio" preload="none"></audio>
+  <script src="js/config.js"></script>
+  <script src="js/directions.js"></script>
+  <script src="js/progression.js"></script>
+  <script src="js/spawns.js"></script>
+  <script src="js/dungeons.js"></script>
+  <script src="js/themes.js"></script>
+  <script src="js/floor-messages.js"></script>
+  <script src="js/enemy-catalog.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/stage42-area-visuals.js"></script>
+  <script src="js/stage8-state.js"></script>
+  <script src="js/stage10-state.js"></script>
+  <script src="js/stage15-state.js"></script>
+  <script src="js/items.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/item-icons.js"></script>
+  <script src="js/item-details.js"></script>
+  <script src="js/damage-descriptions.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/visibility.js"></script>
+  <script src="js/combat-rules.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/enemy-renderer.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/stage17-sprites.js"></script>
+  <script src="js/crystal-walls.js"></script>
+  <script src="js/item-actions.js"></script>
+  <script src="js/stage10-items.js"></script>
+  <script src="js/balance.js"></script>
+  <script src="js/traps.js"></script>
+  <script src="js/trap-renderer.js"></script>
+  <script src="js/monster-house.js"></script>
+  <script src="js/treasures.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/stage7-ui.js"></script>
+  <script src="js/stairs.js"></script>
+  <script src="js/stage8-ui.js"></script>
+  <script src="js/stage10-ui.js"></script>
+  <script src="js/stage11-ui.js"></script>
+  <script src="js/stage12-ui.js"></script>
+  <script src="js/stage14-ui.js"></script>
+  <script src="js/stage15-ui.js"></script>
+  <script src="js/stage16-ui.js"></script>
+  <script src="js/animation.js"></script>
+  <script src="js/stage17-ui.js"></script>
+  <script src="js/stage43-stairs-treasure-ui.js"></script>
+  <script src="js/stage44-inventory-manual-sort.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/stage21-audio.js"></script>
+  <script src="js/stage23-combat.js"></script>
+  <script src="js/stage22-rewards.js"></script>
+  <script src="js/stage23-audio.js"></script>
+  <script src="js/stage25-wake.js"></script>
+  <script src="js/stage26-fixes.js"></script>
+  <script src="js/stage27-sleep-visuals.js"></script>
+  <script src="js/stage28-rules.js"></script>
+  <script src="js/stage28-ui.js"></script>
+  <script src="js/gm-mode.js"></script>
+  <script src="js/stage32-ui-fixes.js"></script>
+  <script src="js/stage33-projectile-rules.js"></script>
+  <script src="js/stage34-status-tools.js"></script>
+  <script src="js/stage35-terrain-gm.js"></script>
+  <script src="js/stage36-monster-gm.js"></script>
+  <script src="js/stage37-status-floor-items.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/stage9-input.js"></script>
+  <script src="js/stage14-input.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/stage38-combat-gold-vitals.js"></script>
+  <script src="js/stage7-controller.js"></script>
+  <script src="js/sound-hooks.js"></script>
+  <script src="js/stage14-controller.js"></script>
+  <script src="js/stage16-controller.js"></script>
+  <script src="js/stage17-controller.js"></script>
+  <script src="js/stage23-controller.js"></script>
+  <script src="js/stage24-controller.js"></script>
+  <script src="js/stage40-floor-hunger-shortcuts.js"></script>
+  <script src="js/stage41-identify-selection.js"></script>
+</body>
+</html>

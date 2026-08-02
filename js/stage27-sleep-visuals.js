@@ -1,0 +1,10 @@
+(function(K){
+  'use strict';
+  function playerSleeping(player){return!!(player&&player.status&&(player.status.sleep||0)>0);}
+  function sleeping(enemy){return!!(enemy.spawnSleep||enemy.awake===false||(enemy.effectSleep||0)>0||(enemy.status&&enemy.status.sleep>0));}
+  var oldPlayerFrame=K.Animation.playerFrame;K.Animation.playerFrame=function(time){var frame=oldPlayerFrame.call(K.Animation,time),player=K.State&&K.State.data&&K.State.data.player;if(playerSleeping(player)&&frame.type!=='damage'&&frame.type!=='death')return{type:'sleep',progress:0,offsetX:0,offsetY:0,facing:frame.facing,facingId:frame.facingId};return frame;};
+  var oldPlayerDraw=K.Sprites.drawPlayer;K.Sprites.drawPlayer=function(ctx,x,y,frame,time,facing,actor){if(playerSleeping(actor)&&(!frame||frame.type!=='damage'&&frame.type!=='death')){var result=oldPlayerDraw.call(K.Sprites,ctx,x,y,{type:'sleep',progress:0,offsetX:0,offsetY:0},0,facing,actor);if(ctx.fillText){ctx.save&&ctx.save();ctx.fillStyle='#d8e4ff';ctx.font='bold 11px sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillText('z',x+23,y+7);ctx.restore&&ctx.restore();}return result;}return oldPlayerDraw.apply(K.Sprites,arguments);};
+  var oldFrame=K.Animation.enemyFrame;K.Animation.enemyFrame=function(enemy,time){var frame=oldFrame.call(K.Animation,enemy,time);if(sleeping(enemy)&&frame.type!=='damage')return{type:'sleep',progress:0,offsetX:0,offsetY:0,dx:0,dy:0};return frame;};
+  var oldDraw=K.Sprites.drawEnemy;K.Sprites.drawEnemy=function(ctx,enemy,x,y,frame,time){if(sleeping(enemy)&&(!frame||frame.type!=='damage')){var result=oldDraw.call(K.Sprites,ctx,enemy,x,y,{type:'sleep',progress:0,offsetX:0,offsetY:0},-(enemy.x+enemy.y)*260);if(!enemy.spawnSleep&&!enemy.effectSleep&&ctx.fillText){ctx.fillStyle='#d8e4ff';ctx.font='bold 10px sans-serif';ctx.fillText('z',x+23,y+7);}return result;}return oldDraw.apply(K.Sprites,arguments);};
+  K.SleepVisuals={isSleeping:sleeping,isPlayerSleeping:playerSleeping};
+})(window.Kiri=window.Kiri||{});

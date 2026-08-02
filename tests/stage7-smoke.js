@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert');global.window=global;global.Kiri={};global.localStorage={getItem:()=>null,setItem:()=>{},removeItem:()=>{}};global.addEventListener=()=>{};
+function load(f){vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f});}
+['config','spawns','dungeons','themes','enemy-catalog','items','item-details','state','map','visibility','combat-rules','entities','item-actions','stage10-items','balance'].forEach(n=>load('js/'+n+'.js'));
+
+const known=Kiri.Items.create('moonHerb',0,0,'tutorialDungeon'),unknown=Kiri.Items.create('moonHerb',0,0,'mysteryDungeon');assert(Kiri.ItemDetails.description(known).includes('HPを25回復'));assert(!Kiri.ItemDetails.description(unknown).includes('HP'));assert(Kiri.ItemDetails.description(unknown).includes('正体が分からない'));
+assert(Object.values(Kiri.Items.definitions).every(d=>typeof d.description==='string'&&d.description.length>0));
+const staff=Kiri.Items.create('thunderStaff',0,0,'normalDungeon');staff.chargesKnown=false;assert(Kiri.ItemDetails.forItem(staff).metadata.some(x=>x.includes('残り回数')&&x.includes('不明')));staff.chargesKnown=true;assert(Kiri.ItemDetails.forItem(staff).metadata.some(x=>x.includes('残り')));
+const weapon=Kiri.Items.create('emberBlade',0,0,'normalDungeon');weapon.curseKnown=true;assert(Kiri.ItemDetails.forItem(weapon).metadata.some(x=>x.includes('攻撃補正')));assert(Kiri.ItemDetails.forItem(weapon).metadata.some(x=>x.includes('呪い')));
+assert.deepStrictEqual(Kiri.ItemActions.actionsFor(known).map(a=>a.label),['飲む','投げる','置く']);assert.deepStrictEqual(Kiri.ItemActions.actionsFor(Kiri.Items.create('reedArrow',0,0,'normalDungeon')).map(a=>a.label),['撃つ','装備','置く']);
+
+// Controller keeps preview/detail/cancel free and delegates only confirmed actions.
+let turns=0,detailShown=0,confirmShown=0;Kiri.State.data=Kiri.State.fresh('tutorialDungeon');Kiri.State.data.inventory=[known];Kiri.UI={showItemMenu:()=>{},showItemDetails:()=>detailShown++,hideTooltip:()=>{},showTooltip:()=>{},showConfirm:()=>confirmShown++,closeConfirm:()=>{},closeItemMenu:()=>{},setInventorySelection:()=>{}};Kiri.Game={actions:{openItem:()=>{},itemAction:()=>turns++}};load('js/stage7-controller.js');assert(Kiri.Game.actions.openItem(0));assert.equal(turns,0);assert.equal(detailShown,1);Kiri.Game.actions.requestItemAction('drink');assert.equal(confirmShown,1);assert.equal(turns,0);Kiri.Game.actions.cancelItemAction();assert.equal(turns,0);Kiri.Game.actions.requestItemAction('drink');Kiri.Game.actions.confirmItemAction();assert.equal(turns,1);
+
+// Keyboard-only path: I, arrows, Enter for details, Enter for action, Esc cancel.
+Kiri.UI.isStairOpen=()=>false;Kiri.UI.isStatusOpen=()=>false;
+const listeners={};global.addEventListener=(t,f)=>listeners[t]=f;function node(){return{addEventListener:()=>{},classList:{toggle:()=>{}},setAttribute:()=>{}};}global.document={querySelectorAll:()=>[],querySelector:()=>node()};Kiri.UI.inventoryColumns=()=>2;Kiri.UI.selectAction=()=>{};Kiri.UI.selectedAction=()=> 'drink';Kiri.UI.closeItemMenu=()=>{};let selected=-1,opened=-1,requested=0,cancelled=0,confirmed=0;load('js/input.js');Kiri.Input.init({inventoryCount:()=>20,selectInventory:i=>selected=i,openItem:i=>(opened=i,true),requestItemAction:()=>{requested++;return true;},cancelItemAction:()=>cancelled++,confirmItemAction:()=>confirmed++,closeItemDetails:()=>{},previewItem:()=>{},hideItemPreview:()=>{},move:()=>{},face:()=>{},attack:()=>{},step:()=>{},toggleStatus:()=>{},newGame:()=>{}});const key=k=>listeners.keydown({key:k,preventDefault:()=>{}});key('i');key('ArrowRight');assert.equal(selected,1);key('Enter');assert.equal(opened,1);key('Enter');assert.equal(requested,1);key('Escape');assert.equal(cancelled,1);key('Enter');key('Enter');assert.equal(confirmed,1);
+
+const css=fs.readFileSync('style.css','utf8');assert(css.includes('.inventory{display:grid'));assert(css.includes('overflow:visible'));assert(css.includes('.item-tooltip'));assert(css.includes('.confirm-screen'));
+console.log('stage 7 smoke: details, confirmation, keyboard flow and responsive grid passed');

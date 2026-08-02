@@ -1,0 +1,8 @@
+(function(K){
+  'use strict';
+  var order={weapon:0,shield:1,arrow:2,ring:3,food:4,herb:5,scroll:6,staff:7,treasure:8};
+  var ids=['emberBlade','willowBlade','mistSaber','stoneAxe','dawnEdge','barkShield','leatherShield','mossShield','clearShield','emberShield','everShield','reedArrow','ironArrow','pierceArrow','mightRing','wakeRing','antidoteRing','fastingRing','safeRing','driftRing','bigBread','nutBread','spoiledBread','moonHerb','starHerb','powerMendHerb','powerSeedHerb','levelHerb','swiftHerb','sightHerb','poisonHerb','confuseHerb','blindHerb','invisibleHerb','sleepHerb','warpHerb','flameHerb','escapeScroll','weaponScroll','shieldScroll','uncurseScroll','identifyScroll','mapScroll','trapScroll','itemScroll','enemyScroll','blastScroll','foodScroll','chargeScroll','thunderStaff','slowStaff','sleepStaff','confuseStaff','blindStaff','invisibleStaff','warpStaff','changeStaff','hasteStaff','sacrificeStaff','trialTreasure','eternalTreasure','deepTreasure','moonTreasure','abyssTreasure'];
+  var idOrder={};ids.forEach(function(id,index){idOrder[id]=index;});
+  function sort(state){state.inventory.forEach(function(item,index){if(item._sortIndex===undefined)item._sortIndex=index;});state.inventory.sort(function(a,b){var ca=order[a.category]===undefined?99:order[a.category],cb=order[b.category]===undefined?99:order[b.category];if(ca!==cb)return ca-cb;var ea=a.equipped?0:1,eb=b.equipped?0:1;if(ea!==eb)return ea-eb;var ia=idOrder[a.id]===undefined?999:idOrder[a.id],ib=idOrder[b.id]===undefined?999:idOrder[b.id];if(ia!==ib)return ia-ib;return a._sortIndex-b._sortIndex;});return state.inventory;}
+  K.Inventory={sort:function(state){return state.inventory;},manualSort:sort,order:order,itemOrder:idOrder};
+})(window.Kiri=window.Kiri||{});
