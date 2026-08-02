@@ -321,3 +321,34 @@
   .dpad button{min-height:44px}
   .floor-commands{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 }
+
+/* Unified play controls: map first, then movement and command buttons. */
+.game-shell{display:flex;flex-direction:column}
+header{order:1}
+.status{order:2}
+.status-tools{order:3}
+.map-layout{order:4}
+.controls{order:5}
+.floor-commands{order:6}
+.message-area{order:7}
+.inventory-panel{order:8}
+.status-map-buttons,.status-audio,.audio-controls{display:none!important}
+.status-tools{grid-template-columns:minmax(0,1fr)!important}
+.floor-extra-command,.floor-attack-command{display:block}
+.floor-commands{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:7px;border-top:1px solid var(--line);margin-top:8px}
+.floor-commands button{min-height:40px;font-size:11px;padding:7px 5px}
+.floor-commands button.active{color:#17140d;background:#8fc5a1;border-color:#bce5c9}
+.controls{margin-top:8px;padding:9px;background:var(--panel);border:1px solid var(--line);border-top:0;border-radius:0 0 9px 9px}
+.touch-controls{width:100%;justify-content:center;gap:12px}
+.touch-controls .action-pad,.legend{display:none!important}
+.dpad{width:190px;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,50px);gap:6px}
+.dpad button{min-height:50px}
+@media(max-width:680px){
+  .controls{order:5;margin-top:0;padding:10px 8px}
+  .floor-commands{order:6;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px;padding:8px}
+  .floor-commands button{min-height:46px;font-size:11px}
+}
+@media(max-width:420px){
+  .floor-commands{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px}
+  .floor-commands button{min-height:44px}
+}

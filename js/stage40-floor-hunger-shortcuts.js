@@ -220,7 +220,7 @@
     if(pickup){pickup.disabled=!item;pickup.classList.toggle('full',!!item&&full);pickup.textContent=pickupLabel(item);pickup.title=item?visibleName(item):'';}
     setText('[data-floor-stairs]','階段：Enter');
     setText('[data-floor-step]','足踏み：Z');
-    setText('[data-floor-suspend]','中断：Esc');
+    setText('.floor-commands [data-floor-suspend]','中断：Esc');
     var mapButton=document.querySelector('[data-map-toggle]');
     if(mapButton&&!mapButton.dataset.stage40Label){mapButton.textContent='全体マップ：M';mapButton.dataset.stage40Label='1';}
   }

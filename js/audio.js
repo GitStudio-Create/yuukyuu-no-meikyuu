@@ -56,8 +56,8 @@
       if(data){
         enabled=true;
         volume=Math.max(0,Math.min(1,Number(data.volume)));
-        if(!Number.isFinite(volume))volume=.35;
-        if(legacy)save();
+        if(!Number.isFinite(volume)||volume<.05)volume=.35;
+        save();
       }
     }catch(e){}
   }
@@ -91,8 +91,7 @@
         audio.volume=volume;
         save();
       });
-      document.addEventListener('pointerdown',function(){K.Audio.unlock();},{once:true});
-      document.addEventListener('keydown',function(){K.Audio.unlock();},{once:true});
+      ['pointerdown','click','touchstart','keydown'].forEach(function(type){document.addEventListener(type,function(){K.Audio.unlock();},{once:true,passive:true});});
       updateControls();
       this.setTheme(requestedFloor);
     },
