@@ -13,9 +13,6 @@
       <div><p class="eyebrow">ORIGINAL MINI ROGUELIKE</p><h1>悠久の迷宮</h1></div>
       <div class="dungeon-start-buttons" aria-label="冒険を始める迷宮">
         <button id="newGame" class="text-button">最初から</button>
-        <button class="text-button" data-new-dungeon="tutorialDungeon">ちょっと不思議</button>
-        <button class="text-button" data-new-dungeon="normalDungeon">不思議</button>
-        <button class="text-button" data-new-dungeon="mysteryDungeon">もっと不思議</button>
       </div>
     </header>
     <section class="status" aria-label="冒険者の状態">
@@ -41,7 +38,7 @@
     </div>
     <aside id="enemyInfo" class="enemy-info hidden" aria-live="polite"><button id="closeEnemyInfo" aria-label="敵情報を閉じる">×</button><small>ENEMY</small><h2 id="enemyInfoName"></h2><p id="enemyInfoDescription"></p><div id="enemyInfoRows"></div></aside>
 
-    <nav class="floor-commands" aria-label="足元の操作"><button data-floor-pickup disabled>拾う</button><button data-floor-stairs disabled>階段</button><button data-floor-step>足踏み</button><button data-floor-suspend>中断</button></nav>
+    <nav class="floor-commands" aria-label="足元の操作"><button data-floor-pickup disabled>拾う</button><button data-floor-stairs disabled>階段</button><button data-floor-step>足踏み</button><button data-floor-attack class="floor-attack-command" aria-label="攻撃">攻撃</button><button data-floor-suspend>中断</button></nav>
 
     <section class="message-area">
       <p id="message" aria-live="polite">古い王城の地下で、失われた歴史が目を覚ます。</p>

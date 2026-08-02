@@ -31,7 +31,7 @@
   };
   function AudioCtor(){return window.AudioContext||window.webkitAudioContext||null;}
   function save(){try{localStorage.setItem(KEY,JSON.stringify({enabled:enabled,volume:volume}));}catch(e){}}
-  function load(){try{var raw=localStorage.getItem(KEY),legacy=false;for(var i=0;!raw&&i<LEGACY_KEYS.length;i++){raw=localStorage.getItem(LEGACY_KEYS[i]);legacy=!!raw;}var d=JSON.parse(raw);if(d){enabled=d.enabled!==false;volume=Math.max(0,Math.min(1,Number(d.volume)));if(!Number.isFinite(volume))volume=.45;if(legacy)save();}}catch(e){}}
+  function load(){try{var raw=localStorage.getItem(KEY),legacy=false;for(var i=0;!raw&&i<LEGACY_KEYS.length;i++){raw=localStorage.getItem(LEGACY_KEYS[i]);legacy=!!raw;}var d=JSON.parse(raw);if(d){enabled=true;volume=Math.max(0,Math.min(1,Number(d.volume)));if(!Number.isFinite(volume))volume=.45;if(legacy)save();}}catch(e){}}
   function controls(){if(typeof document==='undefined')return;var b=document.querySelector('[data-se-toggle]'),r=document.querySelector('[data-se-volume]');if(b){b.textContent=enabled?'SE ON':'SE OFF';b.setAttribute('aria-pressed',String(enabled));}if(r)r.value=String(Math.round(volume*100));}
   function tone(spec){var o=context.createOscillator(),g=context.createGain(),start=context.currentTime+spec[3];o.type=spec[2];o.frequency.setValueAtTime(spec[0],start);g.gain.setValueAtTime(Math.max(.0001,volume*.16),start);g.gain.exponentialRampToValueAtTime(.0001,start+spec[1]);o.connect(g);g.connect(context.destination);o.start(start);o.stop(start+spec[1]+.01);}
   function playFile(name){

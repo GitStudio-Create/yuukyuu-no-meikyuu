@@ -128,6 +128,43 @@
   .dungeon-start-buttons{max-width:100%;justify-content:flex-start}
   .dungeon-start-buttons .text-button{font-size:11px;padding-inline:8px}
 }
+
+/* Mobile play layout cleanup: keep only needed start/audio controls and bring touch controls up. */
+.audio-controls [data-bgm-toggle],
+.audio-controls [data-se-toggle]{display:none!important}
+.floor-attack-command{display:none}
+@media(max-width:720px){
+  .game-shell{display:flex;flex-direction:column}
+  header{order:1}
+  .status{order:2}
+  .status-tools{order:3}
+  .map-layout{order:4}
+  .floor-commands{order:5}
+  .controls{order:6}
+  .message-area{order:7}
+  .inventory-panel{order:8}
+  .dungeon-start-buttons{display:flex;justify-content:flex-end}
+  .dungeon-start-buttons .text-button{min-width:112px}
+  .status-tools .audio-controls{gap:8px}
+  .status-tools .audio-controls label{font-size:10px}
+  .status-tools .audio-controls input{width:64px}
+  .floor-attack-command{display:block}
+  .floor-commands{grid-template-columns:minmax(72px,1.35fr) repeat(4,minmax(50px,1fr));gap:4px}
+  .floor-commands button{min-height:46px;font-size:11px}
+  .controls{margin-top:8px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:9px;justify-content:center}
+  .touch-controls{width:100%;justify-content:center;align-items:center;gap:10px}
+  .legend{display:none}
+  .action-pad{grid-template-columns:repeat(2,minmax(0,1fr));max-width:180px}
+  .action-pad button{min-width:78px;min-height:38px}
+}
+@media(max-width:420px){
+  .floor-commands{grid-template-columns:minmax(64px,1.35fr) repeat(4,minmax(44px,1fr));gap:3px}
+  .floor-commands button{min-height:44px;font-size:10px}
+  .status-tools .audio-controls input{width:54px}
+  .touch-controls{gap:7px}
+  .action-pad{max-width:154px}
+  .action-pad button{min-width:68px;font-size:10px;padding:6px 4px}
+}
 .bag-sort-button{border:1px solid #56604a;background:#252a20;border-radius:6px;padding:4px 9px;font-size:11px;color:var(--ink);white-space:nowrap}
 @media(min-width:1280px){
   .game-shell{margin-left:48px}

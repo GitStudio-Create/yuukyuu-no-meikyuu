@@ -54,7 +54,7 @@
       for(var i=0;!raw&&i<LEGACY_KEYS.length;i++){raw=localStorage.getItem(LEGACY_KEYS[i]);legacy=!!raw;}
       var data=JSON.parse(raw);
       if(data){
-        enabled=data.enabled!==false;
+        enabled=true;
         volume=Math.max(0,Math.min(1,Number(data.volume)));
         if(!Number.isFinite(volume))volume=.35;
         if(legacy)save();
