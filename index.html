@@ -17,15 +17,21 @@
       </div>
     </header>
     <section class="status" aria-label="冒険者の状態">
-      <div class="floor-stat"><span>階層</span><strong id="floor">1F</strong></div>
-      <div class="meter hp-stat"><span>体力 <b id="hpText"></b></span><i><em id="hpBar"></em></i></div>
-      <div class="meter food-stat"><span>満腹 <b id="foodText"></b></span><i><em id="foodBar"></em></i></div>
-      <div class="power-stat"><span>ちから</span><strong id="power">8/8</strong></div>
-      <div class="level-stat"><span>レベル</span><strong id="levelText">1</strong></div>
-      <div class="gold-stat"><span>所持金</span><strong id="goldText">0 G</strong></div>
-      <div class="gear-strength weapon-stat"><span>剣の強さ</span><strong id="weaponStrengthText">0</strong></div>
-      <div class="gear-strength shield-stat"><span>盾の強さ</span><strong id="shieldStrengthText">0</strong></div>
-      <div class="next-level-top next-level-stat"><span>次のレベルまで</span><strong id="nextLevelTopText">-</strong></div>
+      <div class="status-row status-main-row">
+        <div class="floor-stat"><span>階層</span><strong id="floor">1F</strong></div>
+        <div class="meter hp-stat"><span>体力 <b id="hpText"></b></span><i><em id="hpBar"></em></i></div>
+        <div class="meter food-stat"><span>満腹 <b id="foodText"></b></span><i><em id="foodBar"></em></i></div>
+      </div>
+      <div class="status-row status-meta-row">
+        <div class="power-stat"><span>ちから</span><strong id="power">8/8</strong></div>
+        <div class="level-stat"><span>レベル</span><strong id="levelText">1</strong></div>
+        <div class="next-level-top next-level-stat"><span>次のレベルまで</span><strong id="nextLevelTopText">-</strong></div>
+      </div>
+      <div class="status-row status-combat-row">
+        <div class="gear-strength weapon-stat"><span>剣の強さ</span><strong id="weaponStrengthText">0</strong></div>
+        <div class="gear-strength shield-stat"><span>盾の強さ</span><strong id="shieldStrengthText">0</strong></div>
+      </div>
+      <div class="gold-stat" hidden><span>所持金</span><strong id="goldText">0 G</strong></div>
     </section>
 
     <div class="map-layout">

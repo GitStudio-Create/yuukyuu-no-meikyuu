@@ -544,3 +544,67 @@ header{order:1}
   .status .gear-strength strong,
   .status .next-level-top strong{font-size:10px!important}
 }
+
+/* Status rows are intentionally separated from the legacy direct-child grid rules. */
+.status{
+  display:flex!important;
+  flex-direction:column!important;
+  grid-template-columns:none!important;
+  grid-template-areas:none!important;
+  gap:5px!important;
+  overflow:hidden!important;
+}
+.status-row{
+  display:grid!important;
+  align-items:center!important;
+  gap:6px!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+.status-main-row{grid-template-columns:46px minmax(0,1fr) minmax(0,1fr)!important}
+.status-meta-row{grid-template-columns:minmax(78px,.9fr) 52px minmax(120px,1.25fr)!important}
+.status-combat-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+.status-row>div{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:baseline!important;
+  justify-content:flex-start!important;
+  gap:4px!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+}
+.status-main-row>.meter{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:2px!important}
+.status-main-row>.meter span{display:block!important}
+.status-row span{flex:0 0 auto!important}
+.status-row strong,.status-row b{
+  flex:0 1 auto!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.status .meter i{width:100%!important;max-width:150px!important}
+.status .gold-stat{display:none!important}
+@media(max-width:680px){
+  .status{padding:7px!important;gap:5px!important}
+  .status-main-row{grid-template-columns:42px minmax(0,1fr) minmax(0,1fr)!important}
+  .status-meta-row{grid-template-columns:minmax(82px,1fr) 48px minmax(116px,1.15fr)!important}
+  .status-combat-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  .status-row{gap:5px!important}
+  .status-row>div{gap:3px!important}
+  .status span{font-size:9.5px!important}
+  .status strong,.status .meter b{font-size:12px!important}
+  .status .gear-strength strong,.status .next-level-top strong{font-size:10.5px!important}
+  .status .meter i{max-width:118px!important}
+}
+@media(max-width:420px){
+  .status-main-row{grid-template-columns:38px minmax(0,1fr) minmax(0,1fr)!important}
+  .status-meta-row{grid-template-columns:minmax(76px,1fr) 42px minmax(104px,1.12fr)!important}
+  .status-row{gap:4px!important}
+  .status-row>div{gap:2px!important}
+  .status span{font-size:8.5px!important}
+  .status strong,.status .meter b{font-size:11px!important}
+  .status .gear-strength strong,.status .next-level-top strong{font-size:9.5px!important}
+  .status .meter i{max-width:104px!important}
+}
