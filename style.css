@@ -429,3 +429,59 @@ header{order:1}
   .status strong,.status .meter b{font-size:12px!important}
   .status .gear-strength strong,.status .next-level-top strong{font-size:11px!important}
 }
+
+/* Final mobile command/status tightening. */
+.floor-attack-command,
+.floor-commands [data-floor-diagonal],
+.floor-commands [data-floor-run]{display:none!important}
+.floor-commands{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.floor-commands button{min-height:38px}
+.weapon-stat,.shield-stat{white-space:nowrap}
+.canvas-wrap .message-area{
+  left:12px;
+  right:12px;
+  bottom:10px;
+  height:50px!important;
+  min-height:50px!important;
+  max-height:50px!important;
+  padding:4px 8px;
+  background:rgba(17,19,15,.8);
+}
+.canvas-wrap .message-area p{font-size:11px;line-height:1.28}
+.canvas-wrap .message-area .latest{font-size:11px}
+@media(max-width:680px){
+  .status{
+    grid-template-columns:40px minmax(0,1fr) minmax(0,1fr) minmax(0,1.25fr)!important;
+    grid-template-areas:
+      "floor hp hp food"
+      "power level next next"
+      "weapon weapon shield shield";
+    gap:3px 7px;
+  }
+  .status .meter i{width:100%;max-width:118px}
+  .power-stat,.level-stat,.next-level-stat{overflow:visible!important;white-space:nowrap}
+  .next-level-stat strong{max-width:none}
+  .weapon-stat,.shield-stat{justify-content:flex-start;min-width:0}
+  .weapon-stat strong,.shield-stat strong{font-size:12px!important}
+  .floor-commands{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px;padding:7px}
+  .floor-commands button{min-height:42px;font-size:11px}
+  .canvas-wrap .message-area{
+    left:10px;
+    right:10px;
+    bottom:8px;
+    height:48px!important;
+    min-height:48px!important;
+    max-height:48px!important;
+  }
+}
+@media(max-width:420px){
+  .status{
+    grid-template-columns:38px minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr)!important;
+    gap:2px 5px;
+  }
+  .status .meter i{max-width:104px}
+  .status span{font-size:8.5px!important}
+  .status strong,.status .meter b{font-size:11px!important}
+  .weapon-stat strong,.shield-stat strong,.status .next-level-top strong{font-size:10.5px!important}
+  .floor-commands button{min-height:40px;font-size:10.5px;padding:5px 3px}
+}
