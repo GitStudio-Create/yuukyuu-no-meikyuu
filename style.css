@@ -608,3 +608,26 @@ header{order:1}
   .status .gear-strength strong,.status .next-level-top strong{font-size:9.5px!important}
   .status .meter i{max-width:104px!important}
 }
+
+/* Requested status order: floor/power/level/next, combat, then HP/food labels and bars. */
+.status-meta-row{grid-template-columns:56px minmax(80px,.9fr) 64px minmax(160px,1.5fr)!important}
+.status-combat-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+.status-vitals-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+.status-vitals-row>.meter{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:2px!important;
+}
+.status-vitals-row>.meter span{display:block!important}
+.status-vitals-row .meter i{width:100%!important;max-width:150px!important}
+@media(max-width:680px){
+  .status-meta-row{grid-template-columns:46px minmax(78px,.95fr) 56px minmax(132px,1.35fr)!important}
+  .status-combat-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  .status-vitals-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  .status-vitals-row .meter i{max-width:118px!important}
+}
+@media(max-width:420px){
+  .status-meta-row{grid-template-columns:42px minmax(70px,.9fr) 48px minmax(112px,1.25fr)!important}
+  .status-vitals-row .meter i{max-width:104px!important}
+}
