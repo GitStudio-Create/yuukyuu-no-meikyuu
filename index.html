@@ -17,15 +17,15 @@
       </div>
     </header>
     <section class="status" aria-label="冒険者の状態">
-      <div><span>階層</span><strong id="floor">1F</strong></div>
-      <div class="meter"><span>体力 <b id="hpText"></b></span><i><em id="hpBar"></em></i></div>
-      <div class="meter"><span>満腹 <b id="foodText"></b></span><i><em id="foodBar"></em></i></div>
-      <div><span>ちから</span><strong id="power">8/8</strong></div>
-      <div><span>レベル</span><strong id="levelText">1</strong></div>
-      <div><span>所持金</span><strong id="goldText">0 G</strong></div>
-      <div class="gear-strength"><span>剣の強さ</span><strong id="weaponStrengthText">0</strong></div>
-      <div class="gear-strength"><span>盾の強さ</span><strong id="shieldStrengthText">0</strong></div>
-      <div class="next-level-top"><span>次のレベルまで</span><strong id="nextLevelTopText">-</strong></div>
+      <div class="floor-stat"><span>階層</span><strong id="floor">1F</strong></div>
+      <div class="meter hp-stat"><span>体力 <b id="hpText"></b></span><i><em id="hpBar"></em></i></div>
+      <div class="meter food-stat"><span>満腹 <b id="foodText"></b></span><i><em id="foodBar"></em></i></div>
+      <div class="power-stat"><span>ちから</span><strong id="power">8/8</strong></div>
+      <div class="level-stat"><span>レベル</span><strong id="levelText">1</strong></div>
+      <div class="gold-stat"><span>所持金</span><strong id="goldText">0 G</strong></div>
+      <div class="gear-strength weapon-stat"><span>剣の強さ</span><strong id="weaponStrengthText">0</strong></div>
+      <div class="gear-strength shield-stat"><span>盾の強さ</span><strong id="shieldStrengthText">0</strong></div>
+      <div class="next-level-top next-level-stat"><span>次のレベルまで</span><strong id="nextLevelTopText">-</strong></div>
     </section>
 
     <div class="map-layout">
@@ -34,16 +34,15 @@
         <span id="miniLevel" class="legacy-hidden" aria-hidden="true"></span><span id="miniGold" class="legacy-hidden" aria-hidden="true"></span><span id="themeName" class="legacy-hidden" aria-hidden="true"></span>
         <canvas id="game" width="640" height="480" aria-label="迷宮のゲーム画面"></canvas>
         <div id="overlay" class="overlay hidden"><h2 id="overlayTitle"></h2><p id="overlayText"></p><div class="overlay-actions"><button id="overlaySuspend" class="secondary">中断</button><button id="overlayButton">もう一度</button></div></div>
+        <section class="message-area map-message-area">
+          <p id="message" aria-live="polite">古い王城の地下で、失われた歴史が目を覚ます。</p>
+        </section>
       </div>
       <aside class="minimap-dock"><small>EXPLORED MAP</small><canvas id="minimap" width="160" height="120" aria-label="ミニマップ"></canvas></aside>
     </div>
     <aside id="enemyInfo" class="enemy-info hidden" aria-live="polite"><button id="closeEnemyInfo" aria-label="敵情報を閉じる">×</button><small>ENEMY</small><h2 id="enemyInfoName"></h2><p id="enemyInfoDescription"></p><div id="enemyInfoRows"></div></aside>
 
     <nav class="floor-commands" aria-label="操作"><button data-floor-pickup disabled>拾う</button><button data-floor-stairs disabled>階段</button><button data-floor-step>足踏み</button><button data-floor-attack class="floor-attack-command" aria-label="攻撃">攻撃</button><button data-floor-shoot class="floor-extra-command">矢撃ち</button><button data-floor-diagonal class="floor-extra-command" aria-pressed="false">斜め移動</button><button data-floor-status class="floor-extra-command">ステータス</button><button data-floor-map-only class="floor-extra-command">地図確認</button><button data-floor-face class="floor-extra-command" aria-pressed="false">向き変更</button><button data-floor-run class="floor-extra-command" aria-pressed="false">走る</button><button data-floor-map class="floor-extra-command">マップ</button></nav>
-
-    <section class="message-area">
-      <p id="message" aria-live="polite">古い王城の地下で、失われた歴史が目を覚ます。</p>
-    </section>
 
     <section class="inventory-panel">
       <div class="section-title"><h2>道具袋</h2><span>Iキー / タップで詳細　Rキー / 整理</span><button type="button" class="bag-sort-button" data-inventory-sort>整理</button></div>
