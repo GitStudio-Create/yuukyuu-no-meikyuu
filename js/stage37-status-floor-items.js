@@ -11,7 +11,40 @@
   function statusText(p){var s=p.status||{},a=[];if(s.sleep>0)a.push('睡眠');if(s.confuse>0)a.push('混乱');if(s.haste>0)a.push('倍速');if(s.slow>0)a.push('鈍足');if(s.blind>0)a.push('目つぶし');if(s.invisible>0)a.push('透明');if(s.poison>0)a.push('毒');if(s.bind>0)a.push('停止');return a.length?a.join('・'):'なし';}
   function curseText(item){if(!item)return'なし';if(!item.curseKnown)return'未判明';return item.cursed?'あり':'なし';}
   function remainingText(state){if(!K.Progression||!K.Progression.remaining)return'-';var r=K.Progression.remaining(state.player);return r===null?'最大レベル':r+'ポイント';}
+  function parent(selector,className){
+    var node=document.querySelector(selector),box=node&&node.parentElement;
+    if(box&&className)className.split(' ').forEach(function(name){box.classList.add(name);});
+    return box;
+  }
+  function ensureTopStatusLayout(){
+    var status=document.querySelector('.status');if(!status)return;
+    var floor=parent('#floor','floor-stat'),
+        hp=parent('#hpText','meter hp-stat'),
+        food=parent('#foodText','meter food-stat'),
+        power=parent('#power','power-stat'),
+        level=parent('#levelText','level-stat'),
+        gold=parent('#goldText','gold-stat'),
+        weapon=parent('#weaponStrengthText','gear-strength weapon-stat'),
+        shield=parent('#shieldStrengthText','gear-strength shield-stat'),
+        next=parent('#nextLevelTopText','next-level-top next-level-stat');
+    if(!floor||!hp||!food||!power||!level||!weapon||!shield||!next)return;
+    var meta=status.querySelector('.status-meta-row')||document.createElement('div'),
+        combat=status.querySelector('.status-combat-row')||document.createElement('div'),
+        vitals=status.querySelector('.status-vitals-row')||document.createElement('div');
+    meta.className='status-row status-meta-row';
+    combat.className='status-row status-combat-row';
+    vitals.className='status-row status-vitals-row';
+    [meta,combat,vitals].forEach(function(row){if(row.parentElement!==status)status.appendChild(row);});
+    [floor,power,level,next].forEach(function(node){meta.appendChild(node);});
+    [weapon,shield].forEach(function(node){combat.appendChild(node);});
+    [hp,food].forEach(function(node){vitals.appendChild(node);});
+    if(gold){gold.hidden=true;gold.style.display='none';status.appendChild(gold);}
+    if(status.firstElementChild!==meta)status.insertBefore(meta,status.firstElementChild);
+    if(meta.nextElementSibling!==combat)status.insertBefore(combat,meta.nextElementSibling);
+    if(combat.nextElementSibling!==vitals)status.insertBefore(vitals,combat.nextElementSibling);
+  }
   function updateTop(state){
+    ensureTopStatusLayout();
     var w=document.querySelector('#weaponStrengthText'),sh=document.querySelector('#shieldStrengthText'),next=document.querySelector('#nextLevelTopText');
     if(w)w.textContent=weaponStrength(state)+'（攻撃力:'+K.Items.attackPower(state)+'）';
     if(sh)sh.textContent=shieldStrength(state)+'（防御力:'+K.Items.defensePower(state)+'）';
