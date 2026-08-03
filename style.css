@@ -485,3 +485,62 @@ header{order:1}
   .weapon-stat strong,.shield-stat strong,.status .next-level-top strong{font-size:10.5px!important}
   .floor-commands button{min-height:40px;font-size:10.5px;padding:5px 3px}
 }
+
+/* Hard override for mobile status placement.
+   Older mobile rules used stronger grid-column declarations, so place each item explicitly. */
+@media(max-width:680px){
+  .status{
+    grid-template-columns:42px minmax(86px,1fr) minmax(48px,.65fr) minmax(108px,1.25fr)!important;
+    grid-template-areas:none!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:minmax(22px,auto)!important;
+    overflow:hidden;
+  }
+  .status .floor-stat{grid-column:1 / 2!important;grid-row:1!important}
+  .status .hp-stat{grid-column:2 / 3!important;grid-row:1!important}
+  .status .food-stat{grid-column:3 / 5!important;grid-row:1!important}
+  .status .power-stat{grid-column:1 / 3!important;grid-row:2!important}
+  .status .level-stat{grid-column:3 / 4!important;grid-row:2!important}
+  .status .next-level-stat{grid-column:4 / 5!important;grid-row:2!important}
+  .status .weapon-stat{grid-column:1 / 3!important;grid-row:3!important}
+  .status .shield-stat{grid-column:3 / 5!important;grid-row:3!important}
+  .status .power-stat,
+  .status .level-stat,
+  .status .next-level-stat,
+  .status .weapon-stat,
+  .status .shield-stat{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:baseline!important;
+    gap:3px!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+  }
+  .status .power-stat span,
+  .status .level-stat span,
+  .status .next-level-stat span,
+  .status .weapon-stat span,
+  .status .shield-stat span{flex:0 0 auto}
+  .status .power-stat strong,
+  .status .level-stat strong,
+  .status .next-level-stat strong,
+  .status .weapon-stat strong,
+  .status .shield-stat strong{
+    flex:0 1 auto;
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+  .status .gear-strength strong{font-size:10.5px!important}
+  .status .next-level-top strong{font-size:10.5px!important}
+}
+@media(max-width:420px){
+  .status{
+    grid-template-columns:38px minmax(82px,1fr) minmax(44px,.62fr) minmax(100px,1.18fr)!important;
+    grid-auto-rows:minmax(21px,auto)!important;
+  }
+  .status .gear-strength strong,
+  .status .next-level-top strong{font-size:10px!important}
+}
