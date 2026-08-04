@@ -631,3 +631,68 @@ header{order:1}
   .status-meta-row{grid-template-columns:42px minmax(70px,.9fr) 48px minmax(112px,1.25fr)!important}
   .status-vitals-row .meter i{max-width:104px!important}
 }
+
+/* Final status alignment: keep every row readable on narrow phones. */
+.status-meta-row{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:center!important;
+}
+.status-meta-row>div{
+  justify-content:center!important;
+  min-height:22px!important;
+  overflow:visible!important;
+}
+.status-combat-row{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  column-gap:3em!important;
+}
+.status-combat-row>div:first-child{justify-content:flex-end!important}
+.status-combat-row>div:last-child{justify-content:flex-start!important}
+.status-vitals-row{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  align-items:start!important;
+  column-gap:12px!important;
+  min-height:38px!important;
+}
+.status-vitals-row>.meter{
+  display:grid!important;
+  grid-template-rows:auto 8px!important;
+  align-items:start!important;
+  justify-content:stretch!important;
+  row-gap:5px!important;
+  min-width:0!important;
+  overflow:visible!important;
+}
+.status-vitals-row>.meter span{
+  display:flex!important;
+  align-items:baseline!important;
+  gap:4px!important;
+  min-height:16px!important;
+  line-height:1.15!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+}
+.status-vitals-row>.meter span b{
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+.status-vitals-row .meter i{
+  width:100%!important;
+  max-width:none!important;
+  height:7px!important;
+  margin-top:0!important;
+}
+@media(max-width:680px){
+  .status-meta-row{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .status-meta-row>div{justify-content:center!important}
+  .status-combat-row{column-gap:3em!important}
+  .status-vitals-row{column-gap:10px!important;min-height:38px!important}
+  .status-vitals-row .meter i{max-width:none!important}
+}
+@media(max-width:420px){
+  .status-meta-row{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .status-meta-row>div{min-height:21px!important}
+  .status-combat-row{column-gap:2.5em!important}
+  .status-vitals-row{column-gap:8px!important;min-height:38px!important}
+  .status-vitals-row .meter i{max-width:none!important}
+}
