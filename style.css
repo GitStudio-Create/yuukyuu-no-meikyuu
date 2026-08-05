@@ -637,3 +637,106 @@ header{order:1}
 @media(max-width:320px){
   .status-vitals-row{grid-template-columns:minmax(0,1fr)!important;row-gap:8px!important}
 }
+
+/* Center the normal game and keep every primary panel aligned to the same column. */
+body:not(.gm-active) .game-shell{
+  width:min(760px,100%)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body:not(.gm-active) .game-shell>header,
+body:not(.gm-active) .game-shell>.status,
+body:not(.gm-active) .game-shell>.map-layout,
+body:not(.gm-active) .game-shell>.controls,
+body:not(.gm-active) .game-shell>.inventory-panel{
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* Canvas and log use separate normal-flow regions, so map content is never covered. */
+.map-layout{width:min(100%,640px)!important}
+.game-panel{width:100%;min-width:0}
+.game-panel>.canvas-wrap{
+  width:100%!important;
+  aspect-ratio:4/3!important;
+  border-radius:6px 6px 0 0!important;
+}
+.game-panel>.message-area{
+  position:static!important;
+  inset:auto!important;
+  z-index:auto!important;
+  width:100%!important;
+  height:62px!important;
+  min-height:62px!important;
+  max-height:62px!important;
+  margin:0!important;
+  padding:7px 10px!important;
+  border:1px solid var(--line)!important;
+  border-top:0!important;
+  border-radius:0 0 8px 8px!important;
+  background:#171a15!important;
+  box-shadow:none!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+.game-panel>.message-area p{font-size:12px!important;line-height:1.35!important}
+
+/* One shared control panel: left actions, direction pad, right actions. */
+.controls{
+  width:min(100%,640px)!important;
+  display:grid!important;
+  grid-template-columns:minmax(120px,1fr) 190px minmax(120px,1fr)!important;
+  align-items:stretch!important;
+  gap:12px!important;
+  margin-top:8px!important;
+  padding:10px!important;
+  border:1px solid var(--line)!important;
+  border-radius:9px!important;
+  background:var(--panel)!important;
+}
+.control-actions{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:repeat(4,minmax(0,1fr));
+  gap:6px;
+  min-width:0;
+}
+.control-actions button{
+  width:100%;
+  min-width:0;
+  min-height:40px;
+  padding:6px 5px;
+  border:1px solid #4b513d;
+  border-radius:7px;
+  background:#292d22;
+  font-size:11px;
+  line-height:1.2;
+  white-space:normal;
+}
+.control-actions button:active{background:#4b513d;transform:scale(.97)}
+.control-actions button.active{color:#17140d;background:#8fc5a1;border-color:#bce5c9}
+.touch-controls{width:190px!important;min-width:0!important;display:block!important}
+.dpad{
+  width:100%!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,50px)!important;
+  gap:6px!important;
+}
+.dpad button{min-width:0!important;min-height:50px!important}
+.touch-controls .action-pad,
+.legacy-command-hooks,
+.controls>.legend{display:none!important}
+
+@media(max-width:560px){
+  .controls{
+    grid-template-columns:minmax(68px,1fr) clamp(150px,44vw,170px) minmax(68px,1fr)!important;
+    gap:6px!important;
+    padding:7px!important;
+  }
+  .touch-controls{width:100%!important}
+  .dpad{grid-template-rows:repeat(3,46px)!important;gap:5px!important}
+  .dpad button{min-height:46px!important;font-size:17px!important}
+  .control-actions{gap:5px}
+  .control-actions button{min-height:34px;padding:4px 2px;font-size:10px}
+  .game-panel>.message-area{height:58px!important;min-height:58px!important;max-height:58px!important;padding:6px 8px!important}
+}

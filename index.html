@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#151712">
   <title>悠久の迷宮</title>
-  <link rel="stylesheet" href="style.css?v=20260805-responsive-status">
+  <link rel="stylesheet" href="style.css?v=20260805-control-log-center">
 </head>
 <body>
   <main class="game-shell">
@@ -35,11 +35,13 @@
     </section>
 
     <div class="map-layout">
-      <div class="canvas-wrap">
-        <div class="audio-controls"><button data-bgm-toggle aria-pressed="true">BGM ON</button><label>BGM <input data-bgm-volume type="range" min="0" max="100" value="35" aria-label="BGM音量"></label><button data-se-toggle aria-pressed="true">SE ON</button><label>SE <input data-se-volume type="range" min="0" max="100" value="45" aria-label="SE音量"></label></div>
-        <span id="miniLevel" class="legacy-hidden" aria-hidden="true"></span><span id="miniGold" class="legacy-hidden" aria-hidden="true"></span><span id="themeName" class="legacy-hidden" aria-hidden="true"></span>
-        <canvas id="game" width="640" height="480" aria-label="迷宮のゲーム画面"></canvas>
-        <div id="overlay" class="overlay hidden"><h2 id="overlayTitle"></h2><p id="overlayText"></p><div class="overlay-actions"><button id="overlaySuspend" class="secondary">中断</button><button id="overlayButton">もう一度</button></div></div>
+      <div class="game-panel">
+        <div class="canvas-wrap">
+          <div class="audio-controls"><button data-bgm-toggle aria-pressed="true">BGM ON</button><label>BGM <input data-bgm-volume type="range" min="0" max="100" value="35" aria-label="BGM音量"></label><button data-se-toggle aria-pressed="true">SE ON</button><label>SE <input data-se-volume type="range" min="0" max="100" value="45" aria-label="SE音量"></label></div>
+          <span id="miniLevel" class="legacy-hidden" aria-hidden="true"></span><span id="miniGold" class="legacy-hidden" aria-hidden="true"></span><span id="themeName" class="legacy-hidden" aria-hidden="true"></span>
+          <canvas id="game" width="640" height="480" aria-label="迷宮のゲーム画面"></canvas>
+          <div id="overlay" class="overlay hidden"><h2 id="overlayTitle"></h2><p id="overlayText"></p><div class="overlay-actions"><button id="overlaySuspend" class="secondary">中断</button><button id="overlayButton">もう一度</button></div></div>
+        </div>
         <section class="message-area map-message-area">
           <p id="message" aria-live="polite">古い王城の地下で、失われた歴史が目を覚ます。</p>
         </section>
@@ -48,14 +50,10 @@
     </div>
     <aside id="enemyInfo" class="enemy-info hidden" aria-live="polite"><button id="closeEnemyInfo" aria-label="敵情報を閉じる">×</button><small>ENEMY</small><h2 id="enemyInfoName"></h2><p id="enemyInfoDescription"></p><div id="enemyInfoRows"></div></aside>
 
-    <nav class="floor-commands" aria-label="操作"><button data-floor-pickup disabled>拾う</button><button data-floor-stairs disabled>階段</button><button data-floor-step>足踏み</button><button data-floor-attack class="floor-attack-command" aria-label="攻撃">攻撃</button><button data-floor-shoot class="floor-extra-command">矢撃ち</button><button data-floor-diagonal class="floor-extra-command" aria-pressed="false">斜め移動</button><button data-floor-status class="floor-extra-command">ステータス</button><button data-floor-map-only class="floor-extra-command">地図確認</button><button data-floor-face class="floor-extra-command" aria-pressed="false">向き変更</button><button data-floor-run class="floor-extra-command" aria-pressed="false">走る</button><button data-floor-map class="floor-extra-command">マップ</button></nav>
-
-    <section class="inventory-panel">
-      <div class="section-title"><h2>道具袋</h2><span>Iキー / タップで詳細　Rキー / 整理</span><button type="button" class="bag-sort-button" data-inventory-sort>整理</button></div>
-      <div id="inventory" class="inventory"></div>
-    </section>
-
     <section class="controls" aria-label="移動操作">
+      <nav class="control-actions control-actions-left" aria-label="左側の操作">
+        <button data-floor-pickup disabled>拾う：G</button><button data-floor-stairs disabled>階段：Enter</button><button data-floor-status>ステータス</button><button data-floor-map-only>地図確認</button>
+      </nav>
       <div class="touch-controls">
         <div class="dpad">
           <button data-dir="upLeft" aria-label="左上へ">↖</button><button data-dir="up" aria-label="上へ">▲</button><button data-dir="upRight" aria-label="右上へ">↗</button>
@@ -64,7 +62,15 @@
         </div>
         <div class="action-pad"><button data-action="step">足踏み</button><button data-action="shoot-arrow">矢撃ち</button><button data-action="face" aria-pressed="false">向き変更</button><button data-action="diagonal" aria-pressed="false">斜め移動</button><button data-action="run" aria-pressed="false">走る</button><button data-action="status">ステータス</button></div>
       </div>
+      <nav class="control-actions control-actions-right" aria-label="右側の操作">
+        <button data-floor-step>足踏み：Z</button><button data-floor-shoot>矢撃ち</button><button data-floor-face aria-pressed="false">向き変更</button><button data-floor-map>マップ</button>
+      </nav>
+      <div class="legacy-command-hooks" aria-hidden="true"><button data-floor-attack aria-label="攻撃">攻撃</button><button data-floor-diagonal aria-pressed="false">斜め移動</button><button data-floor-run aria-pressed="false">走る</button></div>
       <div class="legend"><p><b>移動</b> 矢印 / WASD</p><p><b>拾う</b> G（空きがあれば自動）</p><p><b>中断</b> Q</p><p><b>矢撃ち</b> F</p><p><b>走る</b> B + 方向</p><p><b>向き</b> Shift + 方向</p><p><b>攻撃</b> Space</p><p><b>足踏</b> Z</p><p><b>斜め</b> Ctrl + 2方向</p><p><b>詳細</b> X / I</p><p><b>閉じる</b> Esc</p><p><b>階段</b> 下りる / そのまま</p></div>
+    </section>
+    <section class="inventory-panel">
+      <div class="section-title"><h2>道具袋</h2><span>Iキー / タップで詳細　Rキー / 整理</span><button type="button" class="bag-sort-button" data-inventory-sort>整理</button></div>
+      <div id="inventory" class="inventory"></div>
     </section>
     <section id="statusScreen" class="status-screen hidden" aria-label="ステータス画面">
       <div class="status-card"><div class="status-heading"><div><small>ADVENTURER STATUS</small><h2>旅支度と記録</h2></div><button id="closeStatus">閉じる</button></div><div id="statusGrid" class="status-grid"></div></div>
