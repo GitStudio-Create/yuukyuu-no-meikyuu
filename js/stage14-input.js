@@ -2,14 +2,14 @@
   'use strict';
 
   var oldInit=K.Input.init;
-  var REPEAT_MS=300;
+  var REPEAT_DELAY_MS=200,REPEAT_INTERVAL_MS=85;
 
   K.Input.init=function(actions){
     oldInit.call(K.Input,actions);
 
     var faceNext=false,runNext=false,diagonalNext=false;
     var faceButton,runButton,diagonalButton;
-    var repeatTimer=null,repeatButton=null;
+    var repeatDelayTimer=null,repeatTimer=null,repeatButton=null;
 
     function setNext(button,on){
       if(!button)return;
@@ -22,11 +22,10 @@
       setNext(runButton,false);
       setNext(diagonalButton,false);
     }
-    function uiBlocked(){
+    function menuBlocked(){
       var itemMenu=document.querySelector('#itemMenu');
       var confirm=document.querySelector('#confirmScreen');
       return !!(
-        (K.Game&&K.Game.isInputLocked&&K.Game.isInputLocked())||
         (K.UI.isStairOpen&&K.UI.isStairOpen())||
         (K.UI.isStatusOpen&&K.UI.isStatusOpen())||
         (K.UI.isSuspendOpen&&K.UI.isSuspendOpen())||
@@ -34,10 +33,21 @@
         (confirm&&!confirm.classList.contains('hidden'))
       );
     }
+    function turnBlocked(){return !!(K.Game&&K.Game.isInputLocked&&K.Game.isInputLocked());}
+    function uiBlocked(){return menuBlocked()||turnBlocked();}
     function stopRepeat(){
-      if(repeatTimer)clearInterval(repeatTimer);
+      if(repeatDelayTimer)clearTimeout(repeatDelayTimer);
+      if(repeatTimer)clearTimeout(repeatTimer);
+      repeatDelayTimer=null;
       repeatTimer=null;
       repeatButton=null;
+    }
+    function repeatDirection(){
+      repeatTimer=null;
+      if(!repeatButton)return;
+      if(menuBlocked())return stopRepeat();
+      if(!turnBlocked())performDirection(repeatButton);
+      if(repeatButton)repeatTimer=setTimeout(repeatDirection,REPEAT_INTERVAL_MS);
     }
     function performDirection(button){
       if(!button||uiBlocked())return false;
@@ -89,10 +99,7 @@
         if(!performDirection(button))return;
         if(oneShot)return;
         repeatButton=button;
-        repeatTimer=setInterval(function(){
-          if(uiBlocked())return stopRepeat();
-          performDirection(repeatButton);
-        },REPEAT_MS);
+        repeatDelayTimer=setTimeout(function(){repeatDelayTimer=null;repeatDirection();},REPEAT_DELAY_MS);
       },true);
       button.addEventListener('pointerup',stopRepeat);
       button.addEventListener('pointercancel',stopRepeat);
