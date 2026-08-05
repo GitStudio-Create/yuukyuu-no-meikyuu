@@ -25,8 +25,8 @@ listeners['window:DOMContentLoaded']&&listeners['window:DOMContentLoaded']();
 function arena(){const s=Kiri.State.reset('normalDungeon');s.map=Array.from({length:24},()=>Array(32).fill(1));s.rooms=[{x:0,y:0,w:32,h:24}];s.player.x=2;s.player.y=2;s.player.power=8;s.player.maxPower=8;s.player.maxFood=100;s.player.equipment={weapon:null,shield:null,ring:null};s.groundItems=[];s.enemies=[];s.traps=[];s.stairs={x:20,y:10,type:'down'};Kiri.Visibility.update(s);return s;}
 let s=arena();
 Kiri.UI.draw(s);
-assert.equal(elem('weaponStrengthText').textContent,'0（攻撃力:5）');
-assert.equal(elem('shieldStrengthText').textContent,'0（防御力:0）');
+assert.equal(elem('weaponStrengthText').textContent,'0（攻撃力：5）');
+assert.equal(elem('shieldStrengthText').textContent,'0（防御力：0）');
 let weapon=Kiri.Items.create('mistSaber',undefined,undefined,s.dungeonId);weapon.modifier=2;weapon.bonus=weapon.basePower+2;weapon.equipped=true;s.player.equipment.weapon=weapon;
 let shield=Kiri.Items.create('barkShield',undefined,undefined,s.dungeonId);shield.modifier=1;shield.bonus=shield.basePower+1;shield.equipped=true;s.player.equipment.shield=shield;
 let ring=Kiri.Items.create('mightRing',undefined,undefined,s.dungeonId);ring.equipped=true;s.player.equipment.ring=ring;
@@ -35,8 +35,8 @@ Kiri.UI.draw(s);
 assert.equal(Kiri.EquipmentStats.weaponStrength(s),6);
 assert.equal(Kiri.EquipmentStats.shieldStrength(s),3);
 assert.deepStrictEqual(Kiri.Items.displayPower(s),{current:11,max:11,bonus:3});
-assert.equal(elem('weaponStrengthText').textContent,'6（攻撃力:'+Kiri.Items.attackPower(s)+'）');
-assert.equal(elem('shieldStrengthText').textContent,'3（防御力:'+Kiri.Items.defensePower(s)+'）');
+assert.equal(elem('weaponStrengthText').textContent,'6（攻撃力：'+Kiri.Items.attackPower(s)+'）');
+assert.equal(elem('shieldStrengthText').textContent,'3（防御力：'+Kiri.Items.defensePower(s)+'）');
 assert.notEqual(Kiri.Items.attackPower(s),Kiri.EquipmentStats.weaponStrength(s),'攻撃力と剣の強さは別値');
 assert.notEqual(Kiri.Items.defensePower(s),Kiri.EquipmentStats.shieldStrength(s)+999,'防御力は既存計算を使用');
 

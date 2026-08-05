@@ -46,8 +46,8 @@
   function updateTop(state){
     ensureTopStatusLayout();
     var w=document.querySelector('#weaponStrengthText'),sh=document.querySelector('#shieldStrengthText'),next=document.querySelector('#nextLevelTopText');
-    if(w)w.textContent=weaponStrength(state)+'（攻撃力:'+K.Items.attackPower(state)+'）';
-    if(sh)sh.textContent=shieldStrength(state)+'（防御力:'+K.Items.defensePower(state)+'）';
+    if(w)w.textContent=weaponStrength(state)+'（攻撃力：'+K.Items.attackPower(state)+'）';
+    if(sh)sh.textContent=shieldStrength(state)+'（防御力：'+K.Items.defensePower(state)+'）';
     if(next)next.textContent=remainingText(state);
   }
   function cell(label,value,full){
