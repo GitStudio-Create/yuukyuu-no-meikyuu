@@ -22,6 +22,9 @@ root.listeners.click({target:{closest:()=>({dataset:{campaign:'exit-game'}})}});
 assert(root.innerHTML.includes('ブラウザを閉じてゲームを終了してください。'));
 assert.equal(body.dataset.appState,'TITLE','safe browser exit never deletes or enters a dungeon');
 Kiri.Campaign.showStart();
+Kiri.Campaign.showBase();
+assert(root.className.includes('castle-no-chest'),'castle uses no-chest background before treasure acquisition');
+Kiri.Campaign.showStart();
 
 const inventory=Array.from({length:20},(_,i)=>({id:'item'+i})),chest={id:'eternalTreasure',category:'treasure'},state={dungeonId:'normalDungeon',floor:27,gameOver:false,player:{level:4},inventory,groundItems:[chest],stairs:{x:2,y:2,type:'down'},treasureState:{returning:false,obtained:{},rank:{}}};
 Kiri.State.data=state;
@@ -58,6 +61,18 @@ assert(Kiri.Campaign.onDungeonReturn(state));
 assert(story.cleared.normalDungeon);
 assert(baseSaves>0);
 assert(titleCalls>=3,'returning to castle restores title BGM');
+assert(root.className.includes('castle-closed-chest'),'returning with treasure uses the closed-chest background');
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'king'}})}});
+assert(root.className.includes('castle-closed-chest')&&root.innerHTML.includes('THE KING'),'king dialogue keeps the castle background');
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'base'}})}});
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'dungeons'}})}});
+assert(root.className.includes('castle-closed-chest')&&root.innerHTML.includes('どの迷宮へ向かいますか？'),'dungeon choice keeps the castle background');
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'base'}})}});
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'chest'}})}});
+assert(root.className.includes('castle-closed-chest')&&root.innerHTML.includes('宝箱を開けますか？'));
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'open-chest'}})}});
+assert(story.treasureChest.opened,'opening the treasure reuses the saved story flag');
+assert(root.className.includes('castle-open-chest'),'opening the treasure updates the castle background without reload');
 
 const deathState={dungeonId:'normalDungeon',floor:8,gameOver:false,player:{level:2}};
 Kiri.Campaign.onGameOver(deathState);

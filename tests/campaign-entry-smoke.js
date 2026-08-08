@@ -17,5 +17,7 @@ assert(css.includes('images/campaign/title-labyrinth-bg.png'),'title uses the cl
 assert(css.includes('images/campaign/adventure-library-bg.png'),'books use the clean library background');
 assert(fs.existsSync('images/campaign/title-labyrinth-bg.png'));
 assert(fs.existsSync('images/campaign/adventure-library-bg.png'));
+['宝箱無し','宝箱あり','宝箱開けた状態'].forEach(name=>assert(css.includes(name),'castle background missing: '+name));
+assert(css.includes('.campaign-screen.screen-exit-confirm')&&css.includes('backdrop-filter:blur(4px)'),'exit and castle overlays keep and blur their backgrounds');
 
 console.log('campaign entry smoke: fail-safe title and explicit script order passed');
