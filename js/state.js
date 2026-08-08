@@ -15,7 +15,7 @@
       identifiedItems:{},
       treasureState:{returning:false,obtained:{},rank:{}},
       player:{
-        x:0,y:0,hp:24,maxHp:24,food:100,power:8,maxPower:8,level:1,exp:0,gold:0,baseDefense:0,
+        x:0,y:0,hp:24,maxHp:24,food:100,maxFood:100,power:8,maxPower:8,level:1,exp:0,gold:0,baseDefense:0,
         status:{sleep:0,confuse:0,haste:0,blind:0,invisible:0,slow:0},
         equipment:{weapon:null,shield:null,ring:null},
         facingDirection:{dx:0,dy:1,id:'S'},
@@ -57,6 +57,7 @@
     p.level=p.level||1;
     p.exp=p.exp||0;
     p.gold=p.gold||0;
+    p.maxFood=p.maxFood||100;
     p.maxPower=p.maxPower||p.power||8;
     p.baseDefense=p.baseDefense||0;
     p.status=p.status||{sleep:0,confuse:0,haste:0};

@@ -1,0 +1,20 @@
+(function(K){'use strict';K.StoryEvents=Object.freeze({
+  opening:[
+    {speaker:'王様',text:'よく来てくれた、若き冒険者よ。'},
+    {speaker:'王様',text:'この国の地下には、古くから続く迷宮がある。'},
+    {speaker:'王様',text:'その奥には、不思議な宝箱が眠っているという。'},
+    {speaker:'王様',text:'その宝箱を見つけ、城まで持ち帰ってほしい。'},
+    {speaker:'王様',text:'まずは浅い迷宮で、冒険の準備を整えるとよい。'}
+  ],
+  deepEntrance:[
+    {text:'開かれた宝箱が、かすかに光り始めた。'},
+    {text:'迷宮の入口がゆがみ、これまでとは違う道が現れた。'},
+    {text:'宝箱の奥から、何かに呼ばれているような気がする……。'}
+  ],
+  deepEntranceShort:[{text:'開かれた宝箱が光り、迷宮に別の道が現れた。'}],
+  ending:[
+    {speaker:'王様',text:'よくぞ、変わり果てた迷宮から戻った。'},
+    {speaker:'王様',text:'宝箱のなぞは、まだすべて解けたわけではない。'},
+    {speaker:'王様',text:'だが、おぬしの勇気は国の希望となった。'}
+  ]
+});})(window.Kiri=window.Kiri||{});

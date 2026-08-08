@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert');global.window=global;global.Kiri={Config:{defaultDungeon:'tutorialDungeon'}};
+vm.runInThisContext(fs.readFileSync('js/dungeons.js','utf8'),{filename:'js/dungeons.js'});
+const tutorial=Kiri.Dungeons.get('tutorialDungeon'),normal=Kiri.Dungeons.get('normalDungeon'),deep=Kiri.Dungeons.get('mysteryDungeon');
+assert.equal(tutorial.maxFloor,10);assert.equal(normal.maxFloor,99);assert.equal(deep.maxFloor,99);
+assert.deepStrictEqual([tutorial.returnTreasureFloor,normal.returnTreasureFloor,deep.returnTreasureFloor],[10,27,27]);
+assert.deepStrictEqual([tutorial.enemyHpMultiplier,normal.enemyHpMultiplier,deep.enemyHpMultiplier],[.85,1,1.12]);
+assert.deepStrictEqual([tutorial.enemyPowerMultiplier,normal.enemyPowerMultiplier,deep.enemyPowerMultiplier],[.75,1,1.08]);
+assert.deepStrictEqual([tutorial.enemyDefenseMultiplier,normal.enemyDefenseMultiplier,deep.enemyDefenseMultiplier],[.9,1,1.08]);
+assert.deepStrictEqual([tutorial.itemSpawnMultiplier,normal.itemSpawnMultiplier,deep.itemSpawnMultiplier],[1.15,1,.9]);
+assert.deepStrictEqual([tutorial.naturalSpawnMultiplier,normal.naturalSpawnMultiplier,deep.naturalSpawnMultiplier],[1.15,1,.85]);
+console.log('campaign dungeon config smoke: floors and all difficulty modifiers passed');

@@ -8,7 +8,7 @@
     if(S.data)S.data.turnLocked=false;
   }
   function isInputLocked(){
-    return !!(S.data&&(S.data.turnLocked||S.data.gameOver))||(K.GM&&K.GM.isOpen&&K.GM.isOpen())||(K.UI&&K.UI.isMapOnlyOpen&&K.UI.isMapOnlyOpen());
+    return !!(S.data&&(S.data.turnLocked||S.data.gameOver))||(K.Campaign&&K.Campaign.isOpen&&K.Campaign.isOpen())||(K.GM&&K.GM.isOpen&&K.GM.isOpen())||(K.UI&&K.UI.isMapOnlyOpen&&K.UI.isMapOnlyOpen());
   }
 
   function buildFloor(){
@@ -69,8 +69,8 @@
     }
     if(!K.Map.canStep(s,nx,ny,dx,dy)){K.UI.draw(s);return{moved:false,blocked:true};}
     p.x=nx;p.y=ny;
-    var ground=s.groundItems.find(function(q){return q.x===nx&&q.y===ny;}),hadItem=!!ground,canMerge=ground&&ground.category==='arrow'&&s.inventory.some(function(q){return q.id===ground.id&&q.quantity<99;});
-    if(hadItem&&(s.inventory.length<K.Config.inventoryMax||canMerge))pickup();
+    var ground=s.groundItems.find(function(q){return q.x===nx&&q.y===ny;}),hadItem=!!ground,important=ground&&ground.category==='treasure'&&K.Campaign&&K.Campaign.collectTreasure,canMerge=ground&&ground.category==='arrow'&&s.inventory.some(function(q){return q.id===ground.id&&q.quantity<99;});
+    if(hadItem&&(important||s.inventory.length<K.Config.inventoryMax||canMerge))pickup();
     var trapResult=triggerTrap(),onStairs=nx===s.stairs.x&&ny===s.stairs.y;if(K.MonsterHouse)K.MonsterHouse.checkEntry(s);
     if(trapResult&&trapResult.pending){
       s.turnLocked=true;
@@ -115,7 +115,7 @@
     return false;
   }
   function run(dx,dy){if(isInputLocked()||dx&&dy)return;if(!dx&&!dy)return;var s=S.data;for(var steps=0;steps<40;steps++){if(stopBeforeRun(s,dx,dy,steps))break;var result=move(dx,dy);if(!result.moved||result.event||visibleEnemyNear(s)||s.gameOver)break;}}
-  function clearDungeon(){var s=S.data;clearEnemyTurnTimer();s.gameOver=true;S.clearSave();K.UI.draw(s);if(K.UI.showEscape){K.UI.showEscape(s);var text=document.querySelector('#overlayText');if(text&&K.Treasures)text.textContent=K.Treasures.clearMessage(s);}return true;}
+  function clearDungeon(){var s=S.data;clearEnemyTurnTimer();if(K.Campaign&&K.Campaign.onDungeonReturn)return K.Campaign.onDungeonReturn(s);s.gameOver=true;S.clearSave();K.UI.draw(s);if(K.UI.showEscape){K.UI.showEscape(s);var text=document.querySelector('#overlayText');if(text&&K.Treasures)text.textContent=K.Treasures.clearMessage(s);}return true;}
   function descend(){var s=S.data;if(isInputLocked()||s.player.x!==s.stairs.x||s.player.y!==s.stairs.y)return false;clearEnemyTurnTimer();K.UI.closeStairs();if(s.stairs&&s.stairs.type==='up'){s.floor--;if(s.floor<=0)return clearDungeon();s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}var mode=K.Dungeons.get(s.dungeonId),max=mode.maxFloor||99;s.floor=s.floor>=max?max:s.floor+1;s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}
   function stayStairs(){K.UI.closeStairs();return true;}
   function attack(){
@@ -139,6 +139,7 @@
     var s=S.data,p=s.player,i=s.groundItems.findIndex(function(q){return q.x===p.x&&q.y===p.y;});
     if(i<0){S.addLog('足元に拾える道具はない。');return false;}
     var item=s.groundItems[i];
+    if(K.Campaign&&K.Campaign.collectTreasure&&K.Campaign.collectTreasure(s,item,i))return true;
     if(item.category==='arrow'){
       var stacks=s.inventory.filter(function(q){return q.id===item.id&&q.quantity<99;}),moved=0;
       stacks.forEach(function(stack){if(item.quantity<=0)return;var amount=Math.min(99-stack.quantity,item.quantity);stack.quantity+=amount;item.quantity-=amount;moved+=amount;});
@@ -157,7 +158,7 @@
     s.groundItems.splice(i,1);delete item.x;delete item.y;s.inventory.push(item);S.addLog(K.Items.name(item)+'を拾った。');if(K.Treasures)K.Treasures.onPickup(s,item);return true;
   }
   function pickupAction(){if(isInputLocked())return false;if(!pickup()){K.UI.draw(S.data);return false;}endTurn();return true;}
-  function suspend(){if(isInputLocked())return false;S.save();K.UI.showSuspend();return true;}
+  function suspend(){if(isInputLocked())return false;if(K.Campaign&&K.Campaign.requestSuspend){K.Campaign.requestSuspend();return true;}S.save();K.UI.showSuspend();return true;}
   function resume(){K.UI.closeSuspend();return true;}
   function triggerTrap(){var s=S.data,p=s.player,t=s.traps.find(function(q){return q.x===p.x&&q.y===p.y;});if(!t)return null;if(K.Traps.armPlayer){var armed=K.Traps.armPlayer(s,t);S.addLog(armed.message);return armed;}var result=K.Traps.applyPlayer(s,t);S.addLog(result.message);return result;}
   function openItem(index){var s=S.data;if(isInputLocked()||index<0||index>=s.inventory.length)return;selectedIndex=index;K.UI.showItemMenu(K.Items.name(s.inventory[index]),K.ItemActions.actionsFor(s.inventory[index]));}
@@ -216,10 +217,10 @@
     return finishEnemyPhase(s,p,skipEnemy);
   }
   function finish(){S.save();K.UI.draw(S.data);return true;}
-  function gameOver(){var s=S.data;clearEnemyTurnTimer();s.player.hp=0;s.gameOver=true;if(K.Ranking)K.Ranking.recordGameOver(s);S.clearSave();K.UI.closeItemMenu();K.UI.closeStairs();K.UI.draw(s);K.UI.showGameOver(s);}
+  function gameOver(){var s=S.data;clearEnemyTurnTimer();s.player.hp=0;s.gameOver=true;if(K.Ranking)K.Ranking.recordGameOver(s);K.UI.closeItemMenu();K.UI.closeStairs();if(K.Campaign&&K.Campaign.onGameOver){K.Campaign.onGameOver(s);return;}S.clearSave();K.UI.draw(s);K.UI.showGameOver(s);}
   function newGame(id){clearEnemyTurnTimer();S.reset(typeof id==='string'?id:K.Config.defaultDungeon);K.Input.resetModes();K.UI.hideOverlay();K.UI.closeStatus();K.UI.closeItemMenu();K.UI.closeStairs();buildFloor();}
   function toggleStatus(){K.UI.toggleStatus(S.data);}
   function sortInventory(){var s=S.data;if(isInputLocked())return false;K.Inventory.manualSort(s);S.addLog('道具袋を整理した。');S.save();K.UI.draw(s);return true;}
   K.Game={actions:{move:move,run:run,face:face,attack:attack,shootArrow:shootArrow,step:step,pickup:pickupAction,suspend:suspend,resume:resume,openItem:openItem,itemAction:itemAction,newGame:newGame,toggleStatus:toggleStatus,descend:descend,stayStairs:stayStairs,sortInventory:sortInventory},buildFloor:buildFloor,endTurn:endTurn,endTurnDelayed:function(){return endTurn({delayEnemy:true});},isInputLocked:isInputLocked,cancelPendingEnemyTurn:clearEnemyTurnTimer,enemyCountFor:K.Spawns.enemyCount};
-  addEventListener('DOMContentLoaded',function(){K.UI.init();K.Input.init(K.Game.actions);if(!S.load())buildFloor();else{if(K.MonsterHouse)K.MonsterHouse.normalize(S.data);K.Map.reveal(S.data);K.UI.draw(S.data);if(K.Audio)K.Audio.setForState?K.Audio.setForState(S.data):K.Audio.setTheme(S.data.floor);}});
+  addEventListener('DOMContentLoaded',function(){K.UI.init();K.Input.init(K.Game.actions);if(K.Campaign&&K.Campaign.boot){K.Campaign.boot();return;}if(!S.load())buildFloor();else{if(K.MonsterHouse)K.MonsterHouse.normalize(S.data);K.Map.reveal(S.data);K.UI.draw(S.data);if(K.Audio)K.Audio.setForState?K.Audio.setForState(S.data):K.Audio.setTheme(S.data.floor);}});
 })(window.Kiri=window.Kiri||{});

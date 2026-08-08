@@ -13,6 +13,6 @@
     if(floor>=21){support.forEach(function(k){table[k]=(table[k]||0)+2;});table.moonHerb=(table.moonHerb||0)+4;table.starHerb=(table.starHerb||0)+3;table.nutBread=(table.nutBread||0)+3;table.bigBread=(table.bigBread||0)+2;table.ironArrow=(table.ironArrow||0)+2;table.pierceArrow=(table.pierceArrow||0)+2;}
     return table;
   }
-  K.Balance={floorPlan:plan,itemTable:itemTable};
+  K.Balance={floorPlan:function(id,floor){var result=clone(plan(id,floor)),mode=K.Dungeons.get(id);result.items=Math.max(1,Math.round(result.items*(mode.itemSpawnMultiplier||1)));return result;},itemTable:itemTable};
   K.Items.randomForFloor=function(f,x,y,dungeonId){return K.Items.create(K.Items.weightedId(itemTable(dungeonId,f)),x,y,dungeonId);};
 })(window.Kiri=window.Kiri||{});
