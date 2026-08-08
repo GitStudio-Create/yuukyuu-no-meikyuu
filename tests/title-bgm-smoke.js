@@ -1,0 +1,28 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+global.window=global;
+const globalListeners={},documentListeners={};
+const bgm={paused:true,src:'',volume:0,loop:false,loads:0,plays:0,pause(){this.paused=true;},load(){this.loads++;},play(){this.paused=false;this.plays++;return Promise.resolve();},removeAttribute(name){if(name==='src')this.src='';},addEventListener(){}};
+const toggle={addEventListener(){},setAttribute(){},textContent:''},range={addEventListener(){},value:''};
+global.localStorage={getItem(){return null;},setItem(){}};
+global.document={querySelector(q){if(q==='#bgmAudio')return bgm;if(q==='[data-bgm-toggle]')return toggle;if(q==='[data-bgm-volume]')return range;return null;},addEventListener(type,fn){documentListeners[type]=fn;}};
+global.addEventListener=(type,fn)=>{globalListeners[type]=fn;};
+global.Kiri={};
+vm.runInThisContext(fs.readFileSync('js/audio.js','utf8'),{filename:'js/audio.js'});
+globalListeners.DOMContentLoaded();
+
+assert.equal(Kiri.Audio.fileForTitle(),'悠久の迷宮（ゲームタイトル曲）.mp3');
+Kiri.Audio.setTitle();
+assert.equal(bgm.src,'BGM/悠久の迷宮（ゲームタイトル曲）.mp3');
+const titleLoads=bgm.loads;
+Kiri.Audio.setTitle();
+assert.equal(bgm.loads,titleLoads,'same title track must not reload on campaign screen changes');
+Kiri.Audio.unlock();
+assert.equal(bgm.plays,1,'first user gesture unlock starts the selected title track');
+Kiri.Audio.setTheme(1);
+assert.equal(bgm.src,'BGM/1_心淵の扉_1F~2F.mp3');
+Kiri.Audio.setTitle();
+assert.equal(bgm.src,'BGM/悠久の迷宮（ゲームタイトル曲）.mp3');
+assert.equal(bgm.volume,.35,'title track follows existing BGM volume');
+
+console.log('title BGM smoke: relative path, gesture unlock, no reload and dungeon/castle switching passed');

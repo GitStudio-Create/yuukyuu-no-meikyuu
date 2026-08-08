@@ -4,6 +4,7 @@
   var KEY='eternal-labyrinth-audio-v1',
       LEGACY_KEYS=['kiriakari-audio-v1'],
       BGM_BASE='BGM/',
+      TITLE_FILE='悠久の迷宮（ゲームタイトル曲）.mp3',
       audio=null,
       enabled=true,
       volume=.35,
@@ -97,11 +98,13 @@
     },
     unlock:function(){unlocked=true;play();},
     setTheme:function(floor){requestedFloor=floor;return setFile(fileFor(floor));},
+    setTitle:function(){return setFile(TITLE_FILE);},
     setSpecial:function(name){return setFile(specialTracks[name]||'');},
     setForState:function(state){if(state&&state.monsterHouse&&state.monsterHouse.bgmActive)return this.setSpecial('monsterHouse');return this.setTheme(state?state.floor:requestedFloor);},
     toggle:function(){var b=document.querySelector('[data-bgm-toggle]');if(b)b.click();},
     settings:function(){return{enabled:enabled,volume:volume,currentFile:currentFile,unlocked:unlocked,base:BGM_BASE};},
     fileForFloor:fileFor,
+    fileForTitle:function(){return TITLE_FILE;},
     fileForSpecial:function(name){return specialTracks[name]||'';}
   };
 

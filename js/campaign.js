@@ -6,6 +6,7 @@
   function formatTime(ms){var minutes=Math.floor((ms||0)/60000),hours=Math.floor(minutes/60);return String(hours).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');}
   function formatDate(value){if(!value)return'-';try{return new Date(value).toLocaleString('ja-JP');}catch(e){return value;}}
   function updateDebug(){var box=document.querySelector('[data-campaign-debug]');if(box&&K.AdventureBooks)box.textContent=JSON.stringify(K.AdventureBooks.debug(),null,2);}
+  function useTitleBgm(name){return['start','books','book-actions','delete-confirm','event','base','king','chest','dungeons'].indexOf(name)>=0;}
   function applyState(name){
     var state=name==='event'?eventState:(STATES[name]||'TITLE'),inDungeon=state==='DUNGEON';
     document.body.dataset.appState=state;
@@ -13,7 +14,7 @@
     root.hidden=inDungeon;root.classList.toggle('hidden',inDungeon);
     gameShell.hidden=!inDungeon;gameShell.setAttribute('aria-hidden',String(!inDungeon));
   }
-  function setScreen(name,html,wide){screen=name;root.className='campaign-screen'+(wide?' campaign-wide':'');root.innerHTML='<div class="campaign-card">'+html+'</div>';applyState(name);updateDebug();}
+  function setScreen(name,html,wide){screen=name;root.className='campaign-screen'+(wide?' campaign-wide':'');root.innerHTML='<div class="campaign-card">'+html+'</div>';applyState(name);if(useTitleBgm(name)&&K.Audio&&K.Audio.setTitle)K.Audio.setTitle();updateDebug();}
   function closeScreen(){screen='dungeon';applyState(screen);updateDebug();}
   function startScreen(){setScreen('start','<small>ORIGINAL MINI ROGUELIKE</small><h1>悠久の迷宮</h1><button class="push-start" data-campaign="books">PUSH START</button><p>Enter / Space / クリック・タップ</p>');}
   function clearNames(ids){return ids.length?ids.map(function(id){return K.Dungeons.get(id).shortName||K.Dungeons.get(id).name;}).join('、'):'なし';}
@@ -74,7 +75,7 @@
   }
   function openChest(){var story=K.AdventureBooks.story();story.treasureChest.opened=true;if(K.AdventureBooks.saveBase(K.State.data))baseScreen('宝箱を開けました。迷宮を変える力が残っています。');else baseScreen(K.AdventureBooks.lastError());}
   function suspendConfirm(){setScreen('suspend-confirm','<small>SUSPEND</small><h2>ここまでの冒険を保存して中断しますか？</h2><div class="campaign-actions"><button data-campaign="suspend-save">中断する</button><button data-campaign="resume-game" class="secondary">冒険を続ける</button></div>');}
-  function suspendSave(){if(K.AdventureBooks.saveDungeon()){K.UI.closeSuspend();booksScreen('冒険を記録しました。');}else{closeScreen();K.State.addLog(K.AdventureBooks.lastError());K.UI.draw(K.State.data);}}
+  function suspendSave(){if(K.AdventureBooks.saveDungeon()){K.UI.closeSuspend();booksScreen('冒険を記録しました。');}else{closeScreen();K.State.addLog('冒険の記録に失敗しました。ゲームを続けます。'+(K.AdventureBooks.lastError()?' '+K.AdventureBooks.lastError():''));K.UI.draw(K.State.data);}}
   function collectTreasure(state,item,index){
     if(['trialTreasure','eternalTreasure','deepTreasure'].indexOf(item.id)<0)return false;
     state.groundItems.splice(index,1);pendingTreasure={state:state,item:item};
@@ -95,7 +96,7 @@
   }
   function gameOver(state){state.gameOver=true;K.AdventureBooks.saveBase(state);setScreen('game-over','<small>GAME OVER</small><h2>冒険はここまで</h2><p>'+state.floor+'Fで力尽きました。挑戦中の記録は終了しました。</p><button data-campaign="base">王城へ戻る</button>');}
   function boot(){
-    root=document.querySelector('#campaignScreen');gameShell=document.querySelector('.game-shell');var titleButton=document.querySelector('#newGame');titleButton.textContent='タイトルへ戻る';titleButton.addEventListener('click',function(e){if(screen!=='dungeon')return;e.preventDefault();e.stopImmediatePropagation();suspendConfirm();},true);
+    root=document.querySelector('#campaignScreen');gameShell=document.querySelector('.game-shell');
     var gmGrid=document.querySelector('#gmPanel .gm-grid');if(gmGrid&&!gmGrid.querySelector('[data-campaign-debug]'))gmGrid.insertAdjacentHTML('beforeend','<section><h3>冒険の書デバッグ</h3><pre data-campaign-debug></pre></section>');startScreen();
     root.addEventListener('click',click);addEventListener('keydown',keys,true);addEventListener('popstate',function(){if(screen==='dungeon')suspendConfirm();else if(screen!=='start')startScreen();});
   }

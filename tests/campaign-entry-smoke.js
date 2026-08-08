@@ -9,5 +9,7 @@ assert(/<main class="game-shell" hidden aria-hidden="true">/.test(html),'legacy 
 assert(css.includes('.game-shell[hidden]{display:none!important}'),'hidden game shell needs an author-level fail-safe');
 assert(css.includes('body:not([data-app-state="DUNGEON"]) .game-shell{display:none!important}'),'only DUNGEON state may show the game UI');
 assert(html.indexOf('js/campaign.js')<html.indexOf('js/game.js'),'campaign controller must load before game boot');
+assert(!/<button[^>]+id="newGame"/.test(html),'dungeon header must not keep the duplicate title button');
+assert.equal((html.match(/data-floor-suspend/g)||[]).length,1,'dungeon header keeps one suspend button');
 
 console.log('campaign entry smoke: fail-safe title and explicit script order passed');

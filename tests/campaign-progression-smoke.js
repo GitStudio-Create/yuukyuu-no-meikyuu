@@ -5,16 +5,17 @@ function node(){return{className:'',classList:classes(),attributes:{},listeners:
 const root=node(),shell=node(),titleButton=node(),body={classList:classes(),dataset:{}},globalListeners={};
 global.document={body,createElement:()=>node(),querySelector(q){if(q==='#campaignScreen')return root;if(q==='.game-shell')return shell;if(q==='#newGame')return titleButton;if(q==='#gmPanel .gm-grid')return null;if(q==='[data-campaign-debug]')return null;return null;}};
 global.addEventListener=(t,f)=>{globalListeners[t]=f;};
-let story={openingSeen:true,questAccepted:true,cleared:{tutorialDungeon:false,normalDungeon:false,mysteryDungeon:false},treasureChest:{obtained:false,opened:false},events:{deepEntranceSeen:false,endingSeen:false}},dungeonSaves=0,baseSaves=0,logs=[];
+let story={openingSeen:true,questAccepted:true,cleared:{tutorialDungeon:false,normalDungeon:false,mysteryDungeon:false},treasureChest:{obtained:false,opened:false},events:{deepEntranceSeen:false,endingSeen:false}},dungeonSaves=0,baseSaves=0,logs=[],saveOk=true,titleCalls=0;
 global.Kiri={
-  AdventureBooks:{slots:()=>[],story:()=>story,saveDungeon:()=>{dungeonSaves++;return true;},saveBase:()=>{baseSaves++;return true;},debug:()=>({slot:1}),lastError:()=>''},
+  AdventureBooks:{slots:()=>[],story:()=>story,saveDungeon:()=>{dungeonSaves++;return saveOk;},saveBase:()=>{baseSaves++;return true;},debug:()=>({slot:1}),lastError:()=>'保存領域を使用できません。'},
   StoryEvents:{opening:[],deepEntrance:[],deepEntranceShort:[],ending:[]},
-  Dungeons:{get:id=>({name:id,shortName:id})},State:{data:null,addLog:text=>logs.push(text)},UI:{draw(){},closeSuspend(){}},Map:{reveal(){}},Audio:null
+  Dungeons:{get:id=>({name:id,shortName:id})},State:{data:null,addLog:text=>logs.push(text)},UI:{draw(){},closeSuspend(){}},Map:{reveal(){}},Audio:{setTitle(){titleCalls++;}}
 };
 vm.runInThisContext(fs.readFileSync('js/campaign.js','utf8'),{filename:'js/campaign.js'});
 Kiri.Campaign.boot();
 assert.equal(body.dataset.appState,'TITLE');
 assert.equal(shell.hidden,true,'game shell stays hidden on title');
+assert.equal(titleCalls,1,'title screen selects title BGM');
 
 const inventory=Array.from({length:20},(_,i)=>({id:'item'+i})),chest={id:'eternalTreasure',category:'treasure'},state={dungeonId:'normalDungeon',floor:27,gameOver:false,player:{level:4},inventory,groundItems:[chest],stairs:{x:2,y:2,type:'down'},treasureState:{returning:false,obtained:{},rank:{}}};
 Kiri.State.data=state;
@@ -31,9 +32,26 @@ assert.equal(state.stairs.type,'up');
 assert.equal(dungeonSaves,1);
 assert(logs.some(text=>text.includes('大切な宝箱')));
 
+Kiri.Campaign.requestSuspend();
+assert.equal(body.dataset.appState,'SUSPEND');
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'resume-game'}})}});
+assert.equal(body.dataset.appState,'DUNGEON','cancel resumes the dungeon');
+Kiri.Campaign.requestSuspend();
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'suspend-save'}})}});
+assert.equal(body.dataset.appState,'ADVENTURE_BOOKS','successful suspend returns to adventure books');
+assert.equal(dungeonSaves,2,'suspend saves the selected adventure book');
+
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'resume-game'}})}});
+saveOk=false;Kiri.Campaign.requestSuspend();
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'suspend-save'}})}});
+assert.equal(body.dataset.appState,'DUNGEON','failed suspend keeps the dungeon active');
+assert(logs.some(text=>text.includes('冒険の記録に失敗しました。ゲームを続けます。')));
+saveOk=true;
+
 assert(Kiri.Campaign.onDungeonReturn(state));
 assert(story.cleared.normalDungeon);
 assert(baseSaves>0);
+assert(titleCalls>=3,'returning to castle restores title BGM');
 
 const deathState={dungeonId:'normalDungeon',floor:8,gameOver:false,player:{level:2}};
 Kiri.Campaign.onGameOver(deathState);
