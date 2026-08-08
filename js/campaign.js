@@ -1,12 +1,20 @@
 (function(K){
   'use strict';
-  var root=null,screen='boot',selectedBook=0,eventIndex=0,eventList=[],eventDone=null,pendingTreasure=null;
+  var root=null,gameShell=null,screen='boot',selectedBook=0,eventIndex=0,eventList=[],eventDone=null,eventState='OPENING',pendingTreasure=null;
+  var STATES={start:'TITLE',books:'ADVENTURE_BOOKS','book-actions':'ADVENTURE_BOOKS','delete-confirm':'ADVENTURE_BOOKS',event:'OPENING',base:'CASTLE',king:'CASTLE',chest:'CASTLE','suspend-confirm':'SUSPEND',dungeons:'DUNGEON_SELECT',dungeon:'DUNGEON','treasure-found':'TREASURE_EVENT','game-over':'GAME_OVER'};
   function esc(value){var d=document.createElement('div');d.textContent=String(value==null?'':value);return d.innerHTML;}
   function formatTime(ms){var minutes=Math.floor((ms||0)/60000),hours=Math.floor(minutes/60);return String(hours).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');}
   function formatDate(value){if(!value)return'-';try{return new Date(value).toLocaleString('ja-JP');}catch(e){return value;}}
   function updateDebug(){var box=document.querySelector('[data-campaign-debug]');if(box&&K.AdventureBooks)box.textContent=JSON.stringify(K.AdventureBooks.debug(),null,2);}
-  function setScreen(name,html,wide){screen=name;root.className='campaign-screen'+(wide?' campaign-wide':'');root.innerHTML='<div class="campaign-card">'+html+'</div>';root.classList.remove('hidden');document.body.classList.add('campaign-menu-open');document.querySelector('.game-shell').setAttribute('aria-hidden','true');updateDebug();}
-  function closeScreen(){screen='dungeon';root.classList.add('hidden');document.body.classList.remove('campaign-menu-open');document.querySelector('.game-shell').removeAttribute('aria-hidden');updateDebug();}
+  function applyState(name){
+    var state=name==='event'?eventState:(STATES[name]||'TITLE'),inDungeon=state==='DUNGEON';
+    document.body.dataset.appState=state;
+    document.body.classList.toggle('campaign-menu-open',!inDungeon);
+    root.hidden=inDungeon;root.classList.toggle('hidden',inDungeon);
+    gameShell.hidden=!inDungeon;gameShell.setAttribute('aria-hidden',String(!inDungeon));
+  }
+  function setScreen(name,html,wide){screen=name;root.className='campaign-screen'+(wide?' campaign-wide':'');root.innerHTML='<div class="campaign-card">'+html+'</div>';applyState(name);updateDebug();}
+  function closeScreen(){screen='dungeon';applyState(screen);updateDebug();}
   function startScreen(){setScreen('start','<small>ORIGINAL MINI ROGUELIKE</small><h1>悠久の迷宮</h1><button class="push-start" data-campaign="books">PUSH START</button><p>Enter / Space / クリック・タップ</p>');}
   function clearNames(ids){return ids.length?ids.map(function(id){return K.Dungeons.get(id).shortName||K.Dungeons.get(id).name;}).join('、'):'なし';}
   function booksScreen(message){
@@ -25,7 +33,7 @@
     setScreen('book-actions','<small>ADVENTURE BOOK '+slot+'</small><h2>冒険の書'+slot+'</h2><div class="campaign-actions">'+action+'<button data-campaign="books" class="secondary">戻る</button></div>');
   }
   function deleteConfirm(slot){setScreen('delete-confirm','<small>DELETE CONFIRMATION</small><h2>冒険の書'+slot+'を消しますか？</h2><p>この操作は元に戻せません。</p><div class="campaign-actions"><button data-delete-confirm="'+slot+'" class="danger">消す</button><button data-book="'+slot+'" class="secondary">やめる</button></div>');}
-  function playEvent(list,done){eventList=list||[];eventIndex=0;eventDone=done;showEvent();}
+  function playEvent(list,done,state){eventList=list||[];eventIndex=0;eventDone=done;eventState=state||'OPENING';showEvent();}
   function showEvent(){
     if(eventIndex>=eventList.length){var done=eventDone;eventDone=null;if(done)done();return;}
     var line=eventList[eventIndex++];
@@ -56,7 +64,7 @@
   function beginDungeon(requested){
     var story=K.AdventureBooks.story(),actual=resolveDungeon(requested,story);
     function launch(){story.currentDungeon=actual;K.AdventureBooks.saveBase(K.State.data);closeScreen();K.Game.actions.newGame(actual);}
-    if(actual==='mysteryDungeon'){var first=!story.events.deepEntranceSeen;story.events.deepEntranceSeen=true;playEvent(first?K.StoryEvents.deepEntrance:K.StoryEvents.deepEntranceShort,function(){K.AdventureBooks.saveBase(K.State.data);launch();});}else launch();
+    if(actual==='mysteryDungeon'){var first=!story.events.deepEntranceSeen;story.events.deepEntranceSeen=true;playEvent(first?K.StoryEvents.deepEntrance:K.StoryEvents.deepEntranceShort,function(){K.AdventureBooks.saveBase(K.State.data);launch();},'TREASURE_EVENT');}else launch();
   }
   function chestScreen(){
     var story=K.AdventureBooks.story();
@@ -81,13 +89,13 @@
   }
   function dungeonReturn(state){
     var story=K.AdventureBooks.story(),id=state.dungeonId;story.cleared[id]=true;state.gameOver=false;K.AdventureBooks.saveBase(state);
-    if(id==='mysteryDungeon'&&!story.events.endingSeen){story.events.endingSeen=true;playEvent(K.StoryEvents.ending,function(){K.AdventureBooks.saveBase(state);baseScreen('もっと不思議から帰還しました。');});}
+    if(id==='mysteryDungeon'&&!story.events.endingSeen){story.events.endingSeen=true;playEvent(K.StoryEvents.ending,function(){K.AdventureBooks.saveBase(state);baseScreen('もっと不思議から帰還しました。');},'CLEAR');}
     else baseScreen(K.Dungeons.get(id).shortName+'をクリアしました。');
     return true;
   }
   function gameOver(state){state.gameOver=true;K.AdventureBooks.saveBase(state);setScreen('game-over','<small>GAME OVER</small><h2>冒険はここまで</h2><p>'+state.floor+'Fで力尽きました。挑戦中の記録は終了しました。</p><button data-campaign="base">王城へ戻る</button>');}
   function boot(){
-    root=document.querySelector('#campaignScreen');var titleButton=document.querySelector('#newGame');titleButton.textContent='タイトルへ戻る';titleButton.addEventListener('click',function(e){if(screen!=='dungeon')return;e.preventDefault();e.stopImmediatePropagation();suspendConfirm();},true);
+    root=document.querySelector('#campaignScreen');gameShell=document.querySelector('.game-shell');var titleButton=document.querySelector('#newGame');titleButton.textContent='タイトルへ戻る';titleButton.addEventListener('click',function(e){if(screen!=='dungeon')return;e.preventDefault();e.stopImmediatePropagation();suspendConfirm();},true);
     var gmGrid=document.querySelector('#gmPanel .gm-grid');if(gmGrid&&!gmGrid.querySelector('[data-campaign-debug]'))gmGrid.insertAdjacentHTML('beforeend','<section><h3>冒険の書デバッグ</h3><pre data-campaign-debug></pre></section>');startScreen();
     root.addEventListener('click',click);addEventListener('keydown',keys,true);addEventListener('popstate',function(){if(screen==='dungeon')suspendConfirm();else if(screen!=='start')startScreen();});
   }
