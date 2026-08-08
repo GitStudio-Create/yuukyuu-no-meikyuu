@@ -663,6 +663,123 @@ header{order:1}
   .status-row strong,.status-row b{font-size:13px!important}
   .status-combat-row strong{font-size:12px!important}
 }
+
+/* Campaign title and adventure-book presentation */
+.campaign-screen.screen-start,
+.campaign-screen.screen-books{
+  isolation:isolate;
+  background-color:#080b0b;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.campaign-screen.screen-start{background-image:linear-gradient(180deg,rgba(1,8,13,.15),rgba(1,6,10,.2) 45%,rgba(0,4,7,.68)),url("images/campaign/title-labyrinth-bg.png")}
+.campaign-screen.screen-books{display:block;background-image:linear-gradient(180deg,rgba(5,4,2,.26),rgba(5,3,1,.48)),url("images/campaign/adventure-library-bg.png");background-position:center top}
+.screen-start .title-card{
+  width:min(94vw,900px);
+  padding:clamp(24px,5vh,64px) clamp(20px,5vw,60px);
+  border:0;
+  background:radial-gradient(ellipse at center,rgba(3,12,17,.82),rgba(3,10,14,.48) 50%,transparent 72%);
+  box-shadow:none;
+  color:#eee6cd;
+}
+.screen-start .title-card>small{display:block;color:#9fb8bc;font-size:clamp(10px,1.1vw,14px);letter-spacing:.38em;text-shadow:0 2px 8px #000}
+.screen-start .title-card h1{
+  margin:clamp(12px,2.5vh,28px) 0 10px;
+  color:#e9dfbd;
+  font-size:clamp(48px,9vw,112px);
+  font-weight:500;
+  letter-spacing:.12em;
+  line-height:1.1;
+  text-shadow:0 2px 2px #000,0 0 18px rgba(210,225,210,.38),0 8px 28px #000;
+}
+.title-ornament{display:flex;align-items:center;gap:12px;width:min(90%,680px);margin:0 auto clamp(24px,5vh,52px);color:#c8b476}
+.title-ornament::before,.title-ornament::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#a99155,#eee0a8)}
+.title-ornament::after{background:linear-gradient(90deg,#eee0a8,#a99155,transparent)}
+.title-ornament i{width:14px;height:14px;border:1px solid #d4bf7d;transform:rotate(45deg);box-shadow:0 0 10px rgba(107,215,242,.7);background:#183c46}
+.title-menu{display:grid;gap:9px;width:min(100%,360px);margin:auto}
+.campaign-card .title-menu-item{
+  position:relative;
+  min-height:58px;
+  border:1px solid transparent;
+  border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(3,12,16,.5),transparent);
+  color:#c8bd9a;
+  font-family:inherit;
+  font-size:clamp(20px,2.4vw,28px);
+  letter-spacing:.18em;
+  text-shadow:0 2px 5px #000;
+  transition:color .22s ease,transform .22s ease,text-shadow .22s ease,border-color .22s ease,background .22s ease;
+}
+.campaign-card .title-menu-item::before,.campaign-card .title-menu-item::after{position:absolute;top:50%;opacity:0;color:#f3d783;transform:translateY(-50%);transition:opacity .2s ease,transform .2s ease}
+.campaign-card .title-menu-item::before{content:"◇";left:26px;transform:translate(-8px,-50%)}
+.campaign-card .title-menu-item::after{content:"◇";right:26px;transform:translate(8px,-50%)}
+.campaign-card .title-menu-item:is(.is-selected,:hover,:focus-visible){border-color:rgba(204,176,97,.35);outline:0;background:linear-gradient(90deg,transparent,rgba(34,39,29,.72),transparent);color:#ffe7a1;transform:scale(1.02);text-shadow:0 0 8px rgba(255,220,124,.9),0 2px 5px #000;animation:campaignGlow 2.8s ease-in-out infinite}
+.campaign-card .title-menu-item:is(.is-selected,:hover,:focus-visible)::before,.campaign-card .title-menu-item:is(.is-selected,:hover,:focus-visible)::after{opacity:1;transform:translate(0,-50%)}
+.menu-guide,.book-guide{margin:clamp(18px,4vh,38px) 0 0;color:#9f9a88;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.08em}
+
+.screen-books .books-card{width:min(96vw,980px);margin:0 auto;padding:clamp(24px,4vw,48px) clamp(12px,3vw,30px) 44px;border:0;background:linear-gradient(180deg,rgba(7,5,3,.82),rgba(13,8,3,.9));box-shadow:0 0 70px #000;text-align:center}
+.books-heading{position:relative;margin:0 auto 24px;padding:4px 10px 20px;color:#e7cf91}
+.books-heading::after{content:"";position:absolute;bottom:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,#b48b3d,#f1d58a,#b48b3d,transparent)}
+.books-heading small{color:#9c7e49;letter-spacing:.28em}
+.books-heading h2{margin:10px 0 6px!important;color:#e7cf91;font-size:clamp(28px,5vw,48px)!important;letter-spacing:.06em;text-shadow:0 2px 2px #000,0 0 16px rgba(199,145,45,.22)}
+.books-heading p{margin:0;color:#d7c59e;font-size:clamp(13px,2vw,18px)}
+.book-list{display:grid;gap:18px;margin:0 auto;padding:8px 5px 12px}
+.book-slot{
+  display:grid;
+  grid-template-columns:minmax(150px,30%) minmax(0,1fr);
+  min-height:220px;
+  overflow:hidden;
+  border:2px solid #72572b;
+  outline:1px solid rgba(220,179,94,.42);
+  outline-offset:-7px;
+  border-radius:5px;
+  background:linear-gradient(120deg,#c5a775,#e1c796 45%,#b89158);
+  color:#24180d;
+  opacity:.76;
+  box-shadow:0 12px 22px #000b,inset 0 0 35px rgba(56,31,10,.32);
+  transition:opacity .22s ease,transform .22s ease,filter .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.book-slot:is(.is-selected,:hover,:focus-visible){opacity:1;transform:translateY(-2px) scale(1.012);filter:brightness(1.06);border-color:#e5bd61;box-shadow:0 0 0 1px #8c6429,0 0 22px rgba(235,180,68,.55),0 16px 28px #000d;outline:0}
+.book-cover{position:relative;display:grid;place-items:center;min-width:0;margin:14px;border:3px double #a47a32;border-radius:5px;background:linear-gradient(135deg,#0d1720,#1d2b35 48%,#080d12);box-shadow:inset 0 0 0 5px #081016,inset 0 0 24px #000,8px 7px 9px #32200f80}
+.book-2 .book-cover{background:linear-gradient(135deg,#172314,#26371c 48%,#0d160a)}
+.book-3 .book-cover{background:linear-gradient(135deg,#2b1112,#4a1b1c 48%,#18090a)}
+.book-cover::before,.book-cover::after{content:"";position:absolute;inset:9px;border:1px solid #9e7432;clip-path:polygon(0 0,25% 0,25% 3%,3% 3%,3% 25%,0 25%,0 75%,3% 75%,3% 97%,25% 97%,25% 100%,0 100%,0 75%,0 25%,100% 25%,100% 75%,100% 100%,75% 100%,75% 97%,97% 97%,97% 75%,100% 75%,100% 25%,97% 25%,97% 3%,75% 3%,75% 0,100% 0,100% 100%,0 100%)}
+.book-compass{display:grid;place-items:center;width:82px;height:82px;border:2px solid #b48a3f;border-radius:50%;color:#d9b665;font-size:48px;line-height:1;text-shadow:0 0 9px #d5a74c;box-shadow:0 0 0 5px rgba(152,108,35,.24),inset 0 0 16px #000}
+.book-page{display:flex;flex-direction:column;min-width:0;padding:22px clamp(16px,3vw,34px);background:linear-gradient(90deg,rgba(255,239,195,.28),transparent 12%,transparent 88%,rgba(76,42,12,.12))}
+.book-page h3{margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid #76572d;color:#2b1c0c;font-size:clamp(24px,3.2vw,36px);font-weight:500;letter-spacing:.08em}
+.book-empty{margin:auto 0;color:#3f2a15;font-size:clamp(17px,2.3vw,23px)}
+.book-error-text{font-size:12px}
+.book-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 20px;margin:0 0 14px;text-align:left;font-family:system-ui,sans-serif;font-size:13px}
+.book-data div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;min-width:0}.book-data dt{color:#74522a}.book-data dd{min-width:0;margin:0;overflow-wrap:anywhere;font-weight:600}
+.book-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:auto}
+.campaign-card .book-buttons button{min-width:min(100%,290px);min-height:48px;padding:9px 20px;border:1px solid #b58c42;border-radius:3px;background:linear-gradient(#17232b,#0a1116);color:#ead39a;font-family:inherit;font-size:clamp(15px,2vw,20px);letter-spacing:.04em;box-shadow:inset 0 0 12px #000,0 3px 6px #50330d66;transition:color .2s ease,box-shadow .2s ease,transform .2s ease}
+.campaign-card .book-buttons button:is(:hover,:focus-visible,:active){outline:0;color:#ffe7a0;transform:translateY(-1px);box-shadow:inset 0 0 12px #000,0 0 14px rgba(235,181,70,.7)}
+.campaign-card .book-buttons .book-delete{min-width:auto;min-height:38px;border-color:#7a5434;background:#2a1713;color:#c9aa84;font-size:12px}
+.books-back{margin-top:14px!important}.screen-books .campaign-notice{border-color:#9b7438;background:#201508;color:#f0d291}
+
+@keyframes campaignGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.14)}}
+@media(max-width:700px){
+  .campaign-screen.screen-start{background-position:58% center}
+  .screen-start .title-card h1{font-size:clamp(44px,15vw,76px);letter-spacing:.04em}
+  .screen-start .title-card{padding-inline:10px}.title-menu{width:min(92%,340px)}
+  .campaign-card .title-menu-item::before{left:12px}.campaign-card .title-menu-item::after{right:12px}
+  .screen-books .books-card{width:100%;padding-inline:10px;box-shadow:none}
+  .book-list{gap:14px}
+  .book-slot{grid-template-columns:112px minmax(0,1fr);min-height:190px}
+  .book-cover{margin:10px}.book-compass{width:58px;height:58px;font-size:34px}
+  .book-page{padding:16px 12px}.book-page h3{margin-bottom:9px;padding-bottom:7px;font-size:24px}
+  .book-data{grid-template-columns:minmax(0,1fr);gap:3px;font-size:11px}.book-data div{grid-template-columns:64px minmax(0,1fr)}
+  .campaign-card .book-buttons button{min-height:44px;padding:7px 9px;font-size:14px}
+  .campaign-card .book-buttons .book-delete{min-height:34px;font-size:10px}
+  .book-guide{display:none}
+}
+@media(max-width:380px){
+  .book-slot{grid-template-columns:88px minmax(0,1fr);min-height:178px}.book-cover{margin:9px 5px}.book-compass{width:46px;height:46px;font-size:28px}
+  .book-page{padding:13px 9px}.book-page h3{font-size:21px}.book-empty{font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){.campaign-card .title-menu-item,.book-slot,.campaign-card .book-buttons button{animation:none!important;transition:none!important}}
 @media(max-width:380px){
   .status-combat-row{grid-template-columns:minmax(0,1fr)!important;row-gap:5px!important}
   .status-combat-row>div{justify-content:flex-start!important}

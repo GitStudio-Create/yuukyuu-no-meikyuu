@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#151712">
   <title>悠久の迷宮</title>
-  <link rel="stylesheet" href="style.css?v=20260808-campaign-entry">
+  <link rel="stylesheet" href="style.css?v=20260808-campaign-redesign">
 </head>
 <body class="campaign-menu-open" data-app-state="TITLE">
-  <section id="campaignScreen" class="campaign-screen" aria-live="polite">
-    <div class="campaign-card">
-      <small>ORIGINAL MINI ROGUELIKE</small>
+  <section id="campaignScreen" class="campaign-screen screen-start" aria-live="polite">
+    <div class="campaign-card title-card">
+      <small>ORIGINAL ROGUELIKE</small>
       <h1>悠久の迷宮</h1>
-      <button class="push-start" data-campaign="books">PUSH START</button>
-      <p>Enter / Space / クリック・タップ</p>
+      <div class="title-ornament" aria-hidden="true"><i></i></div>
+      <nav class="title-menu" aria-label="タイトルメニュー">
+        <button class="title-menu-item is-selected" data-title-action="start" aria-current="true">はじめる</button>
+        <button class="title-menu-item" data-title-action="exit">ゲーム終了</button>
+      </nav>
+      <p class="menu-guide">↑ ↓ 選択　Enter / Space 決定</p>
     </div>
   </section>
   <span id="newGame" hidden aria-hidden="true"></span>
@@ -151,7 +155,7 @@
   <script src="js/gm-mode.js"></script>
   <script src="js/adventure-books.js?v=20260808-campaign-entry"></script>
   <script src="js/story-events.js?v=20260808-campaign-entry"></script>
-  <script src="js/campaign.js?v=20260808-title-bgm"></script>
+  <script src="js/campaign.js?v=20260808-campaign-redesign"></script>
   <script src="js/stage32-ui-fixes.js?v=20260805-mobile-ui-repeat"></script>
   <script src="js/stage33-projectile-rules.js"></script>
   <script src="js/stage34-status-tools.js"></script>

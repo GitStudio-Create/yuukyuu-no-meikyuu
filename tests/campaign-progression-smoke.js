@@ -16,6 +16,12 @@ Kiri.Campaign.boot();
 assert.equal(body.dataset.appState,'TITLE');
 assert.equal(shell.hidden,true,'game shell stays hidden on title');
 assert.equal(titleCalls,1,'title screen selects title BGM');
+root.listeners.click({target:{closest:()=>({dataset:{titleAction:'exit'}})}});
+assert(root.innerHTML.includes('ゲームを終了しますか？'));
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'exit-game'}})}});
+assert(root.innerHTML.includes('ブラウザを閉じてゲームを終了してください。'));
+assert.equal(body.dataset.appState,'TITLE','safe browser exit never deletes or enters a dungeon');
+Kiri.Campaign.showStart();
 
 const inventory=Array.from({length:20},(_,i)=>({id:'item'+i})),chest={id:'eternalTreasure',category:'treasure'},state={dungeonId:'normalDungeon',floor:27,gameOver:false,player:{level:4},inventory,groundItems:[chest],stairs:{x:2,y:2,type:'down'},treasureState:{returning:false,obtained:{},rank:{}}};
 Kiri.State.data=state;
