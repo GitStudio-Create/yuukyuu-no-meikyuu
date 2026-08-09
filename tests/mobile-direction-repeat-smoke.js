@@ -9,7 +9,10 @@ const directionButtons=['N','S','W','E','NW','NE','SW','SE'].map(button);
 const hooks={};
 ['[data-floor-pickup]','[data-floor-stairs]','[data-floor-step]','[data-floor-attack]','[data-floor-shoot]','[data-floor-face]','[data-floor-run]','[data-floor-diagonal]','[data-floor-status]','[data-floor-map]','[data-floor-map-only]','[data-floor-suspend]','[data-resume]'].forEach(selector=>hooks[selector]=button());
 const itemMenu={classList:{contains:()=>true}},confirmScreen={classList:{contains:()=>true}};
-global.document={addEventListener(){},querySelectorAll:selector=>selector==='[data-dir]'?directionButtons:[],querySelector:selector=>selector==='#itemMenu'?itemMenu:selector==='#confirmScreen'?confirmScreen:hooks[selector]};
+function actionGroup(){return{children:[],appendChild(node){this.children=this.children.filter(child=>child!==node);this.children.push(node);}};}
+const leftActions=actionGroup(),rightActions=actionGroup();
+global.matchMedia=()=>({matches:true,addEventListener(){}});
+global.document={addEventListener(){},querySelectorAll:selector=>selector==='[data-dir]'?directionButtons:[],querySelector:selector=>selector==='#itemMenu'?itemMenu:selector==='#confirmScreen'?confirmScreen:selector==='.control-actions-left'?leftActions:selector==='.control-actions-right'?rightActions:hooks[selector]};
 const windowListeners={};global.addEventListener=(type,fn)=>{(windowListeners[type]=windowListeners[type]||[]).push(fn);};
 
 let nextTimer=1,timers=new Map();
@@ -28,6 +31,8 @@ global.Kiri={
 vm.runInThisContext(fs.readFileSync('js/stage14-input.js','utf8'),{filename:'js/stage14-input.js'});
 const actions={move:(dx,dy)=>moves.push([dx,dy]),face(){},run(){},pickup(){},step(){},attack(){},shootArrow(){},toggleStatus(){},suspend(){},resume(){}};
 Kiri.Input.init(actions);
+assert.deepStrictEqual(leftActions.children,[hooks['[data-floor-step]'],hooks['[data-floor-shoot]'],hooks['[data-floor-status]'],hooks['[data-floor-map-only]']]);
+assert.deepStrictEqual(rightActions.children,[hooks['[data-floor-pickup]'],hooks['[data-floor-stairs]'],hooks['[data-floor-face]'],hooks['[data-floor-map]']]);
 
 directionButtons[0].fire('pointerdown');
 assert.deepStrictEqual(moves,[[0,-1]],'pointerdown moves immediately once');

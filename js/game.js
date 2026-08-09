@@ -13,6 +13,9 @@
 
   function buildFloor(){
     clearEnemyTurnTimer();
+    if(K.Input&&K.Input.cancelHeldMovement)K.Input.cancelHeldMovement();
+    if(K.ActionSequence&&K.ActionSequence.flush)K.ActionSequence.flush();
+    if(K.Animation&&K.Animation.clearProjectiles)K.Animation.clearProjectiles();
     var s=S.data,g=K.Map.generate(),mode=K.Dungeons.get(s.dungeonId),theme=K.Themes.forFloor(s.floor),plan=K.Balance.floorPlan(s.dungeonId,s.floor);
     s.map=g.tiles;s.rooms=g.rooms;s.enemies=[];s.groundItems=[];s.traps=[];s.monsterHouse=null;s.seen={};s.vision={traps:false,items:false,enemies:false,mapAll:false};s.crystalWalls=[];
     s.floorTheme=theme.name;s.bgmThemeName=theme.bgmThemeName;s.deepestFloor=Math.max(s.deepestFloor||1,s.floor);

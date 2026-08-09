@@ -7,6 +7,20 @@
   K.Input.init=function(actions){
     oldInit.call(K.Input,actions);
 
+    var mobileLayout=typeof matchMedia==='function'?matchMedia('(max-width: 560px)'):null;
+    function arrangeActionButtons(){
+      if(!mobileLayout)return;
+      var left=document.querySelector('.control-actions-left'),right=document.querySelector('.control-actions-right');
+      if(!left||!right)return;
+      var pickup=document.querySelector('[data-floor-pickup]'),stairs=document.querySelector('[data-floor-stairs]'),step=document.querySelector('[data-floor-step]'),shoot=document.querySelector('[data-floor-shoot]'),status=document.querySelector('[data-floor-status]'),mapOnly=document.querySelector('[data-floor-map-only]'),face=document.querySelector('[data-floor-face]'),map=document.querySelector('[data-floor-map]');
+      var leftButtons=mobileLayout.matches?[step,shoot,status,mapOnly]:[pickup,stairs,status,mapOnly];
+      var rightButtons=mobileLayout.matches?[pickup,stairs,face,map]:[step,shoot,face,map];
+      leftButtons.forEach(function(button){if(button)left.appendChild(button);});
+      rightButtons.forEach(function(button){if(button)right.appendChild(button);});
+    }
+    arrangeActionButtons();
+    if(mobileLayout){if(mobileLayout.addEventListener)mobileLayout.addEventListener('change',arrangeActionButtons);else if(mobileLayout.addListener)mobileLayout.addListener(arrangeActionButtons);}
+
     var faceNext=false,runNext=false,diagonalNext=false;
     var faceButton,runButton,diagonalButton;
     var repeatDelayTimer=null,repeatTimer=null,repeatButton=null;
