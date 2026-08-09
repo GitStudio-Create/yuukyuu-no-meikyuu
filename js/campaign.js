@@ -71,7 +71,7 @@
     setScreen('base','<small>ROYAL CASTLE</small><h2>王城</h2>'+(message?'<p class="campaign-notice">'+esc(message)+'</p>':'')+'<p class="important-item">重要アイテム：'+esc(chestText(story))+'</p><nav class="castle-menu" aria-label="王城メニュー"><button class="castle-menu-item" data-campaign="king">王様と話す</button><button class="castle-menu-item" data-campaign="dungeons">ダンジョンへ向かう</button><button class="castle-menu-item" data-campaign="chest"'+chestDisabled+'>宝箱を調べる'+(story.treasureChest.obtained?'':'<small>まだ宝箱を持っていません</small>')+'</button><button class="castle-menu-item" data-campaign="record">冒険の書に記録する</button><button class="castle-menu-item" data-campaign="title">タイトルへ戻る</button></nav><p class="menu-guide">↑ ↓ 選択　Enter / Space 決定</p>',false,'castle-card');
   }
   function kingText(story){if(story.cleared.mysteryDungeon)return'宝箱のなぞはまだ深い。だが、おぬしの勇気は国の希望だ。';if(story.treasureChest.opened)return'宝箱から不思議な力を感じる。迷宮にも変化が起きているかもしれぬ。';if(story.treasureChest.obtained)return'おお、それが伝説の宝箱か。まずはゆっくり調べてみるとよい。';if(story.cleared.tutorialDungeon)return'よく戻った。これなら本当の迷宮も任せられそうだ。';return'まずは迷宮に慣れることだ。無理はするでないぞ。';}
-  function kingScreen(){var story=K.AdventureBooks.story();setScreen('king','<small>THE KING</small><h2>王様</h2><p class="story-line">「'+esc(kingText(story))+'」</p><button data-campaign="base">王城へ戻る</button>',false,'castle-dialog-card');}
+  function kingScreen(){var story=K.AdventureBooks.story();setScreen('king','<small>THE KING</small><h2>王様</h2><p class="story-line">「'+esc(kingText(story))+'」</p><button data-campaign="base">戻る</button>',false,'castle-dialog-card');}
   function dungeonsScreen(){
     var story=K.AdventureBooks.story(),unlocked=!!(story&&story.cleared.tutorialDungeon);
     setScreen('dungeons','<small>DUNGEON GATE</small><h2>どの迷宮へ向かいますか？</h2><div class="dungeon-list"><button data-dungeon="tutorialDungeon"><strong>ちょっと不思議</strong><span>全10F ／ 難易度：普通</span></button><button data-dungeon="normalDungeon"'+(unlocked?'':' disabled aria-disabled="true"')+'><strong>不思議</strong><span>'+(unlocked?'基本99F ／ 難易度：普通':'未解放 ／ ちょっと不思議をクリアすると挑戦できます')+'</span></button></div><button data-campaign="base" class="secondary">戻る</button>',false,'castle-dialog-card');
@@ -110,7 +110,7 @@
     else baseScreen(K.Dungeons.get(id).shortName+'をクリアしました。');
     return true;
   }
-  function gameOver(state){state.gameOver=true;K.AdventureBooks.saveBase(state);setScreen('game-over','<small>GAME OVER</small><h2>冒険はここまで</h2><p>'+state.floor+'Fで力尽きました。挑戦中の記録は終了しました。</p><button data-campaign="base">王城へ戻る</button>');}
+  function gameOver(state){state.gameOver=true;K.AdventureBooks.saveBase(state);setScreen('game-over','<small>GAME OVER</small><h2>冒険はここまで</h2><p>'+state.floor+'Fで力尽きました。挑戦中の記録は終了しました。</p><button data-campaign="base">戻る</button>');}
   function boot(){
     root=document.querySelector('#campaignScreen');gameShell=document.querySelector('.game-shell');
     var gmGrid=document.querySelector('#gmPanel .gm-grid');if(gmGrid&&!gmGrid.querySelector('[data-campaign-debug]'))gmGrid.insertAdjacentHTML('beforeend','<section><h3>冒険の書デバッグ</h3><pre data-campaign-debug></pre></section>');startScreen();

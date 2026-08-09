@@ -897,6 +897,7 @@ header{order:1}
     padding-top:calc(max(16px,env(safe-area-inset-top)) + 10dvh);
     padding-bottom:max(16px,env(safe-area-inset-bottom));
   }
+  .screen-start>.title-card{transform:translateY(-3dvh)}
   .campaign-screen.screen-books{display:flex;align-items:flex-start}
   .campaign-screen.screen-base,
   .campaign-screen.screen-king,

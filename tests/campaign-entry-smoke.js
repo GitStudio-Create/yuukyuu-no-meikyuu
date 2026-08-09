@@ -26,5 +26,7 @@ assert(campaign.includes("'story-dialog-card'"),'story events need the shared tr
 assert(css.includes('.campaign-screen.screen-event::before'),'story background needs the castle blur and darkening layer');
 assert(css.includes('min-height:100dvh'),'mobile campaign screens must follow the dynamic viewport height');
 assert(css.includes('background-size:100% auto'),'portrait castle screens must preserve the complete image width');
+assert(css.includes('transform:translateY(-3dvh)'),'mobile title UI needs the small upward adjustment');
+assert(!campaign.includes('王城へ戻る</button>'),'castle return buttons should use the concise label');
 
 console.log('campaign entry smoke: fail-safe title and explicit script order passed');
