@@ -675,8 +675,8 @@ header{order:1}
   background-position:center;
   font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
 }
-.campaign-screen.screen-start{background-image:linear-gradient(180deg,rgba(1,8,13,.15),rgba(1,6,10,.2) 45%,rgba(0,4,7,.68)),url("images/campaign/title-labyrinth-bg.png")}
-.campaign-screen.screen-books{display:block;background-image:linear-gradient(180deg,rgba(5,4,2,.26),rgba(5,3,1,.48)),url("images/campaign/adventure-library-bg.png");background-position:center top}
+.campaign-screen.screen-start{background-image:linear-gradient(180deg,rgba(1,8,13,.15),rgba(1,6,10,.2) 45%,rgba(0,4,7,.68)),url("images/campaign/title-labyrinth-bg.jpeg")}
+.campaign-screen.screen-books{display:block;background-image:linear-gradient(180deg,rgba(5,4,2,.26),rgba(5,3,1,.48)),url("images/campaign/adventure-library-bg.jpeg");background-position:center top}
 .screen-start .title-card{
   width:min(94vw,900px);
   padding:clamp(24px,5vh,64px) clamp(20px,5vw,60px);
@@ -797,10 +797,10 @@ header{order:1}
   background-position:center;
   font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
 }
-.campaign-screen.screen-exit-confirm,.campaign-screen.screen-exit-message{background-image:url("images/campaign/title-labyrinth-bg.png")}
-.campaign-screen.castle-no-chest{background-image:url("画像/（悠久の迷宮）タイトル画面後の選択する画面（宝箱無し）.png")}
-.campaign-screen.castle-closed-chest{background-image:url("画像/（悠久の迷宮）タイトル画面後の選択する画面（宝箱あり）.png")}
-.campaign-screen.castle-open-chest{background-image:url("画像/（悠久の迷宮）タイトル画面後の選択する画面（宝箱開けた状態）.png")}
+.campaign-screen.screen-exit-confirm,.campaign-screen.screen-exit-message{background-image:url("images/campaign/title-labyrinth-bg.jpeg")}
+.campaign-screen.castle-no-chest{background-image:url("画像/（悠久の迷宮）タイトル画面後の選択する画面（宝箱無し）.jpeg")}
+.campaign-screen.castle-closed-chest{background-image:url("画像/（悠久の迷宮）タイトル画面後の選択する画面（宝箱あり）.jpeg")}
+.campaign-screen.castle-open-chest{background-image:url("画像/（悠久の迷宮）タイトル画面後の選択する画面（宝箱開けた状態）.jpeg")}
 .campaign-screen.screen-exit-confirm::before,
 .campaign-screen.screen-exit-message::before,
 .campaign-screen.screen-king::before,

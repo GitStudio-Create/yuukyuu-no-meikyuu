@@ -14,10 +14,11 @@ assert(css.includes('.campaign-screen.screen-suspend-confirm'),'suspend confirma
 assert(html.indexOf('js/campaign.js')<html.indexOf('js/game.js'),'campaign controller must load before game boot');
 assert(!/<button[^>]+id="newGame"/.test(html),'dungeon header must not keep the duplicate title button');
 assert.equal((html.match(/data-floor-suspend/g)||[]).length,1,'dungeon header keeps one suspend button');
-assert(css.includes('images/campaign/title-labyrinth-bg.png'),'title uses the clean labyrinth background');
-assert(css.includes('images/campaign/adventure-library-bg.png'),'books use the clean library background');
-assert(fs.existsSync('images/campaign/title-labyrinth-bg.png'));
-assert(fs.existsSync('images/campaign/adventure-library-bg.png'));
+assert(css.includes('images/campaign/title-labyrinth-bg.jpeg'),'title uses the JPEG labyrinth background');
+assert(css.includes('images/campaign/adventure-library-bg.jpeg'),'books use the JPEG library background');
+assert(fs.existsSync('images/campaign/title-labyrinth-bg.jpeg'));
+assert(fs.existsSync('images/campaign/adventure-library-bg.jpeg'));
+assert(!/background-image:[^}]*url\([^)]*\.png/i.test(css),'campaign backgrounds must not reference PNG files');
 ['宝箱無し','宝箱あり','宝箱開けた状態'].forEach(name=>assert(css.includes(name),'castle background missing: '+name));
 assert(css.includes('.campaign-screen.screen-exit-confirm')&&css.includes('backdrop-filter:blur(4px)'),'exit and castle overlays keep and blur their backgrounds');
 
