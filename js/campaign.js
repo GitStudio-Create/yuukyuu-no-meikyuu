@@ -8,7 +8,7 @@
   function updateDebug(){var box=document.querySelector('[data-campaign-debug]');if(box&&K.AdventureBooks)box.textContent=JSON.stringify(K.AdventureBooks.debug(),null,2);}
   function playSound(name){if(K.Sound)K.Sound.play(name);}
   function useTitleBgm(name){return['start','exit-confirm','exit-message','books','book-actions','delete-confirm','event','base','king','chest','record','dungeons'].indexOf(name)>=0;}
-  function isCastleScreen(name){return['base','king','chest','record','dungeons'].indexOf(name)>=0;}
+  function isCastleScreen(name){return['base','king','chest','record','dungeons','event'].indexOf(name)>=0;}
   function castleTheme(){var story=K.AdventureBooks&&K.AdventureBooks.story?K.AdventureBooks.story():null,chest=story&&story.treasureChest;if(!chest||!chest.obtained)return' castle-no-chest';return chest.opened?' castle-open-chest':' castle-closed-chest';}
   function screenMenuSelector(name){if(name==='base')return'.castle-menu-item:not(:disabled)';if(['exit-confirm','king','chest','record','dungeons','suspend-confirm'].indexOf(name)>=0)return'.campaign-card button:not(:disabled)';return'';}
   function updateScreenSelection(next,focus){var selector=screenMenuSelector(screen),items=selector&&root.querySelectorAll?root.querySelectorAll(selector):[];if(!items.length)return;screenSelection=(next+items.length)%items.length;items.forEach(function(item,index){var on=index===screenSelection;item.classList.toggle('is-selected',on);item.setAttribute('aria-current',String(on));if(on&&focus)item.focus();});}
@@ -51,7 +51,7 @@
   function showEvent(){
     if(eventIndex>=eventList.length){var done=eventDone;eventDone=null;if(done)done();return;}
     var line=eventList[eventIndex++];
-    setScreen('event','<small>STORY</small>'+(line.speaker?'<h3>'+esc(line.speaker)+'</h3>':'')+'<p class="story-line">'+esc(line.text)+'</p><button data-campaign="event-next">次へ</button>');
+    setScreen('event','<small>STORY</small>'+(line.speaker?'<h3>'+esc(line.speaker)+'</h3>':'')+'<p class="story-line">'+esc(line.text)+'</p><button data-campaign="event-next">次へ</button>',false,'story-dialog-card');
   }
   function createBook(slot){
     if(!K.AdventureBooks.create(slot))return booksScreen(K.AdventureBooks.lastError());

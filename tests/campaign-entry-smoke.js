@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('fs'),assert=require('assert');
-const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('style.css','utf8');
+const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('style.css','utf8'),campaign=fs.readFileSync('js/campaign.js','utf8');
 
 assert(/<body class="campaign-menu-open" data-app-state="TITLE">/.test(html),'HTML must start in TITLE state');
 assert(/id="campaignScreen" class="campaign-screen screen-start"/.test(html),'campaign screen must be visible before JavaScript runs');
@@ -21,5 +21,10 @@ assert(fs.existsSync('images/campaign/adventure-library-bg.jpeg'));
 assert(!/background-image:[^}]*url\([^)]*\.png/i.test(css),'campaign backgrounds must not reference PNG files');
 ['宝箱無し','宝箱あり','宝箱開けた状態'].forEach(name=>assert(css.includes(name),'castle background missing: '+name));
 assert(css.includes('.campaign-screen.screen-exit-confirm')&&css.includes('backdrop-filter:blur(4px)'),'exit and castle overlays keep and blur their backgrounds');
+assert(campaign.includes("'dungeons','event'"),'story events must inherit the current castle background state');
+assert(campaign.includes("'story-dialog-card'"),'story events need the shared translucent dialogue panel');
+assert(css.includes('.campaign-screen.screen-event::before'),'story background needs the castle blur and darkening layer');
+assert(css.includes('min-height:100dvh'),'mobile campaign screens must follow the dynamic viewport height');
+assert(css.includes('background-size:100% auto'),'portrait castle screens must preserve the complete image width');
 
 console.log('campaign entry smoke: fail-safe title and explicit script order passed');

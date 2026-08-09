@@ -789,7 +789,8 @@ header{order:1}
 .campaign-screen.screen-king,
 .campaign-screen.screen-dungeons,
 .campaign-screen.screen-chest,
-.campaign-screen.screen-record{
+.campaign-screen.screen-record,
+.campaign-screen.screen-event{
   isolation:isolate;
   background-color:#080a0c;
   background-repeat:no-repeat;
@@ -806,7 +807,8 @@ header{order:1}
 .campaign-screen.screen-king::before,
 .campaign-screen.screen-dungeons::before,
 .campaign-screen.screen-chest::before,
-.campaign-screen.screen-record::before{
+.campaign-screen.screen-record::before,
+.campaign-screen.screen-event::before{
   content:"";
   position:absolute;
   z-index:0;
@@ -821,7 +823,8 @@ header{order:1}
 .campaign-screen.screen-king>.campaign-card,
 .campaign-screen.screen-dungeons>.campaign-card,
 .campaign-screen.screen-chest>.campaign-card,
-.campaign-screen.screen-record>.campaign-card{position:relative;z-index:1}
+.campaign-screen.screen-record>.campaign-card,
+.campaign-screen.screen-event>.campaign-card{position:relative;z-index:1}
 .screen-base .castle-card{
   width:min(92vw,620px);
   padding:clamp(22px,4vw,42px);
@@ -851,7 +854,7 @@ header{order:1}
 .campaign-card .castle-menu-item:is(.is-selected,:hover,:focus-visible,:active)::before,.campaign-card .castle-menu-item:is(.is-selected,:hover,:focus-visible,:active)::after{opacity:1}
 .campaign-card .castle-menu-item:disabled{border-color:rgba(125,120,100,.18);background:linear-gradient(90deg,transparent,rgba(10,13,14,.58),transparent);color:#77786f;text-shadow:none;transform:none}
 .campaign-card .castle-menu-item:disabled small{display:block;margin-top:3px;color:#77786f;font-size:11px;letter-spacing:.02em}
-.castle-dialog-card,.screen-exit-confirm .dialog-card,.screen-exit-message .campaign-card{
+.castle-dialog-card,.story-dialog-card,.screen-exit-confirm .dialog-card,.screen-exit-message .campaign-card{
   width:min(92vw,620px);
   padding:clamp(24px,5vw,46px);
   border:1px solid #b18b48;
@@ -861,24 +864,58 @@ header{order:1}
   color:#eee2c3;
   box-shadow:0 18px 55px #000,inset 0 0 32px rgba(175,135,55,.08);
 }
-.castle-dialog-card h2,.dialog-card h2{color:#f0dda9;text-shadow:0 2px 3px #000}.castle-dialog-card .story-line{color:#eee3cb;font-size:clamp(16px,2.2vw,20px)}
+.castle-dialog-card h2,.story-dialog-card h3,.dialog-card h2{color:#f0dda9;text-shadow:0 2px 3px #000}.castle-dialog-card .story-line,.story-dialog-card .story-line{color:#eee3cb;font-size:clamp(16px,2.2vw,20px)}
 .dialog-menu{display:grid;gap:9px;width:min(100%,340px);margin:22px auto 0}
 .dialog-card .title-menu-item{min-height:52px}
-.castle-dialog-card button,.castle-dialog-card .dungeon-list button{
+.castle-dialog-card button,.castle-dialog-card .dungeon-list button,.story-dialog-card button{
   border-color:#9c793c;
   background:linear-gradient(#19242d,#091116);
   color:#ead59e;
   font-family:inherit;
   transition:color .2s ease,transform .2s ease,box-shadow .2s ease,border-color .2s ease;
 }
-.castle-dialog-card button:is(.is-selected,:hover,:focus-visible,:active){outline:0;border-color:#e4bc62;color:#ffe6a0;transform:scale(1.015);box-shadow:0 0 16px rgba(226,175,69,.52),inset 0 0 12px #000}
+.castle-dialog-card button:is(.is-selected,:hover,:focus-visible,:active),.story-dialog-card button:is(:hover,:focus-visible,:active){outline:0;border-color:#e4bc62;color:#ffe6a0;transform:scale(1.015);box-shadow:0 0 16px rgba(226,175,69,.52),inset 0 0 12px #000}
 @media(max-width:700px){
-  .campaign-screen.screen-base,.campaign-screen.screen-king,.campaign-screen.screen-dungeons,.campaign-screen.screen-chest,.campaign-screen.screen-record{background-position:35% center}
   .screen-base .castle-card{width:100%;padding-inline:12px}.castle-card h2{font-size:40px!important}.castle-menu{width:min(94%,360px)}
   .campaign-card .castle-menu-item{min-height:48px;font-size:16px}.campaign-card .castle-menu-item::before{left:8px}.campaign-card .castle-menu-item::after{right:8px}
-  .castle-dialog-card,.screen-exit-confirm .dialog-card,.screen-exit-message .campaign-card{width:min(94vw,620px);padding:28px 17px}
+  .castle-dialog-card,.story-dialog-card,.screen-exit-confirm .dialog-card,.screen-exit-message .campaign-card{width:min(94vw,620px);padding:28px 17px}
 }
 @media(prefers-reduced-motion:reduce){.campaign-card .castle-menu-item,.castle-dialog-card button{transition:none!important}}
+
+/* Mobile campaign positioning and uncropped castle composition. */
+@media(max-width:700px) and (max-aspect-ratio:3/4){
+  .campaign-screen{
+    display:flex;
+    min-height:100dvh;
+    height:100dvh;
+    align-items:center;
+    justify-content:center;
+    padding:max(16px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  }
+  .campaign-screen>.campaign-card{flex:0 0 auto;margin-block:auto}
+  .campaign-screen.screen-start{
+    padding-top:calc(max(16px,env(safe-area-inset-top)) + 10dvh);
+    padding-bottom:max(16px,env(safe-area-inset-bottom));
+  }
+  .campaign-screen.screen-books{display:flex;align-items:flex-start}
+  .campaign-screen.screen-base,
+  .campaign-screen.screen-king,
+  .campaign-screen.screen-dungeons,
+  .campaign-screen.screen-chest,
+  .campaign-screen.screen-record,
+  .campaign-screen.screen-event{
+    background-color:#080b0f;
+    background-size:100% auto;
+    background-position:center top;
+  }
+  .campaign-screen.screen-base{justify-content:flex-end;padding-top:34dvh}
+  .screen-base>.castle-card{margin-block:auto 0;padding-block:14px;background:radial-gradient(ellipse,rgba(3,9,15,.74),rgba(3,7,12,.52) 58%,transparent 78%)}
+  .screen-base .castle-card h2{margin-block:4px 8px!important}
+  .screen-base .castle-card .important-item{margin-bottom:10px;padding:8px}
+  .screen-base .castle-menu{width:min(88%,330px);gap:4px}
+  .screen-base .castle-menu-item{min-height:44px}
+  .screen-base .menu-guide{margin-top:12px}
+}
 
 /* Suspend confirmation stays above the current dungeon view. */
 .campaign-screen.screen-suspend-confirm{
