@@ -12,7 +12,7 @@ global.Kiri={
 function load(file){vm.runInThisContext(fs.readFileSync(file,'utf8'),{filename:file});}
 load('js/adventure-books.js');
 
-function state(id,floor,turn){return{version:2,dungeonId:id,floor:floor,turn:turn,gameOver:false,player:{level:6,hp:17,maxHp:30,food:64,maxFood:100,power:7,maxPower:8,gold:88,equipment:{weapon:{id:'emberBlade',modifier:2},shield:null,ring:null},status:{sleep:0}},inventory:[{id:'nutBread',quantity:2}],enemies:[{id:'dewMote',x:4,y:5}],groundItems:[],traps:[],stairs:{x:9,y:9},map:[[1]],seen:{'0,0':1},log:['保存確認']};}
+function state(id,floor,turn){return{version:2,dungeonId:id,floor:floor,turn:turn,gameOver:false,player:{level:6,hp:17,maxHp:30,food:64,maxFood:100,power:7,maxPower:8,gold:88,equipment:{weapon:{id:'emberBlade',modifier:2},shield:null,ring:null},status:{sleep:0}},inventory:[{id:'nutBread',quantity:2}],enemies:[{id:'dewMote',x:4,y:5}],groundItems:[],traps:[],stairs:{x:9,y:9,type:'up'},treasureState:{returning:true,obtained:{eternalTreasure:true},rank:{}},map:[[1]],seen:{'0,0':1},log:['保存確認']};}
 
 assert(Kiri.AdventureBooks.create(1));
 Kiri.AdventureBooks.story().questAccepted=true;
@@ -33,6 +33,8 @@ assert.equal(Kiri.State.data.floor,5);
 assert.equal(Kiri.State.data.turn,42,'loading does not advance the turn');
 assert.equal(Kiri.State.data.inventory[0].quantity,2);
 assert.equal(Kiri.State.data.player.equipment.weapon.modifier,2);
+assert(Kiri.State.data.treasureState.returning&&Kiri.State.data.treasureState.obtained.eternalTreasure);
+assert.equal(Kiri.State.data.stairs.type,'up','return direction survives adventure-book loading');
 
 store.eternal_labyrinth_adventure_book_3='{broken';
 slots=Kiri.AdventureBooks.slots();

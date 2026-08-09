@@ -101,7 +101,7 @@
   function takeTreasure(){
     var pending=pendingTreasure;if(!pending)return;pendingTreasure=null;var s=pending.state,story=K.AdventureBooks.story();
     if(pending.item.id==='eternalTreasure')story.treasureChest.obtained=true;
-    s.treasureState=s.treasureState||{returning:false,obtained:{},rank:{}};s.treasureState.returning=true;s.treasureState.obtained[pending.item.id]=true;if(s.stairs)s.stairs.type='up';
+    s.treasureState=s.treasureState||{returning:false,obtained:{},rank:{}};s.treasureState.returning=true;s.treasureState.obtained[pending.item.id]=true;if(s.stairs&&!s.stairs.disabled)s.stairs.type='up';else s.stairs={x:s.player.x,y:s.player.y,type:'up'};
     K.State.addLog('大切な宝箱を手に入れた。階段が地上へ戻る道に変わった。');K.AdventureBooks.saveDungeon();closeScreen();K.UI.draw(s);
   }
   function dungeonReturn(state){

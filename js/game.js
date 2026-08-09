@@ -29,6 +29,7 @@
     place(itemCount,function(p){s.groundItems.push(K.Items.randomForFloor(s.floor,p.x,p.y,s.dungeonId));},0);
     place(plan.traps,function(p){s.traps.push(K.Traps.createRandom(s,p));},1);
     if(K.Treasures)K.Treasures.placeForFloor(s);
+    if(s.dungeonId==='tutorialDungeon'&&s.floor>=mode.maxFloor&&!K.Treasures.isReturning(s))s.stairs={x:-1,y:-1,type:'down',disabled:true};
     if(K.CrystalWalls)K.CrystalWalls.place(s);
     if(K.MonsterHouse)K.MonsterHouse.tryCreate(s,mode);
     K.Map.reveal(s);
@@ -74,7 +75,7 @@
     p.x=nx;p.y=ny;
     var ground=s.groundItems.find(function(q){return q.x===nx&&q.y===ny;}),hadItem=!!ground,important=ground&&ground.category==='treasure'&&K.Campaign&&K.Campaign.collectTreasure,canMerge=ground&&ground.category==='arrow'&&s.inventory.some(function(q){return q.id===ground.id&&q.quantity<99;});
     if(hadItem&&(important||s.inventory.length<K.Config.inventoryMax||canMerge))pickup();
-    var trapResult=triggerTrap(),onStairs=nx===s.stairs.x&&ny===s.stairs.y;if(K.MonsterHouse)K.MonsterHouse.checkEntry(s);
+    var trapResult=triggerTrap(),onStairs=!!s.stairs&&nx===s.stairs.x&&ny===s.stairs.y;if(K.MonsterHouse)K.MonsterHouse.checkEntry(s);
     if(trapResult&&trapResult.pending){
       s.turnLocked=true;
       if(K.Sound)K.Sound.play(trapResult.sound||'trap');
@@ -119,7 +120,7 @@
   }
   function run(dx,dy){if(isInputLocked()||dx&&dy)return;if(!dx&&!dy)return;var s=S.data;for(var steps=0;steps<40;steps++){if(stopBeforeRun(s,dx,dy,steps))break;var result=move(dx,dy);if(!result.moved||result.event||visibleEnemyNear(s)||s.gameOver)break;}}
   function clearDungeon(){var s=S.data;clearEnemyTurnTimer();if(K.Campaign&&K.Campaign.onDungeonReturn)return K.Campaign.onDungeonReturn(s);s.gameOver=true;S.clearSave();K.UI.draw(s);if(K.UI.showEscape){K.UI.showEscape(s);var text=document.querySelector('#overlayText');if(text&&K.Treasures)text.textContent=K.Treasures.clearMessage(s);}return true;}
-  function descend(){var s=S.data;if(isInputLocked()||s.player.x!==s.stairs.x||s.player.y!==s.stairs.y)return false;clearEnemyTurnTimer();K.UI.closeStairs();if(s.stairs&&s.stairs.type==='up'){s.floor--;if(s.floor<=0)return clearDungeon();s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}var mode=K.Dungeons.get(s.dungeonId),max=mode.maxFloor||99;s.floor=s.floor>=max?max:s.floor+1;s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}
+  function descend(){var s=S.data;if(isInputLocked()||!s.stairs||s.stairs.disabled||s.player.x!==s.stairs.x||s.player.y!==s.stairs.y)return false;clearEnemyTurnTimer();K.UI.closeStairs();if(s.stairs.type==='up'){s.floor--;if(s.floor<=0)return clearDungeon();s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}var mode=K.Dungeons.get(s.dungeonId),max=mode.maxFloor||99;s.floor=s.floor>=max?max:s.floor+1;s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}
   function stayStairs(){K.UI.closeStairs();return true;}
   function attack(){
     var s=S.data,p=s.player;if(isInputLocked()||asleep())return;

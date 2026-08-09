@@ -11,6 +11,7 @@
   function statusText(p){var s=p.status||{},a=[];if(s.sleep>0)a.push('睡眠');if(s.confuse>0)a.push('混乱');if(s.haste>0)a.push('倍速');if(s.slow>0)a.push('鈍足');if(s.blind>0)a.push('目つぶし');if(s.invisible>0)a.push('透明');if(s.poison>0)a.push('毒');if(s.bind>0)a.push('停止');return a.length?a.join('・'):'なし';}
   function curseText(item){if(!item)return'なし';if(!item.curseKnown)return'未判明';return item.cursed?'あり':'なし';}
   function remainingText(state){if(!K.Progression||!K.Progression.remaining)return'-';var r=K.Progression.remaining(state.player);return r===null?'最大レベル':r+'ポイント';}
+  function dungeonText(state){var mode=state&&K.Dungeons&&K.Dungeons.get(state.dungeonId),name=mode&&(mode.shortName||mode.name)||'なし';return name+(K.Treasures&&K.Treasures.isReturning(state)?'（帰還中）':'');}
   function parent(selector,className){
     var node=document.querySelector(selector),box=node&&node.parentElement;
     if(box&&className)className.split(' ').forEach(function(name){box.classList.add(name);});
@@ -67,6 +68,7 @@
       cell('累計経験値',p.exp||0),cell('所持金',(p.gold||0)+'G'),
       cell('ターン数',state.turn||0),cell('状態異常',statusText(p)),
       cell('刀の呪い',curseText(e.weapon)),cell('盾の呪い',curseText(e.shield)),
+      cell('挑戦中の迷宮',dungeonText(state),true),
       cell('次のレベルまで',remainingText(state),true)
     ].join('');
   }

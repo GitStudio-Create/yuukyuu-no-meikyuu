@@ -43,7 +43,8 @@ assert.notEqual(Kiri.Items.defensePower(s),Kiri.EquipmentStats.shieldStrength(s)
 Kiri.UI.toggleStatus(s);
 Kiri.UI.draw(s);
 const html=elem('statusGrid').innerHTML;
-['階層','レベル','HP','満腹度','剣の強さ','盾の強さ','武器','盾','ちから','指輪','累計経験値','所持金','ターン数','状態異常','刀の呪い','盾の呪い','次のレベルまで'].forEach(label=>assert(html.includes(label)));
+['階層','レベル','HP','満腹度','剣の強さ','盾の強さ','武器','盾','ちから','指輪','累計経験値','所持金','ターン数','状態異常','刀の呪い','盾の呪い','挑戦中の迷宮','不思議','次のレベルまで'].forEach(label=>assert(html.includes(label)));
+assert(html.indexOf('挑戦中の迷宮')<html.indexOf('次のレベルまで'));
 assert(html.includes('11/11'));
 assert(html.indexOf('剣の強さ')<html.indexOf('武器'));
 assert(html.includes('status-full-row'));

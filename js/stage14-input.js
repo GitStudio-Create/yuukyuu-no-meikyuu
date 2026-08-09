@@ -129,7 +129,7 @@
 
     document.querySelector('[data-floor-pickup]').addEventListener('click',actions.pickup);
     document.querySelector('[data-floor-stairs]').addEventListener('click',function(){
-      if(K.State.data.player.x===K.State.data.stairs.x&&K.State.data.player.y===K.State.data.stairs.y)K.UI.showStairs();
+      var stairs=K.State.data.stairs;if(stairs&&K.State.data.player.x===stairs.x&&K.State.data.player.y===stairs.y)K.UI.showStairs();
     });
     document.querySelector('[data-floor-step]').addEventListener('click',actions.step);
     document.querySelector('[data-floor-attack]').addEventListener('click',actions.attack);

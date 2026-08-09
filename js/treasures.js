@@ -2,18 +2,29 @@
   'use strict';
   var CONFIG={
     tutorialDungeon:[{floor:10,item:'trialTreasure',returning:true}],
-    normalDungeon:[{floor:27,item:'eternalTreasure',returning:true}],
-    mysteryDungeon:[{floor:27,item:'deepTreasure',returning:true},{floor:50,item:'moonTreasure',rank:'50F'},{floor:99,item:'abyssTreasure',rank:'99F'}]
+    normalDungeon:[{fromFloor:27,item:'eternalTreasure',returning:true}],
+    mysteryDungeon:[{fromFloor:27,item:'deepTreasure',returning:true},{floor:50,item:'moonTreasure',rank:'50F'},{floor:99,item:'abyssTreasure',rank:'99F'}]
   };
   function list(state){return CONFIG[state.dungeonId]||[];}
   function hasItem(state,id){
     return (state.inventory||[]).some(function(i){return i.id===id;})||(state.groundItems||[]).some(function(i){return i.id===id;});
   }
+  function applies(entry,floor){return entry.floor===floor||(entry.fromFloor!==undefined&&floor>=entry.fromFloor);}
+  function safeCell(state){
+    var rooms=(state.rooms||[]).slice().reverse();
+    for(var i=0;i<rooms.length;i++){
+      var room=rooms[i];
+      for(var y=room.y;y<room.y+room.h;y++)for(var x=room.x;x<room.x+room.w;x++)if(K.Map.walkable(state,x,y)&&!K.Map.occupied(state,x,y)&&!(state.traps||[]).some(function(trap){return trap.x===x&&trap.y===y;}))return{x:x,y:y};
+    }
+    for(var yy=0;yy<K.Config.height;yy++)for(var xx=0;xx<K.Config.width;xx++)if(K.Map.walkable(state,xx,yy)&&!K.Map.occupied(state,xx,yy)&&!(state.traps||[]).some(function(trap){return trap.x===xx&&trap.y===yy;}))return{x:xx,y:yy};
+    for(var fy=0;fy<K.Config.height;fy++)for(var fx=0;fx<K.Config.width;fx++)if(K.Map.walkable(state,fx,fy)&&!(state.player.x===fx&&state.player.y===fy)&&!(state.stairs&&state.stairs.x===fx&&state.stairs.y===fy)&&!(state.enemies||[]).some(function(enemy){return enemy.x===fx&&enemy.y===fy;})&&!(state.traps||[]).some(function(trap){return trap.x===fx&&trap.y===fy;})){state.groundItems=state.groundItems.filter(function(item){return item.x!==fx||item.y!==fy;});return{x:fx,y:fy};}
+    return null;
+  }
   function placeForFloor(state){
     state.treasureState=state.treasureState||{returning:false,obtained:{},rank:{}};
     list(state).forEach(function(entry){
-      if(entry.floor!==state.floor||state.treasureState.obtained[entry.item]||hasItem(state,entry.item))return;
-      var p=K.Map.freeCell(state,Math.max(0,(state.rooms||[]).length-1));
+      if(!applies(entry,state.floor)||state.treasureState.obtained[entry.item]||hasItem(state,entry.item))return;
+      var p=safeCell(state);
       if(p)state.groundItems.push(K.Items.create(entry.item,p.x,p.y,state.dungeonId));
     });
   }
@@ -24,7 +35,7 @@
     var entry=list(state).find(function(e){return e.item===item.id;});
     if(entry&&entry.returning){
       state.treasureState.returning=true;
-      if(state.stairs)state.stairs.type='up';
+      if(state.stairs&&!state.stairs.disabled)state.stairs.type='up';else state.stairs={x:state.player.x,y:state.player.y,type:'up'};
       K.State.addLog(K.Items.name(item)+'を手に入れた。階段が地上へ戻る道に変わった。');
     }else if(entry&&entry.rank){
       state.treasureState.rank[entry.rank]=true;
