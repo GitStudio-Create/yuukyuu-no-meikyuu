@@ -161,10 +161,11 @@
   function suspend(){if(isInputLocked())return false;if(K.Campaign&&K.Campaign.requestSuspend){K.Campaign.requestSuspend();return true;}S.save();K.UI.showSuspend();return true;}
   function resume(){K.UI.closeSuspend();return true;}
   function triggerTrap(){var s=S.data,p=s.player,t=s.traps.find(function(q){return q.x===p.x&&q.y===p.y;});if(!t)return null;if(K.Traps.armPlayer){var armed=K.Traps.armPlayer(s,t);S.addLog(armed.message);return armed;}var result=K.Traps.applyPlayer(s,t);S.addLog(result.message);return result;}
-  function openItem(index){var s=S.data;if(isInputLocked()||index<0||index>=s.inventory.length)return;selectedIndex=index;K.UI.showItemMenu(K.Items.name(s.inventory[index]),K.ItemActions.actionsFor(s.inventory[index]));}
+  function openItem(index){var s=S.data;if(isInputLocked()||index<0||index>=s.inventory.length)return;if(K.Input&&K.Input.cancelHeldMovement)K.Input.cancelHeldMovement();selectedIndex=index;K.UI.showItemMenu(K.Items.name(s.inventory[index]),K.ItemActions.actionsFor(s.inventory[index]));}
   function itemAction(action){
     var s=S.data,item=s.inventory[selectedIndex];
     if(isInputLocked())return;
+    if(K.Input&&K.Input.cancelHeldMovement)K.Input.cancelHeldMovement();
     if(!item){K.UI.closeItemMenu();return;}
     var result=K.ItemActions.perform(action,s,item);
     if(result.message)S.addLog(result.message);

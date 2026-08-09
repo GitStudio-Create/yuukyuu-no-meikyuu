@@ -106,7 +106,12 @@
       button.addEventListener('pointerleave',stopRepeat);
     });
     document.addEventListener('pointerup',stopRepeat);
+    document.addEventListener('pointercancel',stopRepeat);
     addEventListener('blur',stopRepeat);
+    document.addEventListener('visibilitychange',function(){if(document.hidden)stopRepeat();});
+    K.Input.cancelHeldMovement=stopRepeat;
+    var oldResetModes=K.Input.resetModes;
+    K.Input.resetModes=function(){stopRepeat();return oldResetModes.apply(this,arguments);};
 
     document.querySelector('[data-floor-pickup]').addEventListener('click',actions.pickup);
     document.querySelector('[data-floor-stairs]').addEventListener('click',function(){

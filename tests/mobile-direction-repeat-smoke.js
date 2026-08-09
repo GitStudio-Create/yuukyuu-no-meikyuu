@@ -54,4 +54,8 @@ directionButtons[2].fire('pointerdown');
 assert.equal(timers.size,1,'a new press replaces the previous timer');
 directionButtons[2].fire('pointercancel');
 assert.equal(timers.size,0,'pointercancel stops repeating');
+directionButtons[0].fire('pointerdown');
+assert.equal(timers.size,1);
+Kiri.Input.cancelHeldMovement();
+assert.equal(timers.size,0,'item and mode changes can cancel held movement explicitly');
 console.log('mobile direction repeat smoke: passed');
