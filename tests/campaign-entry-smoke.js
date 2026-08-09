@@ -9,7 +9,8 @@ assert(/data-title-action="exit"[^>]*>ゲーム終了/.test(html),'static title 
 assert(!/PRESS ANY KEY|PUSH START|オプション|つづきから/.test(html),'obsolete title choices must not remain');
 assert(/<main class="game-shell" hidden aria-hidden="true">/.test(html),'legacy game UI must be hidden by default');
 assert(css.includes('.game-shell[hidden]{display:none!important}'),'hidden game shell needs an author-level fail-safe');
-assert(css.includes('body:not([data-app-state="DUNGEON"]) .game-shell{display:none!important}'),'only DUNGEON state may show the game UI');
+assert(css.includes('body:not([data-app-state="DUNGEON"]):not([data-app-state="SUSPEND"]) .game-shell{display:none!important}'),'only DUNGEON and SUSPEND states may show the game UI');
+assert(css.includes('.campaign-screen.screen-suspend-confirm'),'suspend confirmation needs its dedicated overlay');
 assert(html.indexOf('js/campaign.js')<html.indexOf('js/game.js'),'campaign controller must load before game boot');
 assert(!/<button[^>]+id="newGame"/.test(html),'dungeon header must not keep the duplicate title button');
 assert.equal((html.match(/data-floor-suspend/g)||[]).length,1,'dungeon header keeps one suspend button');

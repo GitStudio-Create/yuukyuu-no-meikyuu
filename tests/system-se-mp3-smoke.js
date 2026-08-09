@@ -5,7 +5,7 @@ global.localStorage={getItem:()=>null,setItem:()=>{},removeItem:()=>{}};
 global.addEventListener=()=>{};
 let now=1000;Date.now=()=>now+=30;
 const played=[];
-global.Audio=function(src){this.src=src;this.volume=0;this.play=()=>{played.push({src:this.src,volume:this.volume});return Promise.resolve();};};
+global.Audio=function(src){this.src=src;this.volume=0;this.currentTime=12;this.preload='';this.load=()=>{};this.play=()=>{played.push({src:this.src,volume:this.volume,currentTime:this.currentTime});return Promise.resolve();};};
 function load(f){vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f});}
 load('js/sound.js');
 Kiri.Sound._setContext({});
@@ -31,6 +31,7 @@ Kiri.Sound._setContext({});
   assert(played[index].src.includes('BGM/SE/'+file),name);
 });
 assert.equal(played.find(p=>p.src.includes('決定した音.mp3')).volume,played.find(p=>p.src.includes('メニューを開く音.mp3')).volume);
+assert(played.every(p=>p.currentTime===0),'preloaded SE pool restarts sounds without creating playback delay');
 Kiri.Sound.clearEvents();
 assert(Kiri.Sound.play('playerAttack','swordAttack'));
 assert.deepStrictEqual(Kiri.Sound.events(),['playerAttack']);

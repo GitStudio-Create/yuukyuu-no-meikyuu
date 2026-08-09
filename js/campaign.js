@@ -6,17 +6,18 @@
   function formatTime(ms){var minutes=Math.floor((ms||0)/60000),hours=Math.floor(minutes/60);return String(hours).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');}
   function formatDate(value){if(!value)return'-';try{return new Date(value).toLocaleString('ja-JP');}catch(e){return value;}}
   function updateDebug(){var box=document.querySelector('[data-campaign-debug]');if(box&&K.AdventureBooks)box.textContent=JSON.stringify(K.AdventureBooks.debug(),null,2);}
+  function playSound(name){if(K.Sound)K.Sound.play(name);}
   function useTitleBgm(name){return['start','exit-confirm','exit-message','books','book-actions','delete-confirm','event','base','king','chest','record','dungeons'].indexOf(name)>=0;}
   function isCastleScreen(name){return['base','king','chest','record','dungeons'].indexOf(name)>=0;}
   function castleTheme(){var story=K.AdventureBooks&&K.AdventureBooks.story?K.AdventureBooks.story():null,chest=story&&story.treasureChest;if(!chest||!chest.obtained)return' castle-no-chest';return chest.opened?' castle-open-chest':' castle-closed-chest';}
-  function screenMenuSelector(name){if(name==='base')return'.castle-menu-item';if(['exit-confirm','king','chest','record','dungeons'].indexOf(name)>=0)return'.campaign-card button';return'';}
+  function screenMenuSelector(name){if(name==='base')return'.castle-menu-item:not(:disabled)';if(['exit-confirm','king','chest','record','dungeons','suspend-confirm'].indexOf(name)>=0)return'.campaign-card button:not(:disabled)';return'';}
   function updateScreenSelection(next,focus){var selector=screenMenuSelector(screen),items=selector&&root.querySelectorAll?root.querySelectorAll(selector):[];if(!items.length)return;screenSelection=(next+items.length)%items.length;items.forEach(function(item,index){var on=index===screenSelection;item.classList.toggle('is-selected',on);item.setAttribute('aria-current',String(on));if(on&&focus)item.focus();});}
   function applyState(name){
-    var state=name==='event'?eventState:(STATES[name]||'TITLE'),inDungeon=state==='DUNGEON';
+    var state=name==='event'?eventState:(STATES[name]||'TITLE'),inDungeon=state==='DUNGEON',showGame=inDungeon||state==='SUSPEND';
     document.body.dataset.appState=state;
     document.body.classList.toggle('campaign-menu-open',!inDungeon);
     root.hidden=inDungeon;root.classList.toggle('hidden',inDungeon);
-    gameShell.hidden=!inDungeon;gameShell.setAttribute('aria-hidden',String(!inDungeon));
+    gameShell.hidden=!showGame;gameShell.setAttribute('aria-hidden',String(!inDungeon));
   }
   function setScreen(name,html,wide,cardClass){screen=name;screenSelection=0;root.className='campaign-screen screen-'+name+(wide?' campaign-wide':'')+(isCastleScreen(name)?castleTheme():'');root.innerHTML='<div class="campaign-card'+(cardClass?' '+cardClass:'')+'">'+html+'</div>';applyState(name);updateScreenSelection(0,false);if(useTitleBgm(name)&&K.Audio&&K.Audio.setTitle)K.Audio.setTitle();updateDebug();}
   function closeScreen(){screen='dungeon';applyState(screen);updateDebug();}
@@ -35,8 +36,8 @@
   }
   function updateTitleSelection(next){var items=root.querySelectorAll('[data-title-action]');if(!items.length)return;titleSelection=(next+items.length)%items.length;items.forEach(function(item,index){var on=index===titleSelection;item.classList.toggle('is-selected',on);item.setAttribute('aria-current',String(on));});}
   function updateBookSelection(next,focus){var cards=root.querySelectorAll('[data-book-card]');if(!cards.length)return;bookSelection=(next+cards.length)%cards.length;cards.forEach(function(card,index){var on=index===bookSelection;card.classList.toggle('is-selected',on);card.setAttribute('aria-selected',String(on));card.tabIndex=on?0:-1;if(on&&focus)card.focus();});}
-  function activateTitle(){if(titleSelection===0)booksScreen();else exitConfirm();}
-  function activateBook(slot){var result=K.AdventureBooks.slots()[slot-1];if(!result)return;if(result.error)bookActions(slot);else if(result.empty)createBook(slot);else continueBook(slot);}
+  function activateTitle(){playSound('menuSelect');if(titleSelection===0)booksScreen();else exitConfirm();}
+  function activateBook(slot){var result=K.AdventureBooks.slots()[slot-1];if(!result)return;playSound('menuSelect');if(result.error)bookActions(slot);else if(result.empty)createBook(slot);else continueBook(slot);}
   function exitConfirm(){setScreen('exit-confirm','<small>END GAME</small><h2>ゲームを終了しますか？</h2><div class="dialog-menu"><button class="title-menu-item" data-campaign="exit-game">終了する</button><button class="title-menu-item" data-campaign="start">戻る</button></div>',false,'dialog-card');}
   function exitGame(){try{window.close();}catch(e){}setScreen('exit-message','<small>END GAME</small><h2>冒険を終了しました</h2><p class="story-line">ブラウザを閉じてゲームを終了してください。</p><button data-campaign="start">タイトルへ戻る</button>');}
   function bookActions(slot){
@@ -66,17 +67,19 @@
   function chestText(story){return!story.treasureChest.obtained?'宝箱はまだ見つかっていない。':story.treasureChest.opened?'開かれた宝箱。中は空だが、不思議な力が残っている。':'古びた宝箱。固く閉ざされている。';}
   function baseScreen(message){
     var story=K.AdventureBooks.story();if(!story)return booksScreen();K.AdventureBooks.saveBase(K.State.data);
-    setScreen('base','<small>ROYAL CASTLE</small><h2>王城</h2>'+(message?'<p class="campaign-notice">'+esc(message)+'</p>':'')+'<p class="important-item">重要アイテム：'+esc(chestText(story))+'</p><nav class="castle-menu" aria-label="王城メニュー"><button class="castle-menu-item" data-campaign="king">王様と話す</button><button class="castle-menu-item" data-campaign="dungeons">ダンジョンへ向かう</button><button class="castle-menu-item" data-campaign="chest">宝箱を調べる</button><button class="castle-menu-item" data-campaign="record">冒険の書に記録する</button><button class="castle-menu-item" data-campaign="title">タイトルへ戻る</button></nav><p class="menu-guide">↑ ↓ 選択　Enter / Space 決定</p>',false,'castle-card');
+    var chestDisabled=story.treasureChest.obtained?'':' disabled aria-disabled="true"';
+    setScreen('base','<small>ROYAL CASTLE</small><h2>王城</h2>'+(message?'<p class="campaign-notice">'+esc(message)+'</p>':'')+'<p class="important-item">重要アイテム：'+esc(chestText(story))+'</p><nav class="castle-menu" aria-label="王城メニュー"><button class="castle-menu-item" data-campaign="king">王様と話す</button><button class="castle-menu-item" data-campaign="dungeons">ダンジョンへ向かう</button><button class="castle-menu-item" data-campaign="chest"'+chestDisabled+'>宝箱を調べる'+(story.treasureChest.obtained?'':'<small>まだ宝箱を持っていません</small>')+'</button><button class="castle-menu-item" data-campaign="record">冒険の書に記録する</button><button class="castle-menu-item" data-campaign="title">タイトルへ戻る</button></nav><p class="menu-guide">↑ ↓ 選択　Enter / Space 決定</p>',false,'castle-card');
   }
   function kingText(story){if(story.cleared.mysteryDungeon)return'宝箱のなぞはまだ深い。だが、おぬしの勇気は国の希望だ。';if(story.treasureChest.opened)return'宝箱から不思議な力を感じる。迷宮にも変化が起きているかもしれぬ。';if(story.treasureChest.obtained)return'おお、それが伝説の宝箱か。まずはゆっくり調べてみるとよい。';if(story.cleared.tutorialDungeon)return'よく戻った。これなら本当の迷宮も任せられそうだ。';return'まずは迷宮に慣れることだ。無理はするでないぞ。';}
   function kingScreen(){var story=K.AdventureBooks.story();setScreen('king','<small>THE KING</small><h2>王様</h2><p class="story-line">「'+esc(kingText(story))+'」</p><button data-campaign="base">王城へ戻る</button>',false,'castle-dialog-card');}
   function dungeonsScreen(){
-    setScreen('dungeons','<small>DUNGEON GATE</small><h2>どの迷宮へ向かいますか？</h2><div class="dungeon-list"><button data-dungeon="tutorialDungeon"><strong>ちょっと不思議</strong><span>全10F ／ 難易度：弱</span></button><button data-dungeon="normalDungeon"><strong>不思議</strong><span>全99F ／ 難易度：中</span></button></div><button data-campaign="base" class="secondary">戻る</button>',false,'castle-dialog-card');
+    var story=K.AdventureBooks.story(),unlocked=!!(story&&story.cleared.tutorialDungeon);
+    setScreen('dungeons','<small>DUNGEON GATE</small><h2>どの迷宮へ向かいますか？</h2><div class="dungeon-list"><button data-dungeon="tutorialDungeon"><strong>ちょっと不思議</strong><span>全10F ／ 難易度：普通</span></button><button data-dungeon="normalDungeon"'+(unlocked?'':' disabled aria-disabled="true"')+'><strong>不思議</strong><span>'+(unlocked?'基本99F ／ 難易度：普通':'未解放 ／ ちょっと不思議をクリアすると挑戦できます')+'</span></button></div><button data-campaign="base" class="secondary">戻る</button>',false,'castle-dialog-card');
   }
   function resolveDungeon(requested,story){return requested==='normalDungeon'&&story&&story.treasureChest.obtained&&story.treasureChest.opened?'mysteryDungeon':requested;}
   function beginDungeon(requested){
-    var story=K.AdventureBooks.story(),actual=resolveDungeon(requested,story);
-    function launch(){story.currentDungeon=actual;K.AdventureBooks.saveBase(K.State.data);closeScreen();K.Game.actions.newGame(actual);}
+    var story=K.AdventureBooks.story();if(requested==='normalDungeon'&&!(story&&story.cleared.tutorialDungeon))return false;var actual=resolveDungeon(requested,story);
+    function launch(){playSound('stairs');story.currentDungeon=actual;K.AdventureBooks.saveBase(K.State.data);closeScreen();K.Game.actions.newGame(actual);}
     if(actual==='mysteryDungeon'){var first=!story.events.deepEntranceSeen;story.events.deepEntranceSeen=true;playEvent(first?K.StoryEvents.deepEntrance:K.StoryEvents.deepEntranceShort,function(){K.AdventureBooks.saveBase(K.State.data);launch();},'TREASURE_EVENT');}else launch();
   }
   function chestScreen(){
@@ -87,7 +90,7 @@
   }
   function openChest(){var story=K.AdventureBooks.story();story.treasureChest.opened=true;if(K.AdventureBooks.saveBase(K.State.data))baseScreen('宝箱を開けました。迷宮を変える力が残っています。');else baseScreen(K.AdventureBooks.lastError());}
   function recordScreen(){var saved=K.AdventureBooks.saveBase(K.State.data);setScreen('record','<small>ADVENTURE RECORD</small><h2>'+(saved?'冒険の記録を残しました。':'冒険の記録に失敗しました。')+'</h2>'+(saved?'':'<p>'+esc(K.AdventureBooks.lastError())+'</p>')+'<button data-campaign="base">戻る</button>',false,'castle-dialog-card');}
-  function suspendConfirm(){setScreen('suspend-confirm','<small>SUSPEND</small><h2>ここまでの冒険を保存して中断しますか？</h2><div class="campaign-actions"><button data-campaign="suspend-save">中断する</button><button data-campaign="resume-game" class="secondary">冒険を続ける</button></div>');}
+  function suspendConfirm(){playSound('menuSelect');setScreen('suspend-confirm','<small>SUSPEND</small><h2>ここまでの冒険を保存して中断しますか？</h2><div class="campaign-actions"><button data-campaign="suspend-save">中断する</button><button data-campaign="resume-game" class="secondary">冒険を続ける</button></div>',false,'suspend-dialog-card');}
   function suspendSave(){if(K.AdventureBooks.saveDungeon()){K.UI.closeSuspend();booksScreen('冒険を記録しました。');}else{closeScreen();K.State.addLog('冒険の記録に失敗しました。ゲームを続けます。'+(K.AdventureBooks.lastError()?' '+K.AdventureBooks.lastError():''));K.UI.draw(K.State.data);}}
   function collectTreasure(state,item,index){
     if(['trialTreasure','eternalTreasure','deepTreasure'].indexOf(item.id)<0)return false;
@@ -114,9 +117,11 @@
     root.addEventListener('click',click);root.addEventListener('pointerover',function(e){var selector=screenMenuSelector(screen),title=e.target.closest('[data-title-action]'),card=e.target.closest('[data-book-card]'),menu=selector?e.target.closest(selector):null;if(title){var titles=Array.prototype.slice.call(root.querySelectorAll('[data-title-action]'));updateTitleSelection(titles.indexOf(title));}else if(card)updateBookSelection(Number(card.dataset.bookCard)-1,false);else if(menu){var items=Array.prototype.slice.call(root.querySelectorAll(selector));updateScreenSelection(items.indexOf(menu),false);}});addEventListener('keydown',keys,true);addEventListener('popstate',function(){if(screen==='dungeon')suspendConfirm();else if(screen!=='start')startScreen();});
   }
   function click(e){
-    var b=e.target.closest('button'),card=e.target.closest('[data-book-card]');if(!b){if(card)updateBookSelection(Number(card.dataset.bookCard)-1,false);return;}
+    var b=e.target.closest('button'),card=e.target.closest('[data-book-card]');if(!b){if(card)updateBookSelection(Number(card.dataset.bookCard)-1,false);return;}if(b.disabled)return;
     var action=b.dataset.campaign;
-    if(b.dataset.titleAction){titleSelection=b.dataset.titleAction==='start'?0:1;activateTitle();}else if(action==='books')booksScreen();else if(action==='start')startScreen();else if(action==='exit-game')exitGame();else if(action==='event-next')showEvent();else if(action==='base')baseScreen();else if(action==='king')kingScreen();else if(action==='dungeons')dungeonsScreen();else if(action==='chest')chestScreen();else if(action==='record')recordScreen();else if(action==='title')startScreen();else if(action==='open-chest')openChest();else if(action==='suspend-save')suspendSave();else if(action==='resume-game')closeScreen();else if(action==='take-treasure')takeTreasure();
+    if(b.dataset.titleAction){titleSelection=b.dataset.titleAction==='start'?0:1;activateTitle();return;}
+    if(!b.dataset.dungeon)playSound(b.classList&&b.classList.contains('secondary')||['books','start','base','title','resume-game'].indexOf(action)>=0?'menuCancel':'menuSelect');
+    if(action==='books')booksScreen();else if(action==='start')startScreen();else if(action==='exit-game')exitGame();else if(action==='event-next')showEvent();else if(action==='base')baseScreen();else if(action==='king')kingScreen();else if(action==='dungeons')dungeonsScreen();else if(action==='chest')chestScreen();else if(action==='record')recordScreen();else if(action==='title')startScreen();else if(action==='open-chest')openChest();else if(action==='suspend-save')suspendSave();else if(action==='resume-game')closeScreen();else if(action==='take-treasure')takeTreasure();
     else if(b.dataset.book)bookActions(Number(b.dataset.book));else if(b.dataset.create)createBook(Number(b.dataset.create));else if(b.dataset.continue)continueBook(Number(b.dataset.continue));else if(b.dataset.delete)deleteConfirm(Number(b.dataset.delete));else if(b.dataset.deleteConfirm){K.AdventureBooks.remove(Number(b.dataset.deleteConfirm));booksScreen('冒険の書を消しました。');}else if(b.dataset.dungeon)beginDungeon(b.dataset.dungeon);
   }
   function keys(e){
@@ -133,7 +138,7 @@
       if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();updateScreenSelection(screenSelection+(e.key==='ArrowDown'?1:-1),true);return;}
       if(e.key==='Enter'||e.key===' '){e.preventDefault();var selected=root.querySelector(screenMenuSelector(screen)+'.is-selected');if(selected)selected.click();return;}
     }
-    if(e.key==='Escape'){e.preventDefault();if(screen==='books'||screen==='exit-confirm'||screen==='exit-message')startScreen();else if(screen==='base')startScreen();else if(screen==='event')return;else if(screen==='suspend-confirm')closeScreen();else if(screen==='book-actions'||screen==='delete-confirm')booksScreen();else baseScreen();}
+    if(e.key==='Escape'){if(screen==='event')return;e.preventDefault();playSound('menuCancel');if(screen==='books'||screen==='exit-confirm'||screen==='exit-message')startScreen();else if(screen==='base')startScreen();else if(screen==='suspend-confirm')closeScreen();else if(screen==='book-actions'||screen==='delete-confirm')booksScreen();else baseScreen();}
   }
   K.Campaign={boot:boot,isOpen:function(){return screen!=='dungeon';},currentScreen:function(){return screen;},showStart:startScreen,showBooks:booksScreen,showBase:baseScreen,requestSuspend:suspendConfirm,collectTreasure:collectTreasure,onDungeonReturn:dungeonReturn,onGameOver:gameOver,resolveDungeon:resolveDungeon,debug:function(){return K.AdventureBooks.debug();}};
 })(window.Kiri=window.Kiri||{});

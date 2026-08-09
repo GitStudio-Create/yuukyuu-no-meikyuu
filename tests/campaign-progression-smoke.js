@@ -24,6 +24,18 @@ assert.equal(body.dataset.appState,'TITLE','safe browser exit never deletes or e
 Kiri.Campaign.showStart();
 Kiri.Campaign.showBase();
 assert(root.className.includes('castle-no-chest'),'castle uses no-chest background before treasure acquisition');
+assert(/data-campaign="chest" disabled/.test(root.innerHTML),'treasure command is disabled until the chest is obtained');
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'dungeons'}})}});
+assert(/data-dungeon="normalDungeon" disabled/.test(root.innerHTML),'normal dungeon is locked before tutorial clear');
+assert(root.innerHTML.includes('未解放 ／ ちょっと不思議をクリアすると挑戦できます'));
+const lockedScreen=root.innerHTML;
+root.listeners.click({target:{closest:()=>({disabled:true,dataset:{dungeon:'normalDungeon'}})}});
+assert.equal(root.innerHTML,lockedScreen,'disabled dungeon cannot be activated programmatically through the UI handler');
+story.cleared.tutorialDungeon=true;Kiri.Campaign.showBase();
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'dungeons'}})}});
+assert(!/data-dungeon="normalDungeon" disabled/.test(root.innerHTML),'existing tutorial clear flag unlocks normal dungeon');
+assert(root.innerHTML.includes('基本99F ／ 難易度：普通'));
+story.cleared.tutorialDungeon=false;
 Kiri.Campaign.showStart();
 
 const inventory=Array.from({length:20},(_,i)=>({id:'item'+i})),chest={id:'eternalTreasure',category:'treasure'},state={dungeonId:'normalDungeon',floor:27,gameOver:false,player:{level:4},inventory,groundItems:[chest],stairs:{x:2,y:2,type:'down'},treasureState:{returning:false,obtained:{},rank:{}}};
@@ -43,6 +55,7 @@ assert(logs.some(text=>text.includes('大切な宝箱')));
 
 Kiri.Campaign.requestSuspend();
 assert.equal(body.dataset.appState,'SUSPEND');
+assert.equal(shell.hidden,false,'suspend overlay keeps the current dungeon visible');
 root.listeners.click({target:{closest:()=>({dataset:{campaign:'resume-game'}})}});
 assert.equal(body.dataset.appState,'DUNGEON','cancel resumes the dungeon');
 Kiri.Campaign.requestSuspend();
