@@ -161,7 +161,8 @@
 - BGMは階層テーマに応じてMP3を切り替えます。
 - SEは `BGM/SE` 配下のMP3を使用します。
 - 画面の正式決定は `決定した音.mp3`、戻る・Esc・中止は `キャンセルする音.mp3`、迷宮突入は `階段を上り下りする音.mp3` を共通SE管理から再生します。
-- 頻出SEは起動時に `preload="auto"` の3音プールへ読み込み、最初の `pointerdown` / `keydown` をキャプチャして音声を解放します。再生時の `new Audio()` 生成は行いません。
+- 頻出SEは最初の `pointerdown` / `keydown` で共有AudioContextを `resume()` し、バックグラウンドでfetch・`decodeAudioData()`してAudioBufferを保持します。再生時は新しいAudioBufferSourceNodeから `start(0)` し、バッファ未準備・Web Audio失敗時だけ起動時に用意したHTMLAudioプールへフォールバックします。
+- `K.Sound.timings()` で攻撃入力、共通SE呼び出し、Web Audioの `source.start(0)`（HTMLAudioフォールバック時は `playing`）の時刻を確認できます。通常はコンソール出力せず、`K.Sound.debugTimings(true)` を明示した時だけ `[SE DEBUG]` を出します。
 - レベルアップSEは `BGM/レベルアップ.mp3` を使用します。
 - スマホやブラウザではユーザー操作前に音が鳴らない制限があるため、音が出ない場合はオーディオ初期化・ユーザー操作起点の再生処理を確認してください。
 

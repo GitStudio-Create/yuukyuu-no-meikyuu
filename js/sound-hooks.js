@@ -16,9 +16,9 @@
   var a=K.Game.actions;
   function wrap(name,before,after){var old=a[name];if(!old)return;a[name]=function(){if(before)before.apply(this,arguments);var result=old.apply(this,arguments);if(after)after.call(this,result);return result;};}
   var attackHpBefore=0,attackMaySound=false;
-  wrap('attack',function(){var s=K.State.data;attackHpBefore=enemyHp(s);attackMaySound=!(K.Game.isInputLocked&&K.Game.isInputLocked())&&!(s.player.status&&s.player.status.sleep>0);},function(){if(attackMaySound&&enemyHp(K.State.data)===attackHpBefore)play('playerAttack',attackVariant(K.State.data,true));});
+  wrap('attack',function(){var s=K.State.data;if(K.Sound&&K.Sound.markInput)K.Sound.markInput('attack');attackHpBefore=enemyHp(s);attackMaySound=!(K.Game.isInputLocked&&K.Game.isInputLocked())&&!(s.player.status&&s.player.status.sleep>0);},function(){if(attackMaySound&&enemyHp(K.State.data)===attackHpBefore)play('playerAttack',attackVariant(K.State.data,true));});
   var oldMove=a.move;a.move=function(){return oldMove.apply(this,arguments);};
-  wrap('shootArrow',null,function(result){if(result)play('arrow');});wrap('descend',null,function(result){if(result)play('stairs');});wrap('stayStairs',function(){play('menuCancel');});
+  wrap('descend',null,function(result){if(result)play('stairs');});wrap('stayStairs',function(){play('menuCancel');});
   wrap('requestItemAction',null,function(result){if(result)play('menuSelect');});wrap('confirmItemAction',null,function(result){if(result)play('menuSelect');});wrap('cancelItemAction',function(){play('menuCancel');});wrap('closeItemDetails',function(){play('menuCancel');});
   var statusWasOpen=false;
   wrap('toggleStatus',function(){statusWasOpen=!!(K.UI&&K.UI.isStatusOpen&&K.UI.isStatusOpen());},function(result){play(statusWasOpen?'menuCancel':'menuOpen');});
