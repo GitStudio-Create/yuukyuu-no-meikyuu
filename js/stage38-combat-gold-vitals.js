@@ -28,7 +28,7 @@
   }
   function applyStrengthDamage(state,amount,source,opts){
     opts=opts||{};var p=state.player,before=p.power===undefined?8:p.power;
-    if(K.Items.hasEffect(state,'poisonGuard')){if(!opts.silent)K.State.addLog('毒よけの指輪が毒を防いだ。');return 0;}
+    if(K.Items.hasEffect(state,'poisonGuard')||K.Items.hasEffect(state,'strengthGuard')){if(!opts.silent)K.State.addLog(K.Items.hasEffect(state,'poisonGuard')?'毒よけの指輪が毒を防いだ。':'毒よけの盾がちから低下を防いだ。');return 0;}
     p.power=Math.max(0,before-Math.max(0,Math.floor(amount||0)));
     var down=before-p.power;
     if(!opts.silent){
@@ -63,7 +63,7 @@
   }
   K.Gold={create:createGold,name:goldName,amountForFloor:goldAmountForFloor,placeFloorGold:placeFloorGold,dropAt:dropGoldAt,collect:collectGold,collectAtPlayer:collectGoldAtPlayer,min:GOLD_DROP_MIN,max:GOLD_DROP_MAX,chance:GOLD_CHANCE};
   K.Ranking={key:RANKING_KEY,list:readRanking,recordGameOver:recordGameOver};
-  function normalizeState(state){if(!state||!state.player)return state;var p=state.player;if(p.hpRegenAccumulator===undefined)p.hpRegenAccumulator=0;if(p.lastHpRegen===undefined)p.lastHpRegen=0;p.status=p.status||{};p.status.poison=0;state.groundItems=(state.groundItems||[]).map(function(item){if(item&&item.id==='gold')item.category='gold';return item;});return state;}
+  function normalizeState(state){if(!state||!state.player)return state;var p=state.player;if(p.hpRegenAccumulator===undefined)p.hpRegenAccumulator=0;if(p.lastHpRegen===undefined)p.lastHpRegen=0;p.status=p.status||{};p.status.poison=p.status.poison||0;p.status.trapSight=p.status.trapSight||0;state.groundItems=(state.groundItems||[]).map(function(item){if(item&&item.id==='gold')item.category='gold';return item;});return state;}
   var oldResetState=K.State.reset,oldLoadState=K.State.load;
   K.State.reset=function(){return normalizeState(oldResetState.apply(this,arguments));};
   K.State.load=function(){var ok=oldLoadState.apply(this,arguments);if(ok)normalizeState(this.data);return ok;};
@@ -90,8 +90,9 @@
     }
     if(action==='drink'&&item.id==='poisonHerb'){
       var herbName=K.Items.name(item);state.player.food=Math.min(state.player.maxFood||100,state.player.food+5);removeInventory(state,item);K.Items.identify(item);
-      directDamage(state,5,herbName,{silent:true});var lowered=applyStrengthDamage(state,3,herbName,{silent:true});
-      return{success:true,message:herbName+'を飲んだ。\nHPが5減った。\n'+(lowered>0?'ちからが'+lowered+'下がった。':'毒よけがちから低下を防いだ。')};
+      if(K.Items.hasEffect(state,'poisonGuard')){state.player.status.poison=0;return{success:true,message:herbName+'を飲んだ。\n毒よけの指輪が毒を防いだ。'};}
+      state.player.status.poison=12;directDamage(state,5,herbName,{silent:true});var lowered=applyStrengthDamage(state,3,herbName,{silent:true});
+      return{success:true,message:herbName+'を飲んだ。\nHPが5減り、毒状態になった。\n'+(lowered>0?'ちからが'+lowered+'下がった。':'毒よけの盾がちから低下を防いだ。')};
     }
     if(action==='drink'&&item.id==='powerMendHerb'){
       var before=state.player.power;state.player.food=Math.min(state.player.maxFood||100,state.player.food+5);state.player.power=state.player.maxPower;removeInventory(state,item);K.Items.identify(item);

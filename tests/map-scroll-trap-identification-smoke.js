@@ -61,17 +61,17 @@ assert(trapOnly.traps.every(t=>t.revealed&&t.identified));
 assert.equal(Kiri.TrapRenderer.knowledgeState(trapOnly.traps[0]),'identified');
 assert.equal(Kiri.TrapRenderer.detail(trapOnly.traps[0]).name,'眠り糸の印');
 
-// ワナ見え草も紙片と同じく、位置だけでなく種類まで判明する。
+// ワナ見え草は効果中、隣接した罠だけを識別する（遠い罠は変化しない）。
 let herbOnly=arena();
 let sightHerb=Kiri.Items.create('sightHerb',undefined,undefined,herbOnly.dungeonId);
 result=Kiri.ItemActions.perform('drink',herbOnly,sightHerb);
 assert(result.success);
-assert.equal(herbOnly.vision.traps,true);
+assert.equal(herbOnly.vision.traps,false);
 assert.equal(herbOnly.vision.mapAll,false);
 assert.equal(herbOnly.vision.items,false);
-assert(herbOnly.traps.every(t=>t.revealed&&t.identified));
-assert.equal(Kiri.TrapRenderer.knowledgeState(herbOnly.traps[0]),'identified');
-assert.equal(Kiri.TrapRenderer.detail(herbOnly.traps[0]).name,'眠り糸の印');
+assert.equal(herbOnly.player.status.trapSight,20);
+assert.equal(herbOnly.traps[0].revealed,false);
+assert.equal(Kiri.TrapRenderer.knowledgeState(herbOnly.traps[0]),'hidden');
 
 // 踏んで判明した罠と、紙片で判明した罠は同じ固有表示状態になる。
 let stepped={x:9,y:6,id:'dreamSeal',revealed:false,identified:false};

@@ -53,7 +53,7 @@ let scroll=Kiri.Items.create('trapScroll',undefined,undefined,s.dungeonId);
 s.inventory=[scroll];
 Kiri.ItemActions.perform('read',s,scroll);
 assert(s.traps[0].revealed);
-assert.equal(s.traps[0].identified,false);
+assert.equal(s.traps[0].identified,true);
 
 let migrated=Kiri.State.migrate({dungeonId:'normalDungeon',floor:1,deepestFloor:1,vision:{},player:Kiri.State.fresh().player,inventory:[],groundItems:[],traps:[{x:1,y:1,id:'bileBloom',revealed:true}],rooms:[],enemies:[],log:[]});
 assert.equal(migrated.traps[0].identified,false);

@@ -5,7 +5,7 @@ function table(kind){
     moonHerb:10,starHerb:5,powerMendHerb:4,powerSeedHerb:3,levelHerb:2,swiftHerb:3,sightHerb:3,poisonHerb:3,confuseHerb:3,blindHerb:2,invisibleHerb:1,sleepHerb:3,warpHerb:3,flameHerb:6,
     thunderStaff:4,slowStaff:3,sleepStaff:3,confuseStaff:3,blindStaff:2,invisibleStaff:1,warpStaff:3,changeStaff:2,hasteStaff:2,sacrificeStaff:2,
     escapeScroll:2,weaponScroll:3,shieldScroll:3,uncurseScroll:3,identifyScroll:3,mapScroll:3,trapScroll:2,itemScroll:2,enemyScroll:2,blastScroll:3,foodScroll:2,chargeScroll:2,
-    emberBlade:5,willowBlade:4,mistSaber:3,stoneAxe:3,dawnEdge:2,
+    emberBlade:5,willowBlade:4,mistSaber:3,stoneAxe:3,dawnEdge:2,beastBlade:0,magicBlade:0,dragonBlade:0,
     barkShield:4,leatherShield:4,mossShield:4,clearShield:3,emberShield:3,everShield:2,
     mightRing:2,antidoteRing:2,wakeRing:2,fastingRing:2,safeRing:2,driftRing:2,
     reedArrow:5,ironArrow:3,pierceArrow:2

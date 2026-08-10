@@ -44,7 +44,7 @@
   }
   function isReturning(state){return !!(state&&state.treasureState&&state.treasureState.returning);}
   function resetFloorEffects(state){
-    state.vision={traps:false,items:false,enemies:false,mapAll:false};
+    state.vision={traps:false,items:false,enemies:false,mapAll:false,mapOnly:false};
   }
   function clearMessage(state){
     var ranks=state.treasureState&&state.treasureState.rank?Object.keys(state.treasureState.rank).filter(function(k){return state.treasureState.rank[k];}):[];

@@ -16,7 +16,7 @@
       treasureState:{returning:false,obtained:{},rank:{}},
       player:{
         x:0,y:0,hp:24,maxHp:24,food:100,maxFood:100,power:8,maxPower:8,level:1,exp:0,gold:0,baseDefense:0,
-        status:{sleep:0,confuse:0,haste:0,blind:0,invisible:0,slow:0},
+        status:{sleep:0,confuse:0,haste:0,blind:0,invisible:0,slow:0,poison:0,trapSight:0},
         equipment:{weapon:null,shield:null,ring:null},
         facingDirection:{dx:0,dy:1,id:'S'},
         facing8:'S',
@@ -61,7 +61,7 @@
     p.maxPower=p.maxPower||p.power||8;
     p.baseDefense=p.baseDefense||0;
     p.status=p.status||{sleep:0,confuse:0,haste:0};
-    p.status.sleep=p.status.sleep||0;p.status.confuse=p.status.confuse||0;p.status.haste=p.status.haste||0;p.status.blind=p.status.blind||0;p.status.invisible=p.status.invisible||0;p.status.slow=p.status.slow||0;
+    p.status.sleep=p.status.sleep||0;p.status.confuse=p.status.confuse||0;p.status.haste=p.status.haste||0;p.status.blind=p.status.blind||0;p.status.invisible=p.status.invisible||0;p.status.slow=p.status.slow||0;p.status.poison=p.status.poison||0;p.status.trapSight=p.status.trapSight||0;
     p.equipment=p.equipment||{weapon:null,shield:null,ring:null};
     d.inventory=(d.inventory||[]).map(function(i){return K.Items.normalize(i,d.dungeonId);}).filter(Boolean);
     ['weapon','shield','ring','arrow'].forEach(function(slot){

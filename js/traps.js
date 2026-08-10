@@ -24,15 +24,14 @@
   function applyPlayer(state,trap){
     var p=state.player,d=def(trap),message='「'+d.name+'」が作動した。';
     reveal(trap);
-    if(K.Items.hasEffect(state,'trapGuard'))return{message:'足見の指輪が「'+d.name+'」を退けた。',soundPlayed:!!trap._trapSoundPlayed};
+    if(K.Items.hasEffect(state,'trapGuard'))return{message:'ワナよけの指輪が「'+d.name+'」を退けた。',soundPlayed:!!trap._trapSoundPlayed};
     if(d.effect==='damage'){
       p.hp=Math.max(0,p.hp-6);
       message+=' 6のダメージ。';
     }else if(d.effect==='poison'){
       var before=p.power;
-      if(K.PlayerVitals)K.PlayerVitals.applyStrengthDamage(state,1,d.name,{silent:true});
-      else p.power=Math.max(0,(p.power||8)-1);
-      message+=' ちからが'+Math.max(0,before-p.power)+'下がった。';
+      if(K.Items.hasEffect(state,'poisonGuard'))message+=' 毒よけの指輪が毒を防いだ。';
+      else{p.status.poison=12;if(K.PlayerVitals)K.PlayerVitals.applyStrengthDamage(state,1,d.name,{silent:true});else if(!K.Items.hasEffect(state,'strengthGuard'))p.power=Math.max(0,(p.power||8)-1);message+=' 毒状態になった。ちからが'+Math.max(0,before-p.power)+'下がった。';}
     }else if(d.effect==='sleep'){
       if(!K.Items.hasEffect(state,'sleepGuard'))p.status.sleep=5;
       message+=' 眠気に包まれた。';

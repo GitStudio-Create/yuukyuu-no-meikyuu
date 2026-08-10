@@ -42,6 +42,14 @@
     {id:'manyCore',name:'ふえるコア',role:'splitter',floorRange:[31,99],hp:60,attack:20,defense:5,exp:230,behaviorType:'fast',specialAbility:'split',splitChance:.30,spawnWeight:3,maxPerFloor:3,dropRate:.30,dropCategories:['herb','rare'],color:'#b26978',iconShape:'poison',description:'倍速で動き、傷つくと分裂する危険な核。増える前に対処したい。',tier:5},
     {id:'abyssOracle',name:'深層まどうし',role:'lateBoss',floorRange:[35,99],hp:68,attack:36,defense:6,exp:320,behaviorType:'ranged',specialAbility:'staffCast',specialChance:.55,specialCooldown:1,specialRange:7,statusDuration:7,spawnWeight:3,maxPerFloor:2,dropRate:.25,dropCategories:['rare','staff','scroll'],color:'#58417d',iconShape:'star',description:'深い階で強い妨害術を使う。射線と状態異常対策が重要。',tier:5}
   ];
+  var combatTags={
+    driftMoth:['flying'],dozeBud:['plant'],stoneBeak:['flying'],bileToad:['beast'],dreamWisp:['plant','flying','spirit'],needleWing:['flying'],
+    mudBrute:['armored'],reedSniper:['plant'],pocketImp:['beast','magic'],shyShell:['beast','shell'],spiralEye:['magic'],rustMaw:['beast'],
+    hungerShade:['spirit','shadow'],mirrorSeed:['plant'],riftFox:['beast'],wallWraith:['spirit','shadow'],oakGiant:['plant','rock'],
+    emberHorn:['beast','dragon'],staffAdept:['magic'],roomWatcher:['magic'],frostCrown:['ice','beast'],voidKnight:['armored','spirit'],
+    manyCore:['rock','magic'],abyssOracle:['magic','spirit']
+  };
+  list.forEach(function(enemy){enemy.tags=Object.freeze((combatTags[enemy.id]||[]).slice());});
   var byId={};list.forEach(function(d){byId[d.id]=d;});
   function allowed(d,id,floor){
     var mode=K.Dungeons&&K.Dungeons.get?K.Dungeons.get(id):null;
@@ -80,7 +88,7 @@
       var d=this.get(e.definitionId||e.id);
       e.definitionId=d.id;
       if(!e.name||(legacyNames[d.id]||[]).indexOf(e.name)>=0)e.name=d.name;
-      ['role','defense','behaviorType','specialAbility','color','iconShape','description','spawnWeight','maxPerFloor',
+      ['role','defense','behaviorType','specialAbility','color','iconShape','description','spawnWeight','maxPerFloor','tags',
        'specialChance','specialCooldown','specialRange','statusDuration','rangedDamage','hungerDamage','stealType',
        'splitChance','warpChance','rustChance','sleepChance','confuseChance','poisonChance','spawnSleepChance'
       ].forEach(function(k){if(e[k]===undefined&&d[k]!==undefined)e[k]=d[k];});

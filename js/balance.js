@@ -8,6 +8,9 @@
   }
   function itemTable(id,floor){
     var table=clone(K.Dungeons.get(id).itemSpawnTable),support=['thunderStaff','slowStaff','sleepStaff','confuseStaff','blindStaff','invisibleStaff','warpStaff','blastScroll','trapScroll','mapScroll','enemyScroll','uncurseScroll'];
+    if(floor>=5)table.beastBlade=3;
+    if(floor>=15)table.magicBlade=2;
+    if(floor>=25)table.dragonBlade=1;
     if(floor>=11)support.forEach(function(k){table[k]=(table[k]||0)+2;});
     if(floor>=9)table.ironArrow=(table.ironArrow||0)+2;
     if(floor>=21){support.forEach(function(k){table[k]=(table[k]||0)+2;});table.moonHerb=(table.moonHerb||0)+4;table.starHerb=(table.starHerb||0)+3;table.nutBread=(table.nutBread||0)+3;table.bigBread=(table.bigBread||0)+2;table.ironArrow=(table.ironArrow||0)+2;table.pierceArrow=(table.pierceArrow||0)+2;}

@@ -65,9 +65,9 @@ assert(Kiri.Visibility.shouldShowItemOnMap(s,s.groundItems[0]));
 s=arena();
 Kiri.ItemActions.perform('drink',s,Kiri.Items.create('sightHerb',undefined,undefined,s.dungeonId));
 data=Kiri.UI.floorMapData(s);
-assert.equal(s.vision.traps,true);
-assert(s.traps.every(t=>t.revealed&&t.identified));
-assert.equal(data.traps.length,1);
+assert.equal(s.vision.traps,false);
+assert(s.traps.every(t=>!t.revealed&&!t.identified));
+assert.equal(data.traps.length,0);
 assert(!data.tiles.some(t=>t.x===26&&t.y===19));
 
 s=arena();

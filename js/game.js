@@ -17,7 +17,7 @@
     if(K.ActionSequence&&K.ActionSequence.flush)K.ActionSequence.flush();
     if(K.Animation&&K.Animation.clearProjectiles)K.Animation.clearProjectiles();
     var s=S.data,g=K.Map.generate(),mode=K.Dungeons.get(s.dungeonId),theme=K.Themes.forFloor(s.floor),plan=K.Balance.floorPlan(s.dungeonId,s.floor);
-    s.map=g.tiles;s.rooms=g.rooms;s.enemies=[];s.groundItems=[];s.traps=[];s.monsterHouse=null;s.seen={};s.vision={traps:false,items:false,enemies:false,mapAll:false};s.crystalWalls=[];
+    s.map=g.tiles;s.rooms=g.rooms;s.enemies=[];s.groundItems=[];s.traps=[];s.monsterHouse=null;s.seen={};s.vision={traps:false,items:false,enemies:false,mapAll:false,mapOnly:false};s.crystalWalls=[];
     s.floorTheme=theme.name;s.bgmThemeName=theme.bgmThemeName;s.deepestFloor=Math.max(s.deepestFloor||1,s.floor);
     var start=s.rooms[0],goal=s.rooms[s.rooms.length-1];
     s.player.x=start.cx;s.player.y=start.cy;s.stairs={x:goal.cx,y:goal.cy,type:(K.Treasures&&K.Treasures.isReturning(s))?'up':'down'};
@@ -210,7 +210,9 @@
     tickPlayerStatus(p,'blind','目つぶしが治った。');
     tickPlayerStatus(p,'invisible','透明の効果が切れた。');
     tickPlayerStatus(p,'slow','体の重さが消えた。');
-    p.status.poison=0;
+    if(p.status.poison>0&&K.Items.hasEffect(s,'poisonGuard')){p.status.poison=0;S.addLog('毒よけの指輪が毒を消した。');}
+    else if(p.status.poison>0){p.status.poison--;if(p.status.poison%3===0){p.hp=Math.max(0,p.hp-1);S.addLog('毒でHPが1減った。');}if(p.status.poison===0)S.addLog('毒が消えた。');}
+    tickPlayerStatus(p,'trapSight','ワナ見え草の効果が切れた。');
     var skipEnemy=p.status.haste>0&&s.turn%2===0;
     if(options&&options.delayEnemy){
       s.turnLocked=true;
