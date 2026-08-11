@@ -5,11 +5,11 @@ function node(){return{className:'',classList:classes(),attributes:{},listeners:
 const root=node(),shell=node(),titleButton=node(),body={classList:classes(),dataset:{}},globalListeners={};
 global.document={body,createElement:()=>node(),querySelector(q){if(q==='#campaignScreen')return root;if(q==='.game-shell')return shell;if(q==='#newGame')return titleButton;if(q==='#gmPanel .gm-grid')return null;if(q==='[data-campaign-debug]')return null;return null;}};
 global.addEventListener=(t,f)=>{globalListeners[t]=f;};
-let story={openingSeen:true,questAccepted:true,cleared:{tutorialDungeon:false,normalDungeon:false,mysteryDungeon:false},treasureChest:{obtained:false,opened:false},events:{deepEntranceSeen:false,endingSeen:false}},dungeonSaves=0,baseSaves=0,logs=[],saveOk=true,titleCalls=0;
+let story={openingSeen:true,questAccepted:true,cleared:{tutorialDungeon:false,normalDungeon:false,mysteryDungeon:false},treasureChest:{obtained:false,opened:false},events:{deepEntranceSeen:false,endingSeen:false}},dungeonSaves=0,baseSaves=0,logs=[],saveOk=true,titleCalls=0,titleUnlocks=0;
 global.Kiri={
   AdventureBooks:{slots:()=>[],story:()=>story,saveDungeon:()=>{dungeonSaves++;return saveOk;},saveBase:()=>{baseSaves++;return true;},debug:()=>({slot:1}),lastError:()=>'保存領域を使用できません。'},
   StoryEvents:{opening:[],deepEntrance:[],deepEntranceShort:[],ending:[]},
-  Dungeons:{get:id=>({name:id,shortName:id})},State:{data:null,addLog:text=>logs.push(text)},UI:{draw(){},closeSuspend(){}},Map:{reveal(){}},Audio:{setTitle(){titleCalls++;}}
+  Dungeons:{get:id=>({name:id,shortName:id})},State:{data:null,addLog:text=>logs.push(text)},UI:{draw(){},closeSuspend(){}},Map:{reveal(){}},Audio:{setTitle(){titleCalls++;},unlock(){titleUnlocks++;}}
 };
 vm.runInThisContext(fs.readFileSync('js/campaign.js','utf8'),{filename:'js/campaign.js'});
 Kiri.Campaign.boot();
@@ -22,6 +22,13 @@ root.listeners.click({target:{closest:()=>({dataset:{campaign:'exit-game'}})}});
 assert(root.innerHTML.includes('ブラウザを閉じてゲームを終了してください。'));
 assert.equal(body.dataset.appState,'TITLE','safe browser exit never deletes or enters a dungeon');
 Kiri.Campaign.showStart();
+globalListeners.keydown({key:'Enter',preventDefault(){}});
+assert.equal(titleUnlocks,1,'Enter on the title start action explicitly unlocks BGM');
+assert.equal(body.dataset.appState,'ADVENTURE_BOOKS','BGM unlock is followed by the adventure-book screen');
+Kiri.Campaign.showStart();
+root.listeners.click({target:{closest:()=>({dataset:{titleAction:'start'}})}});
+assert.equal(titleUnlocks,2,'click or tap on the title start action explicitly unlocks BGM');
+assert.equal(body.dataset.appState,'ADVENTURE_BOOKS');
 Kiri.Campaign.showBase();
 assert(root.className.includes('castle-no-chest'),'castle uses no-chest background before treasure acquisition');
 assert(/data-campaign="chest" disabled/.test(root.innerHTML),'treasure command is disabled until the chest is obtained');

@@ -55,7 +55,7 @@
       for(var i=0;!raw&&i<LEGACY_KEYS.length;i++){raw=localStorage.getItem(LEGACY_KEYS[i]);legacy=!!raw;}
       var data=JSON.parse(raw);
       if(data){
-        enabled=true;
+        if(typeof data.enabled==='boolean')enabled=data.enabled;
         volume=Math.max(0,Math.min(1,Number(data.volume)));
         if(!Number.isFinite(volume)||volume<.05)volume=.35;
         save();
@@ -92,11 +92,10 @@
         audio.volume=volume;
         save();
       });
-      ['pointerdown','click','touchstart','keydown'].forEach(function(type){document.addEventListener(type,function(){K.Audio.unlock();},{once:true,passive:true});});
       updateControls();
       this.setTheme(requestedFloor);
     },
-    unlock:function(){unlocked=true;play();},
+    unlock:function(){unlocked=true;play();return true;},
     setTheme:function(floor){requestedFloor=floor;return setFile(fileFor(floor));},
     setTitle:function(){return setFile(TITLE_FILE);},
     setSpecial:function(name){return setFile(specialTracks[name]||'');},

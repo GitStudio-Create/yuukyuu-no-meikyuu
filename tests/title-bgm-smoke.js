@@ -10,6 +10,7 @@ global.addEventListener=(type,fn)=>{globalListeners[type]=fn;};
 global.Kiri={};
 vm.runInThisContext(fs.readFileSync('js/audio.js','utf8'),{filename:'js/audio.js'});
 globalListeners.DOMContentLoaded();
+assert.equal(Object.keys(documentListeners).length,0,'BGM unlock is not attached to unrelated document gestures');
 
 assert.equal(Kiri.Audio.fileForTitle(),'悠久の迷宮（ゲームタイトル曲）.mp3');
 Kiri.Audio.setTitle();
@@ -19,6 +20,8 @@ Kiri.Audio.setTitle();
 assert.equal(bgm.loads,titleLoads,'same title track must not reload on campaign screen changes');
 Kiri.Audio.unlock();
 assert.equal(bgm.plays,1,'first user gesture unlock starts the selected title track');
+Kiri.Audio.unlock();
+assert.equal(bgm.plays,1,'repeated title decisions do not start a duplicate BGM');
 Kiri.Audio.setTheme(1);
 assert.equal(bgm.src,'BGM/1_心淵の扉_1F~2F.mp3');
 Kiri.Audio.setTitle();

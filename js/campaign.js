@@ -36,7 +36,7 @@
   }
   function updateTitleSelection(next){var items=root.querySelectorAll('[data-title-action]');if(!items.length)return;titleSelection=(next+items.length)%items.length;items.forEach(function(item,index){var on=index===titleSelection;item.classList.toggle('is-selected',on);item.setAttribute('aria-current',String(on));});}
   function updateBookSelection(next,focus){var cards=root.querySelectorAll('[data-book-card]');if(!cards.length)return;bookSelection=(next+cards.length)%cards.length;cards.forEach(function(card,index){var on=index===bookSelection;card.classList.toggle('is-selected',on);card.setAttribute('aria-selected',String(on));card.tabIndex=on?0:-1;if(on&&focus)card.focus();});}
-  function activateTitle(){playSound('menuSelect');if(titleSelection===0)booksScreen();else exitConfirm();}
+  function activateTitle(){if(titleSelection===0&&K.Audio&&K.Audio.unlock)K.Audio.unlock();playSound('menuSelect');if(titleSelection===0)booksScreen();else exitConfirm();}
   function activateBook(slot){var result=K.AdventureBooks.slots()[slot-1];if(!result)return;playSound('menuSelect');if(result.error)bookActions(slot);else if(result.empty)createBook(slot);else continueBook(slot);}
   function exitConfirm(){setScreen('exit-confirm','<small>END GAME</small><h2>ゲームを終了しますか？</h2><div class="dialog-menu"><button class="title-menu-item" data-campaign="exit-game">終了する</button><button class="title-menu-item" data-campaign="start">戻る</button></div>',false,'dialog-card');}
   function exitGame(){try{window.close();}catch(e){}setScreen('exit-message','<small>END GAME</small><h2>冒険を終了しました</h2><p class="story-line">ブラウザを閉じてゲームを終了してください。</p><button data-campaign="start">タイトルへ戻る</button>');}
