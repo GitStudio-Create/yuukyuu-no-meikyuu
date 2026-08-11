@@ -73,8 +73,8 @@
   function kingText(story){if(story.cleared.mysteryDungeon)return'宝箱のなぞはまだ深い。だが、おぬしの勇気は国の希望だ。';if(story.treasureChest.opened)return'宝箱から不思議な力を感じる。迷宮にも変化が起きているかもしれぬ。';if(story.treasureChest.obtained)return'おお、それが伝説の宝箱か。まずはゆっくり調べてみるとよい。';if(story.cleared.tutorialDungeon)return'よく戻った。これなら本当の迷宮も任せられそうだ。';return'まずは迷宮に慣れることだ。無理はするでないぞ。';}
   function kingScreen(){var story=K.AdventureBooks.story();setScreen('king','<small>THE KING</small><h2>王様</h2><p class="story-line">「'+esc(kingText(story))+'」</p><button data-campaign="base">戻る</button>',false,'castle-dialog-card');}
   function dungeonsScreen(){
-    var story=K.AdventureBooks.story(),unlocked=!!(story&&story.cleared.tutorialDungeon);
-    setScreen('dungeons','<small>DUNGEON GATE</small><h2>どの迷宮へ向かいますか？</h2><div class="dungeon-list"><button data-dungeon="tutorialDungeon"><strong>ちょっと不思議</strong><span>全10F ／ 難易度：普通</span></button><button data-dungeon="normalDungeon"'+(unlocked?'':' disabled aria-disabled="true"')+'><strong>不思議</strong><span>'+(unlocked?'基本99F ／ 難易度：普通':'未解放 ／ ちょっと不思議をクリアすると挑戦できます')+'</span></button></div><button data-campaign="base" class="secondary">戻る</button>',false,'castle-dialog-card');
+    var story=K.AdventureBooks.story(),unlocked=!!(story&&story.cleared.tutorialDungeon),deeper=!!(story&&story.treasureChest&&story.treasureChest.opened),secondName=deeper?'もっと不思議':'不思議',secondGuide='27Fへ行くと、不思議な宝があるとの噂があるらしい。';
+    setScreen('dungeons','<small>DUNGEON GATE</small><h2>どの迷宮へ向かいますか？</h2><div class="dungeon-list"><button data-dungeon="tutorialDungeon"><strong>ちょっと不思議</strong><span>10Fへ行くと、王様に依頼された物があるみたいだ。</span></button><button data-dungeon="normalDungeon"'+(unlocked?'':' disabled aria-disabled="true"')+'><strong>'+secondName+'</strong><span>'+(unlocked?secondGuide:'未解放 ／ ちょっと不思議をクリアすると挑戦できます')+'</span></button></div><button data-campaign="base" class="secondary">戻る</button>',false,'castle-dialog-card');
   }
   function resolveDungeon(requested,story){return requested==='normalDungeon'&&story&&story.treasureChest.obtained&&story.treasureChest.opened?'mysteryDungeon':requested;}
   function beginDungeon(requested){

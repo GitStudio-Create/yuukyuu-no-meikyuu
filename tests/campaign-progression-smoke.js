@@ -34,7 +34,9 @@ assert.equal(root.innerHTML,lockedScreen,'disabled dungeon cannot be activated p
 story.cleared.tutorialDungeon=true;Kiri.Campaign.showBase();
 root.listeners.click({target:{closest:()=>({dataset:{campaign:'dungeons'}})}});
 assert(!/data-dungeon="normalDungeon" disabled/.test(root.innerHTML),'existing tutorial clear flag unlocks normal dungeon');
-assert(root.innerHTML.includes('基本99F ／ 難易度：普通'));
+assert(root.innerHTML.includes('10Fへ行くと、王様に依頼された物があるみたいだ。'));
+assert(root.innerHTML.includes('27Fへ行くと、不思議な宝があるとの噂があるらしい。'));
+assert(!root.innerHTML.includes('基本99F')&&!root.innerHTML.includes('難易度：普通'));
 story.cleared.tutorialDungeon=false;
 Kiri.Campaign.showStart();
 
@@ -86,6 +88,11 @@ assert(root.className.includes('castle-closed-chest')&&root.innerHTML.includes('
 root.listeners.click({target:{closest:()=>({dataset:{campaign:'open-chest'}})}});
 assert(story.treasureChest.opened,'opening the treasure reuses the saved story flag');
 assert(root.className.includes('castle-open-chest'),'opening the treasure updates the castle background without reload');
+story.cleared.tutorialDungeon=true;
+root.listeners.click({target:{closest:()=>({dataset:{campaign:'dungeons'}})}});
+assert(root.innerHTML.includes('<strong>もっと不思議</strong>'));
+assert(root.innerHTML.includes('27Fへ行くと、不思議な宝があるとの噂があるらしい。'));
+assert(!root.innerHTML.includes('99F'));
 
 const deathState={dungeonId:'normalDungeon',floor:8,gameOver:false,player:{level:2}};
 Kiri.Campaign.onGameOver(deathState);
