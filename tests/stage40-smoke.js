@@ -43,29 +43,29 @@ s=arena();s.player.food=1;s.player.hungerAccumulator=90;const hp=s.player.hp;
 Kiri.Hunger.processTurn(s);assert.equal(s.player.food,0);assert.equal(s.player.hp,hp);assert(s.log[0].includes('お腹'));
 Kiri.Hunger.processTurn(s);assert.equal(s.player.hp,hp-1);assert.equal(s.player.lastHungerDamage,1);
 
-s=arena();s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let herb=ground('moonHerb',s);let detailCalls=0,confirmCalls=0;
+s=arena();s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let herb=ground('moonHerb',s);let detailCalls=0,confirmCalls=0;
 Kiri.UI.showItemDetails=()=>detailCalls++;Kiri.UI.showConfirm=()=>confirmCalls++;
 assert.equal(Kiri.Game.actions.pickup(),'floor-menu');
-assert.equal(s.inventory.length,20);assert.equal(s.groundItems.includes(herb),true);assert.equal(s.turn,0);assert.equal(detailCalls,1);
+assert.equal(s.inventory.length,Kiri.Config.inventoryMax);assert.equal(s.groundItems.includes(herb),true);assert.equal(s.turn,0);assert.equal(detailCalls,1);
 assert.equal(Kiri.Game.actions.requestItemAction('describe'),false);assert.equal(s.turn,0);
 assert.equal(Kiri.Game.actions.requestItemAction('drink'),true);assert.equal(confirmCalls,1);
 Kiri.Game.actions.confirmItemAction();
-assert.equal(s.groundItems.includes(herb),false);assert.equal(s.inventory.length,20);assert.equal(s.turn,1);
+assert.equal(s.groundItems.includes(herb),false);assert.equal(s.inventory.length,Kiri.Config.inventoryMax);assert.equal(s.turn,1);
 
-s=arena();s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let floorBread=ground('bigBread',s);
+s=arena();s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let floorBread=ground('bigBread',s);
 Kiri.Game.actions.pickup();assert.equal(Kiri.Game.actions.requestItemAction('exchange'),false);
 assert.equal(Kiri.Game.actions.requestItemAction('exchange:0'),true);Kiri.Game.actions.confirmItemAction();
 assert(s.inventory.some(i=>i===floorBread));assert.equal(s.groundItems.length,1);assert.equal(s.turn,1);
 
-s=arena();s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let floorShield=ground('leatherShield',s);
+s=arena();s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let floorShield=ground('leatherShield',s);
 Kiri.Game.actions.pickup();assert.equal(Kiri.Game.actions.requestItemAction('equip'),true);Kiri.Game.actions.confirmItemAction();
 assert.equal(s.player.equipment.shield,null);assert.equal(s.turn,0);assert(s.groundItems.includes(floorShield));
-s=arena();let oldShield=item('barkShield',s);oldShield.equipped=true;s.player.equipment.shield=oldShield;while(s.inventory.length<20)s.inventory.push(Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));floorShield=ground('leatherShield',s);
+s=arena();let oldShield=item('barkShield',s);oldShield.equipped=true;s.player.equipment.shield=oldShield;while(s.inventory.length<Kiri.Config.inventoryMax)s.inventory.push(Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));floorShield=ground('leatherShield',s);
 Kiri.Game.actions.pickup();assert.equal(Kiri.Game.actions.requestItemAction('equip'),true);Kiri.Game.actions.confirmItemAction();
 assert.equal(s.player.equipment.shield,floorShield);assert(s.groundItems.includes(oldShield));assert.equal(s.turn,1);
 
-s=arena();s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let gold=Kiri.Gold.create(80,2,2);s.groundItems.push(gold);
-assert.equal(Kiri.Game.actions.pickup(),true);assert.equal(s.player.gold,80);assert.equal(s.inventory.length,20);
+s=arena();s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));let gold=Kiri.Gold.create(80,2,2);s.groundItems.push(gold);
+assert.equal(Kiri.Game.actions.pickup(),true);assert.equal(s.player.gold,80);assert.equal(s.inventory.length,Kiri.Config.inventoryMax);
 
 s=arena();s.inventory=[Kiri.Gold.create(10),Kiri.Items.create('reedArrow',undefined,undefined,s.dungeonId)];
 s.inventory[1].quantity=78;assert.equal(Kiri.Hunger.bagUsed(s),1);

@@ -11,7 +11,7 @@ function arena(floor=10,id='mysteryDungeon'){
   s.stairs={x:30,y:22,type:'down'};s.enemies=[];s.groundItems=[];s.traps=[];s.inventory=[];s.seen={};
   s.spawnPolicy={maxEnemies:14,nextSpawnTurn:0};Kiri.Map.reveal(s);return s;
 }
-assert.equal(Kiri.EnemyCatalog.list.length,25);
+assert.equal(Kiri.EnemyCatalog.list.length,33);
 assert(Kiri.EnemyCatalog.list.every(d=>d.role&&Number.isFinite(d.spawnWeight)&&d.spawnWeight>0&&Number.isFinite(d.maxPerFloor)&&d.maxPerFloor>0));
 assert(Kiri.EnemyCatalog.list.every(d=>Number.isFinite(d.hp)&&Number.isFinite(d.attack)&&Number.isFinite(d.defense)&&Number.isFinite(d.exp)));
 assert(Kiri.EnemyCatalog.tableFor('mysteryDungeon',2).every(d=>d.specialAbility==='none'));

@@ -8,6 +8,7 @@
   function collectGold(state,item){var i=state.groundItems.indexOf(item);if(i>=0)state.groundItems.splice(i,1);state.player.gold=(state.player.gold||0)+(item.amount||0);K.State.addLog((item.amount||0)+'Gを拾った。');if(K.UI&&K.UI.hideFloorItemTooltip)K.UI.hideFloorItemTooltip();return true;}
   function canPlaceGold(state,x,y){return K.ProjectileLanding?K.ProjectileLanding.canLand(state,x,y):K.Map.walkable(state,x,y);}
   function dropGoldAt(state,amount,x,y){
+    if(K.ItemLimits&&!K.ItemLimits.canCreate(state))return null;
     var gold=createGold(amount,x,y),result=K.ProjectileLanding&&K.ProjectileLanding.resolveLanding?K.ProjectileLanding.resolveLanding(state,gold,{x:x,y:y},{disappearMessage:''}):null;
     if(result&&result.placed)return gold;
     if(!result&&canPlaceGold(state,x,y)){state.groundItems.push(gold);return gold;}

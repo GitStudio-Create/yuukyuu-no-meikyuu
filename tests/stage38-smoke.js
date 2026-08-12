@@ -31,7 +31,7 @@ s=arena();s.player.power=5;let mend=item('powerMendHerb',s);result=Kiri.ItemActi
 s=arena();let ring=item('antidoteRing',s);s.player.equipment.ring=ring;assert.equal(Kiri.PlayerVitals.applyStrengthDamage(s,3,'毒',{silent:true}),0);assert.equal(s.player.power,8);poison=item('poisonHerb',s);s.player.hp=20;result=Kiri.ItemActions.perform('drink',s,poison);assert.equal(s.player.hp,20);assert.equal(s.player.power,8);assert.equal(s.player.status.poison,0);
 
 s=arena();let gold=Kiri.Gold.dropAt(s,33,4,4);assert(gold);assert.equal(s.groundItems.length,1);assert.equal(Kiri.Items.name(gold),'33G');assert(Kiri.ItemDetails.forItem(gold).description.includes('所持金'));s.player.x=4;s.player.y=4;Kiri.Gold.collectAtPlayer(s);assert.equal(s.player.gold,33);assert.equal(s.groundItems.length,0);
-s=arena();s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));gold=Kiri.Gold.dropAt(s,25,3,2);s.player.x=3;s.player.y=2;Kiri.Gold.collectAtPlayer(s);assert.equal(s.player.gold,25);assert.equal(s.inventory.length,20);
+s=arena();s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));gold=Kiri.Gold.dropAt(s,25,3,2);s.player.x=3;s.player.y=2;Kiri.Gold.collectAtPlayer(s);assert.equal(s.player.gold,25);assert.equal(s.inventory.length,Kiri.Config.inventoryMax);
 
 ['standard','horizontal','vertical','branch','bigMixed','perimeter'].forEach(type=>{
   for(let i=0;i<100;i++){

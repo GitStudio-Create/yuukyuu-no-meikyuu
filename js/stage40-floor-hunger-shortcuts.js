@@ -232,11 +232,11 @@
     var s=K.State.data,p=s.player;
     if(footItem(s)){addLog('足元にはすでに道具がある。');return false;}
     var item=K.Items.create(id||'moonHerb',p.x,p.y,s.dungeonId);
-    s.groundItems.push(item);K.UI.draw(s);return true;
+    if(K.ItemLimits&&!K.ItemLimits.canCreate(s))return false;s.groundItems.push(item);K.UI.draw(s);return true;
   }
   function fillBag(){
     var s=K.State.data;
-    while(bagUsed(s)<BAG_MAX())s.inventory.push(K.Items.create('nutBread',undefined,undefined,s.dungeonId));
+    while(bagUsed(s)<BAG_MAX()&&(!K.ItemLimits||K.ItemLimits.canCreate(s)))s.inventory.push(K.Items.create('nutBread',undefined,undefined,s.dungeonId));
     K.UI.draw(s);
   }
   function equipLeatherShield(){
@@ -245,7 +245,7 @@
     var current=s.player.equipment.shield;
     if(current)current.equipped=false;
     item.equipped=true;s.player.equipment.shield=item;
-    if(bagUsed(s)<BAG_MAX())s.inventory.push(item);
+    if(bagUsed(s)<BAG_MAX()&&(!K.ItemLimits||K.ItemLimits.canCreate(s)))s.inventory.push(item);
     K.UI.draw(s);
   }
   function enhanceGMPanel(){
@@ -255,7 +255,7 @@
     if(!grid)return;
     var sec=document.createElement('section');
     sec.setAttribute('data-gm-stage40','');
-    sec.innerHTML='<h3>道具袋・満腹度</h3><p data-gm-bag-hunger-info></p><label>床に置く道具<select data-gm-stage40-item>'+itemOptions()+'</select></label><button data-gm-fill-bag>道具袋を20/20にする</button><button data-gm-place-foot-item>足元に道具を置く</button><button data-gm-equip-leather>皮の盾を生成・装備</button><button data-gm-empty-hunger>満腹度を0にする</button><label>満腹度<input data-gm-set-food type="number" min="0" max="999" value="100"></label><button data-gm-apply-food>満腹度を反映</button><label>蓄積値<input data-gm-set-hunger-acc type="number" min="0" max="999" value="0"></label><button data-gm-apply-hunger-acc>蓄積値を反映</button><p class="gm-key-list">キー：M 全体マップ / G 拾う / Z 足踏み / Enter 階段 / Esc 中断 / I 道具袋</p>';
+    sec.innerHTML='<h3>道具袋・満腹度</h3><p data-gm-bag-hunger-info></p><label>床に置く道具<select data-gm-stage40-item>'+itemOptions()+'</select></label><button data-gm-fill-bag>道具袋を30/30にする</button><button data-gm-place-foot-item>足元に道具を置く</button><button data-gm-equip-leather>皮の盾を生成・装備</button><button data-gm-empty-hunger>満腹度を0にする</button><label>満腹度<input data-gm-set-food type="number" min="0" max="999" value="100"></label><button data-gm-apply-food>満腹度を反映</button><label>蓄積値<input data-gm-set-hunger-acc type="number" min="0" max="999" value="0"></label><button data-gm-apply-hunger-acc>蓄積値を反映</button><p class="gm-key-list">キー：M 全体マップ / G 拾う / Z 足踏み / Enter 階段 / Esc 中断 / I 道具袋</p>';
     grid.appendChild(sec);
     panel.addEventListener('click',function(e){
       var b=e.target.closest&&e.target.closest('button');

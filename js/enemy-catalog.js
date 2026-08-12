@@ -40,6 +40,14 @@
     {id:'frostCrown',name:'ねむり氷獣',role:'fast',floorRange:[27,99],hp:58,attack:18,defense:5,exp:170,behaviorType:'fast',specialAbility:'sleepTouch',sleepChance:.22,statusDuration:4,spawnWeight:4,maxPerFloor:2,dropRate:.22,dropCategories:['rare','herb'],color:'#7ab9ce',iconShape:'ice',description:'倍速で近づき、眠りの冷気をまとっている。近づけすぎないこと。',tier:5},
     {id:'voidKnight',name:'さび鎧',role:'tank',floorRange:[28,99],hp:74,attack:24,defense:8,exp:190,behaviorType:'chaser',specialAbility:'weakenGear',rustChance:.28,spawnWeight:5,maxPerFloor:2,dropRate:.20,dropCategories:['gold','weapon','shield'],color:'#51566d',iconShape:'horn',description:'硬い鎧の敵。攻撃時に装備を弱くすることがある。',tier:5},
     {id:'manyCore',name:'ふえるコア',role:'splitter',floorRange:[31,99],hp:60,attack:20,defense:5,exp:230,behaviorType:'fast',specialAbility:'split',splitChance:.30,spawnWeight:3,maxPerFloor:3,dropRate:.30,dropCategories:['herb','rare'],color:'#b26978',iconShape:'poison',description:'倍速で動き、傷つくと分裂する危険な核。増える前に対処したい。',tier:5},
+    {id:'poisonSnake',name:'どくヘビ',role:'status',floorRange:[8,18],hp:20,attack:7,defense:1,exp:18,behaviorType:'chaser',specialAbility:'poisonTouch',poisonChance:.25,statusDuration:10,spawnWeight:10,maxPerFloor:4,dropRate:.18,dropCategories:['herb'],color:'#5d9454',iconShape:'poison',description:'かみつかれると毒を受けることがある獣。毒よけ装備が役立つ。',tier:2,normal:true},
+    {id:'fireBat',name:'火のコウモリ',role:'ranged',floorRange:[12,24],hp:25,attack:9,defense:1,exp:36,behaviorType:'wander',specialAbility:'fireBreath',specialChance:.38,specialCooldown:1,specialRange:5,rangedDamage:9,spawnWeight:8,maxPerFloor:3,dropRate:.18,dropCategories:['arrow','herb'],color:'#cf633f',iconShape:'wing',description:'空を飛び、短い炎を吐く。風の剣と火よけの盾が有効。',tier:3,normal:true},
+    {id:'ironBeetle',name:'鉄こうら虫',role:'tank',floorRange:[16,30],hp:45,attack:13,defense:7,exp:62,behaviorType:'slow',specialAbility:'none',spawnWeight:8,maxPerFloor:3,dropRate:.20,dropCategories:['shield','gold'],color:'#6f7680',iconShape:'diamond',description:'硬い殻を持つ遅い敵。岩割りの斧なら倒しやすい。',tier:3,normal:true},
+    {id:'spellCrow',name:'まほうカラス',role:'ranged',floorRange:[19,36],hp:38,attack:13,defense:3,exp:88,behaviorType:'ranged',specialAbility:'roomShot',specialChance:.55,specialCooldown:1,specialRange:99,rangedDamage:12,spawnWeight:7,maxPerFloor:3,dropRate:.24,dropCategories:['scroll','staff'],color:'#71679c',iconShape:'wing',description:'同じ部屋から光弾を放つ魔法の鳥。風の剣や鏡の盾が役立つ。',tier:4,normal:true},
+    {id:'iceBird',name:'氷の鳥',role:'fast',floorRange:[25,48],hp:50,attack:17,defense:4,exp:138,behaviorType:'fast',specialAbility:'sleepTouch',sleepChance:.18,statusDuration:3,spawnWeight:6,maxPerFloor:3,dropRate:.20,dropCategories:['rare','herb'],color:'#78bfd1',iconShape:'ice',description:'冷気をまとって素早く飛ぶ。炎の短剣と風の剣が有効。',tier:4,normal:true},
+    {id:'rockDragon',name:'岩ドラゴン',role:'tank',floorRange:[30,58],hp:82,attack:25,defense:10,exp:245,behaviorType:'slow',specialAbility:'none',spawnWeight:5,maxPerFloor:2,dropRate:.24,dropCategories:['weapon','shield','gold'],color:'#83745e',iconShape:'horn',description:'岩の鱗で身を守る遅い竜。岩割りの斧と竜殺しの剣が有効。',tier:5,normal:true},
+    {id:'flameDragon',name:'火炎ドラゴン',role:'ranged',floorRange:[42,78],hp:92,attack:30,defense:8,exp:330,behaviorType:'chaser',specialAbility:'fireBreath',specialChance:.48,specialCooldown:1,specialRange:7,rangedDamage:22,spawnWeight:4,maxPerFloor:2,dropRate:.26,dropCategories:['rare','weapon'],color:'#c44b32',iconShape:'flame',description:'遠くから強い炎を吐く竜。竜殺しの剣と火よけの盾が重要。',tier:5,normal:true},
+    {id:'shadowDragon',name:'影ドラゴン',role:'ranged',floorRange:[60,99],hp:112,attack:36,defense:10,exp:480,behaviorType:'ranged',specialAbility:'staffCast',specialChance:.45,specialCooldown:1,specialRange:7,statusDuration:6,spawnWeight:3,maxPerFloor:2,dropRate:.28,dropCategories:['rare','staff'],color:'#4d4267',iconShape:'ghost',description:'影と魔力をまとう深層の竜。白銀の刀・魔断ちの剣・竜殺しの剣が候補になる。',tier:5,normal:true},
     {id:'abyssOracle',name:'深層まどうし',role:'lateBoss',floorRange:[35,99],hp:68,attack:36,defense:6,exp:320,behaviorType:'ranged',specialAbility:'staffCast',specialChance:.55,specialCooldown:1,specialRange:7,statusDuration:7,spawnWeight:3,maxPerFloor:2,dropRate:.25,dropCategories:['rare','staff','scroll'],color:'#58417d',iconShape:'star',description:'深い階で強い妨害術を使う。射線と状態異常対策が重要。',tier:5}
   ];
   var combatTags={
@@ -47,7 +55,7 @@
     mudBrute:['armored'],reedSniper:['plant'],pocketImp:['beast','magic'],shyShell:['beast','shell'],spiralEye:['magic'],rustMaw:['beast'],
     hungerShade:['spirit','shadow'],mirrorSeed:['plant'],riftFox:['beast'],wallWraith:['spirit','shadow'],oakGiant:['plant','rock'],
     emberHorn:['beast','dragon'],staffAdept:['magic'],roomWatcher:['magic'],frostCrown:['ice','beast'],voidKnight:['armored','spirit'],
-    manyCore:['rock','magic'],abyssOracle:['magic','spirit']
+    manyCore:['rock','magic'],poisonSnake:['beast'],fireBat:['flying','fire'],ironBeetle:['shell','armored'],spellCrow:['flying','magic'],iceBird:['ice','flying'],rockDragon:['dragon','rock','armored'],flameDragon:['dragon','fire'],shadowDragon:['dragon','magic','spirit','shadow'],abyssOracle:['magic','spirit']
   };
   list.forEach(function(enemy){enemy.tags=Object.freeze((combatTags[enemy.id]||[]).slice());});
   var byId={};list.forEach(function(d){byId[d.id]=d;});
@@ -57,6 +65,7 @@
     if(id==='tutorialDungeon')return!!d.tutorial;
     if(id==='normalDungeon'){
       if(d.tier<=3)return true;
+      if(d.normal)return true;
       if(floor>=21&&['wallWraith','oakGiant'].indexOf(d.id)>=0)return true;
       if(floor>=24&&d.id==='emberHorn')return true;
       if(floor>=26&&d.id==='staffAdept')return true;

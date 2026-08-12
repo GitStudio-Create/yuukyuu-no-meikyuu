@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('fs'),vm=require('vm'),assert=require('assert');global.window=global;global.Kiri={};const store={};global.localStorage={getItem:k=>store[k]||null,setItem:(k,v)=>store[k]=v,removeItem:k=>delete store[k]};global.addEventListener=()=>{};function load(f){vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f});}
-['config','spawns','dungeons','themes','enemy-catalog','items','state','stage8-state','map','visibility','combat-rules','entities','item-actions','stage10-items','balance','traps'].forEach(n=>load('js/'+n+'.js'));
+['config','spawns','dungeons','themes','enemy-catalog','items','inventory','item-limits','state','stage8-state','map','visibility','combat-rules','entities','item-actions','stage10-items','balance','traps'].forEach(n=>load('js/'+n+'.js'));
 function arena(id='normalDungeon'){const s=Kiri.State.reset(id);s.map=Array.from({length:24},()=>Array(32).fill(1));s.rooms=[{x:0,y:0,w:32,h:24,cx:16,cy:12}];s.player.x=2;s.player.y=2;s.player.hp=100;s.player.maxHp=100;s.player.facingDirection={dx:1,dy:0};s.stairs={x:30,y:22,type:'down'};s.groundItems=[];s.enemies=[];s.traps=[];s.seen={};s.spawnPolicy=Kiri.Spawns.policy(id,1,0);return s;}
 let logs=[];Kiri.UI={draw:()=>{},showStairs:()=>{},closeStairs:()=>{},closeItemMenu:()=>{},showGameOver:()=>{},showEscape:()=>{},hideOverlay:()=>{},closeStatus:()=>{},toggleStatus:()=>{}};Kiri.Input={resetModes:()=>{}};Kiri.Audio={setTheme:()=>{}};load('js/game.js');
 
@@ -9,7 +9,7 @@ let s=arena(),arrow=Kiri.Items.create('reedArrow',undefined,undefined,s.dungeonI
 s=arena();const turn=s.turn;assert.equal(Kiri.Game.actions.shootArrow(),false);assert.equal(s.turn,turn);assert(s.log[0].includes('装備していない'));
 
 // Natural spawning respects time, cap, sight and distances.
-s=arena('mysteryDungeon');s.spawnPolicy={nextSpawnTurn:25,naturalSpawnInterval:25,maxEnemies:14};s.turn=25;s.seen={'2,2':1};assert(Kiri.Spawns.tryNaturalSpawn(s));assert.equal(s.enemies.length,1);assert(Kiri.Util.distance(s.enemies[0],s.player)>8);assert(!s.seen[Kiri.Util.key(s.enemies[0].x,s.enemies[0].y)]);s.enemies=Array.from({length:14},(_,i)=>Kiri.Entities.createEnemy(1,{x:10+i%5,y:10+Math.floor(i/5)},Kiri.Dungeons.get(s.dungeonId),'chaser'));s.turn=s.spawnPolicy.nextSpawnTurn;assert.equal(Kiri.Spawns.tryNaturalSpawn(s),false);assert.equal(s.enemies.length,14);
+s=arena('mysteryDungeon');s.spawnPolicy=Kiri.Spawns.policy(s.dungeonId,s.floor);s.spawnPolicy.spawnActionCount=50;s.seen={'2,2':1};assert(Kiri.Spawns.tryNaturalSpawn(s));assert.equal(s.enemies.length,1);assert(Kiri.Util.distance(s.enemies[0],s.player)>8);s.enemies=Array.from({length:30},(_,i)=>Kiri.Entities.createEnemy(1,{x:10+i%5,y:10+Math.floor(i/5)},Kiri.Dungeons.get(s.dungeonId),'chaser'));s.spawnPolicy.spawnActionCount=50;assert.equal(Kiri.Spawns.tryNaturalSpawn(s),false);assert.equal(s.enemies.length,30);assert.equal(s.spawnPolicy.spawnActionCount,0);
 
 // All behavior types exist; sleeper, fast, slow, ranged and thief have distinct actions.
 assert.deepStrictEqual(Kiri.Entities.behaviors.sort(),['wander','chaser','sleeper','fast','slow','ranged','coward','thief'].sort());const oldRandom=Math.random;Math.random=()=>.5;

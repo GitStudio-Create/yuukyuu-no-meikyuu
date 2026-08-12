@@ -6,7 +6,7 @@ Kiri.UI={draw:()=>{},showStairs:()=>{},closeStairs:()=>{},closeItemMenu:()=>{},s
 
 // Auto pickup below capacity; full bags leave the item and explicit pickup costs no turn on failure.
 let s=arena(false),item=Kiri.Items.create('moonHerb',3,2,s.dungeonId);s.groundItems=[item];Kiri.Game.actions.move(1,0);assert(s.inventory.includes(item));assert.equal(s.groundItems.length,0);
-s=arena(false);s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));item=Kiri.Items.create('moonHerb',3,2,s.dungeonId);s.groundItems=[item];Kiri.Game.actions.move(1,0);assert.equal(s.inventory.length,20);assert(s.groundItems.includes(item));let turn=s.turn;assert.equal(Kiri.Game.actions.pickup(),false);assert.equal(s.turn,turn);assert(s.log[0].includes('いっぱいです'));s.inventory.pop();assert(Kiri.Game.actions.pickup());assert.equal(s.turn,turn+1);assert(s.inventory.includes(item));
+s=arena(false);s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));item=Kiri.Items.create('moonHerb',3,2,s.dungeonId);s.groundItems=[item];Kiri.Game.actions.move(1,0);assert.equal(s.inventory.length,Kiri.Config.inventoryMax);assert(s.groundItems.includes(item));let turn=s.turn;assert.equal(Kiri.Game.actions.pickup(),false);assert.equal(s.turn,turn);assert(s.log[0].includes('いっぱいです'));s.inventory.pop();assert(Kiri.Game.actions.pickup());assert.equal(s.turn,turn+1);assert(s.inventory.includes(item));
 
 // Corridor sight is the surrounding 3x3; entering a room maps and lights the complete room plus its edge walls.
 s=arena(false);Kiri.Visibility.update(s);assert.equal(Object.keys(s.visible).length,9);assert(Kiri.Visibility.isVisible(s,1,1));assert(!Kiri.Visibility.isVisible(s,4,2));

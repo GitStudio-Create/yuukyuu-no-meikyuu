@@ -7,7 +7,7 @@ let suspended=0,resumed=0;Kiri.UI={draw:()=>{},showStairs:()=>{},closeStairs:()=
 // Walking onto an item auto-picks when the bag has room.
 let s=arena(),item=Kiri.Items.create('nutBread',3,2,s.dungeonId);s.groundItems=[item];Kiri.Game.actions.move(1,0);assert.equal(s.player.x,3);assert.equal(s.inventory.length,1);assert.equal(s.groundItems.length,0);assert(s.inventory.includes(item));let turn=s.turn;
 s=arena();turn=s.turn;assert.equal(Kiri.Game.actions.pickup(),false);assert.equal(s.turn,turn);
-s=arena();s.inventory=Array.from({length:20},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));s.groundItems=[Kiri.Items.create('moonHerb',2,2,s.dungeonId)];turn=s.turn;assert.equal(Kiri.Game.actions.pickup(),false);assert.equal(s.turn,turn);assert.equal(s.groundItems.length,1);
+s=arena();s.inventory=Array.from({length:Kiri.Config.inventoryMax},()=>Kiri.Items.create('nutBread',undefined,undefined,s.dungeonId));s.groundItems=[Kiri.Items.create('moonHerb',2,2,s.dungeonId)];turn=s.turn;assert.equal(Kiri.Game.actions.pickup(),false);assert.equal(s.turn,turn);assert.equal(s.groundItems.length,1);
 
 // Arrow stacks merge and the bag sorts equipped items then clear categories.
 s=arena();let arrow=Kiri.Items.create('reedArrow',undefined,undefined,s.dungeonId);arrow.quantity=3;s.inventory=[arrow];let floorArrow=Kiri.Items.create('reedArrow',2,2,s.dungeonId);floorArrow.quantity=4;s.groundItems=[floorArrow];Kiri.Game.actions.pickup();assert.equal(arrow.quantity,7);assert.equal(s.inventory.length,1);

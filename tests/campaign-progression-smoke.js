@@ -47,12 +47,12 @@ assert(!root.innerHTML.includes('基本99F')&&!root.innerHTML.includes('難易�
 story.cleared.tutorialDungeon=false;
 Kiri.Campaign.showStart();
 
-const inventory=Array.from({length:20},(_,i)=>({id:'item'+i})),chest={id:'eternalTreasure',category:'treasure'},state={dungeonId:'normalDungeon',floor:27,gameOver:false,player:{level:4},inventory,groundItems:[chest],stairs:{x:2,y:2,type:'down'},treasureState:{returning:false,obtained:{},rank:{}}};
+const inventory=Array.from({length:30},(_,i)=>({id:'item'+i})),chest={id:'eternalTreasure',category:'treasure'},state={dungeonId:'normalDungeon',floor:27,gameOver:false,player:{level:4},inventory,groundItems:[chest],stairs:{x:2,y:2,type:'down'},treasureState:{returning:false,obtained:{},rank:{}}};
 Kiri.State.data=state;
 assert(Kiri.Campaign.collectTreasure(state,chest,0));
 assert.equal(body.dataset.appState,'TREASURE_EVENT');
 assert.equal(state.groundItems.length,0,'important treasure is removed even with a full bag');
-assert.equal(state.inventory.length,20,'important treasure never consumes a bag slot');
+assert.equal(state.inventory.length,30,'important treasure never consumes a bag slot');
 root.listeners.click({target:{closest:()=>({dataset:{campaign:'take-treasure'}})}});
 assert.equal(body.dataset.appState,'DUNGEON');
 assert.equal(shell.hidden,false,'game shell is shown only in dungeon state');

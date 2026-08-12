@@ -1,6 +1,6 @@
 (function(K){
   'use strict';
-  var S=K.State,U=K.Util,selectedIndex=-1,enemyTurnTimer=null,enemyTurnToken=0;
+  var S=K.State,U=K.Util,selectedIndex=-1,enemyTurnTimer=null,enemyTurnToken=0,runActionBatch=false,runSpawnCounted=false;
 
   function clearEnemyTurnTimer(){
     if(enemyTurnTimer){clearTimeout(enemyTurnTimer);enemyTurnTimer=null;}
@@ -24,9 +24,9 @@
     s.spawnPolicy=K.Spawns.policy(s.dungeonId,s.floor,s.turn);
     placeEnemies(s.spawnPolicy.initialCount,mode);
     var itemCount=plan.items;
-    if(plan.guaranteedHeal){placeOne(function(p){s.groundItems.push(K.Items.create('moonHerb',p.x,p.y,s.dungeonId));},0);itemCount--;}
-    if(plan.guaranteedFood){placeOne(function(p){s.groundItems.push(K.Items.create('nutBread',p.x,p.y,s.dungeonId));},0);itemCount--;}
-    place(itemCount,function(p){s.groundItems.push(K.Items.randomForFloor(s.floor,p.x,p.y,s.dungeonId));},0);
+    if(plan.guaranteedHeal){placeOne(function(p){if(!K.ItemLimits||K.ItemLimits.canCreate(s))s.groundItems.push(K.Items.create('moonHerb',p.x,p.y,s.dungeonId));},0);itemCount--;}
+    if(plan.guaranteedFood){placeOne(function(p){if(!K.ItemLimits||K.ItemLimits.canCreate(s))s.groundItems.push(K.Items.create('nutBread',p.x,p.y,s.dungeonId));},0);itemCount--;}
+    place(itemCount,function(p){if(!K.ItemLimits||K.ItemLimits.canCreate(s))s.groundItems.push(K.Items.randomForFloor(s.floor,p.x,p.y,s.dungeonId));},0);
     place(plan.traps,function(p){s.traps.push(K.Traps.createRandom(s,p));},1);
     if(K.Treasures)K.Treasures.placeForFloor(s);
     if(s.dungeonId==='tutorialDungeon'&&s.floor>=mode.maxFloor&&!K.Treasures.isReturning(s))s.stairs={x:-1,y:-1,type:'down',disabled:true};
@@ -118,7 +118,7 @@
     if(steps>0&&!inRoom(s,p.x,p.y)&&branches(s,p.x,p.y)!==2)return true;
     return false;
   }
-  function run(dx,dy){if(isInputLocked()||dx&&dy)return;if(!dx&&!dy)return;var s=S.data;for(var steps=0;steps<40;steps++){if(stopBeforeRun(s,dx,dy,steps))break;var result=move(dx,dy);if(!result.moved||result.event||visibleEnemyNear(s)||s.gameOver)break;}}
+  function run(dx,dy){if(isInputLocked()||dx&&dy)return;if(!dx&&!dy)return;var s=S.data;runActionBatch=true;runSpawnCounted=false;try{for(var steps=0;steps<40;steps++){if(stopBeforeRun(s,dx,dy,steps))break;var result=move(dx,dy);if(!result.moved||result.event||visibleEnemyNear(s)||s.gameOver)break;}}finally{runActionBatch=false;runSpawnCounted=false;}}
   function clearDungeon(){var s=S.data;clearEnemyTurnTimer();if(K.Campaign&&K.Campaign.onDungeonReturn)return K.Campaign.onDungeonReturn(s);s.gameOver=true;S.clearSave();K.UI.draw(s);if(K.UI.showEscape){K.UI.showEscape(s);var text=document.querySelector('#overlayText');if(text&&K.Treasures)text.textContent=K.Treasures.clearMessage(s);}return true;}
   function descend(){var s=S.data;if(isInputLocked()||!s.stairs||s.stairs.disabled||s.player.x!==s.stairs.x||s.player.y!==s.stairs.y)return false;clearEnemyTurnTimer();K.UI.closeStairs();if(s.stairs.type==='up'){s.floor--;if(s.floor<=0)return clearDungeon();s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}var mode=K.Dungeons.get(s.dungeonId),max=mode.maxFloor||99;s.floor=s.floor>=max?max:s.floor+1;s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}
   function stayStairs(){K.UI.closeStairs();return true;}
@@ -203,6 +203,7 @@
     var s=S.data,p=s.player;
     if(p.hp<=0){gameOver();return false;}
     if(s.turnLocked)return false;
+    if(!runActionBatch||!runSpawnCounted){K.Spawns.recordAction(s);if(runActionBatch)runSpawnCounted=true;}
     s.turn++;
     tickPlayerStatus(p,'sleep','眠りから目を覚ました。');
     tickPlayerStatus(p,'confuse','混乱が解けた。');

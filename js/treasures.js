@@ -25,7 +25,7 @@
     list(state).forEach(function(entry){
       if(!applies(entry,state.floor)||state.treasureState.obtained[entry.item]||hasItem(state,entry.item))return;
       var p=safeCell(state);
-      if(p)state.groundItems.push(K.Items.create(entry.item,p.x,p.y,state.dungeonId));
+      if(p&&(!K.ItemLimits||K.ItemLimits.canCreate(state)))state.groundItems.push(K.Items.create(entry.item,p.x,p.y,state.dungeonId));
     });
   }
   function onPickup(state,item){

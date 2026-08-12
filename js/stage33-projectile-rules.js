@@ -69,7 +69,9 @@
   function resolveLanding(state,item,planned,options){
     options=options||{};
     if(!planned)return{placed:false,message:itemName(item)+'は落ちる場所がなく消えた。'};
+    var wasGround=state.groundItems.indexOf(item)>=0;
     removeGround(state,item);
+    if(!wasGround&&K.ItemLimits&&!K.ItemLimits.canCreate(state))return{placed:false,message:(options.disappearMessage||itemName(item)+'は落ちる場所がなく消えた。')};
     var cells=candidatesAround(planned.x,planned.y).filter(function(cell){
       if(cell.center&&!canLand(state,cell.x,cell.y,item))return false;
       if(!cell.center&&!canLand(state,cell.x,cell.y,item))return false;
@@ -118,7 +120,7 @@
     var before=new Set(state.groundItems),info=rayInfo(state,MAX_PROJECTILE_RANGE),pierce=item&&item.effect==='pierce';
     var result=execute(),drops=newDrops(state,before),messages=[];
     messages=messages.concat(sanitizeDrops(state,drops,info.last,{disappearMessage:itemName(item)+'は落ちる場所がなく消えた。'}));
-    if(action==='shoot'&&pierce&&info.wall&&!drops.length){
+    if(action==='shoot'&&pierce&&info.wall&&!drops.length&&(!K.ItemLimits||K.ItemLimits.canCreate(state))){
       var arrow=K.Items.create(item.id,undefined,undefined,state.dungeonId);
       arrow.quantity=1;arrow.equipped=false;arrow.identified=item.identified;arrow.displayName=item.displayName;
       var landed=resolveLanding(state,arrow,info.last,{disappearMessage:itemName(item)+'は落ちる場所がなく消えた。'});

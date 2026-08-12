@@ -46,6 +46,7 @@
   function placeItems(state,room,count){
     var placed=0;
     for(var i=0;i<count;i++){
+      if(K.ItemLimits&&!K.ItemLimits.canCreate(state))break;
       var p=takeCell(state,room);if(!p)break;
       var item=K.Items.randomForFloor(state.floor,p.x,p.y,state.dungeonId);
       if(item){state.groundItems.push(item);placed++;}
