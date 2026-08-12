@@ -45,9 +45,9 @@
     {id:'ironBeetle',name:'鉄こうら虫',role:'tank',floorRange:[16,30],hp:45,attack:13,defense:7,exp:62,behaviorType:'slow',specialAbility:'none',spawnWeight:8,maxPerFloor:3,dropRate:.20,dropCategories:['shield','gold'],color:'#6f7680',iconShape:'diamond',description:'硬い殻を持つ遅い敵。岩割りの斧なら倒しやすい。',tier:3,normal:true},
     {id:'spellCrow',name:'まほうカラス',role:'ranged',floorRange:[19,36],hp:38,attack:13,defense:3,exp:88,behaviorType:'ranged',specialAbility:'roomShot',specialChance:.55,specialCooldown:1,specialRange:99,rangedDamage:12,spawnWeight:7,maxPerFloor:3,dropRate:.24,dropCategories:['scroll','staff'],color:'#71679c',iconShape:'wing',description:'同じ部屋から光弾を放つ魔法の鳥。風の剣や鏡の盾が役立つ。',tier:4,normal:true},
     {id:'iceBird',name:'氷の鳥',role:'fast',floorRange:[25,48],hp:50,attack:17,defense:4,exp:138,behaviorType:'fast',specialAbility:'sleepTouch',sleepChance:.18,statusDuration:3,spawnWeight:6,maxPerFloor:3,dropRate:.20,dropCategories:['rare','herb'],color:'#78bfd1',iconShape:'ice',description:'冷気をまとって素早く飛ぶ。炎の短剣と風の剣が有効。',tier:4,normal:true},
-    {id:'rockDragon',name:'岩ドラゴン',role:'tank',floorRange:[30,58],hp:82,attack:25,defense:10,exp:245,behaviorType:'slow',specialAbility:'none',spawnWeight:5,maxPerFloor:2,dropRate:.24,dropCategories:['weapon','shield','gold'],color:'#83745e',iconShape:'horn',description:'岩の鱗で身を守る遅い竜。岩割りの斧と竜殺しの剣が有効。',tier:5,normal:true},
-    {id:'flameDragon',name:'火炎ドラゴン',role:'ranged',floorRange:[42,78],hp:92,attack:30,defense:8,exp:330,behaviorType:'chaser',specialAbility:'fireBreath',specialChance:.48,specialCooldown:1,specialRange:7,rangedDamage:22,spawnWeight:4,maxPerFloor:2,dropRate:.26,dropCategories:['rare','weapon'],color:'#c44b32',iconShape:'flame',description:'遠くから強い炎を吐く竜。竜殺しの剣と火よけの盾が重要。',tier:5,normal:true},
-    {id:'shadowDragon',name:'影ドラゴン',role:'ranged',floorRange:[60,99],hp:112,attack:36,defense:10,exp:480,behaviorType:'ranged',specialAbility:'staffCast',specialChance:.45,specialCooldown:1,specialRange:7,statusDuration:6,spawnWeight:3,maxPerFloor:2,dropRate:.28,dropCategories:['rare','staff'],color:'#4d4267',iconShape:'ghost',description:'影と魔力をまとう深層の竜。白銀の刀・魔断ちの剣・竜殺しの剣が候補になる。',tier:5,normal:true},
+    {id:'rockDragon',name:'岩ドラゴン',role:'tank',floorRange:[23,40],hp:82,attack:25,defense:10,exp:245,behaviorType:'slow',specialAbility:'none',spawnWeight:5,maxPerFloor:2,dropRate:.24,dropCategories:['weapon','shield','gold'],color:'#83745e',iconShape:'horn',description:'岩の鱗で身を守る遅い竜。岩割りの斧と竜殺しの剣が有効。',tier:5,normal:true},
+    {id:'flameDragon',name:'火炎ドラゴン',role:'ranged',floorRange:[25,60],hp:92,attack:30,defense:8,exp:330,behaviorType:'chaser',specialAbility:'fireBreath',specialChance:.48,specialCooldown:1,specialRange:7,rangedDamage:22,spawnWeight:4,maxPerFloor:2,dropRate:.26,dropCategories:['rare','weapon'],color:'#c44b32',iconShape:'flame',description:'遠くから強い炎を吐く竜。竜殺しの剣と火よけの盾が重要。',tier:5,normal:true},
+    {id:'shadowDragon',name:'影ドラゴン',role:'ranged',floorRange:[50,99],hp:112,attack:36,defense:10,exp:480,behaviorType:'ranged',specialAbility:'staffCast',specialChance:.45,specialCooldown:1,specialRange:7,statusDuration:6,spawnWeight:3,maxPerFloor:2,dropRate:.28,dropCategories:['rare','staff'],color:'#4d4267',iconShape:'ghost',description:'影と魔力をまとう深層の竜。白銀の刀・魔断ちの剣・竜殺しの剣が候補になる。',tier:5,normal:true},
     {id:'abyssOracle',name:'深層まどうし',role:'lateBoss',floorRange:[35,99],hp:68,attack:36,defense:6,exp:320,behaviorType:'ranged',specialAbility:'staffCast',specialChance:.55,specialCooldown:1,specialRange:7,statusDuration:7,spawnWeight:3,maxPerFloor:2,dropRate:.25,dropCategories:['rare','staff','scroll'],color:'#58417d',iconShape:'star',description:'深い階で強い妨害術を使う。射線と状態異常対策が重要。',tier:5}
   ];
   var combatTags={
@@ -76,7 +76,8 @@
   }
   function countOnFloor(state,id){return (state.enemies||[]).filter(function(e){return(e.definitionId||e.id)===id;}).length;}
   function canSpawnMore(state,d){return !state||!d.maxPerFloor||countOnFloor(state,d.id)<d.maxPerFloor;}
-  function weightedPick(pool){var total=pool.reduce(function(n,d){return n+(d.spawnWeight||1);},0),r=K.Util.rand(Math.max(1,total));for(var i=0;i<pool.length;i++){r-=pool[i].spawnWeight||1;if(r<0)return pool[i];}return pool[0];}
+  function spawnWeightFor(d,floor){if(d.id==='rockDragon'){if(floor===23)return 1;if(floor===24)return 2;}if(d.id==='flameDragon'){if(floor===25)return 1;if(floor===26)return 2;}return d.spawnWeight||1;}
+  function weightedPick(pool,floor){var total=pool.reduce(function(n,d){return n+spawnWeightFor(d,floor);},0),r=K.Util.rand(Math.max(1,total));for(var i=0;i<pool.length;i++){r-=spawnWeightFor(pool[i],floor);if(r<0)return pool[i];}return pool[0];}
   K.EnemyCatalog={
     list:Object.freeze(list),byId:byId,roles:roleLabels,
     tableFor:function(id,floor){
@@ -86,11 +87,12 @@
       if(!pool.length)pool=list.filter(function(d){return allowed(d,id,floor)&&d.floorRange[0]<=floor;}).slice(-6);
       return pool;
     },
-    pick:function(id,floor){return weightedPick(this.tableFor(id,floor));},
+    pick:function(id,floor){return weightedPick(this.tableFor(id,floor),floor);},
     pickForState:function(state){
       var pool=this.tableFor(state.dungeonId,state.floor).filter(function(d){return canSpawnMore(state,d);});
-      return weightedPick(pool.length?pool:this.tableFor(state.dungeonId,state.floor));
+      return weightedPick(pool.length?pool:this.tableFor(state.dungeonId,state.floor),state.floor);
     },
+    spawnWeightFor:spawnWeightFor,
     get:function(id){return byId[id]||byId.dewMote;},
     canSpawnMore:canSpawnMore,
     normalize:function(e){
