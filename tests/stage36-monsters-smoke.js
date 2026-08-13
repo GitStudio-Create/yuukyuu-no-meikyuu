@@ -21,7 +21,7 @@ assert(Kiri.EnemyCatalog.get('pocketImp').specialChance>0);
 assert(Kiri.EnemyCatalog.get('reedSniper').specialRange===7);
 
 let s=arena(9),enemy=Kiri.Entities.createEnemy(9,{x:7,y:2},Kiri.Dungeons.get(s.dungeonId),'reedSniper');
-assert.equal(enemy.role,'ranged');assert.equal(enemy.rangedDamage,6);assert.equal(enemy.specialRange,7);
+assert.equal(enemy.role,'ranged');assert.equal(enemy.rangedDamage,Kiri.EnemyCatalog.get('reedSniper').rangedDamage);assert.equal(enemy.specialRange,7);
 s.enemies=[enemy,Kiri.Entities.createEnemy(9,{x:4,y:2},Kiri.Dungeons.get(s.dungeonId),'dewMote')];
 let hp=s.player.hp;Math.random=()=>0;Kiri.Entities.enemyAct(s,enemy);assert.equal(s.player.hp,hp,'他の敵越しに遠距離攻撃しない');
 s.enemies=[enemy];Kiri.Entities.enemyAct(s,enemy);assert(s.player.hp<hp,'射線が通ると遠距離攻撃する');
@@ -39,4 +39,10 @@ s=arena(31);let def=Kiri.EnemyCatalog.get('manyCore');for(let i=0;i<def.maxPerFl
 assert.equal(Kiri.EnemyCatalog.canSpawnMore(s,def),false);
 assert.notEqual(Kiri.EnemyCatalog.pickForState(s).id,'manyCore','上限に達した敵は自然湧き抽選から外れる');
 
-console.log('stage 36 smoke: monster roles, data-driven specials, line-of-sight, stealing and split limits passed');
+def=Kiri.EnemyCatalog.get('wallWraith');assert.equal(def.name,'壁すべり');assert.equal(def.specialAbility,'wallSprint');assert.notEqual(def.role,'phase');
+s=arena(21);enemy=Kiri.Entities.createEnemy(21,{x:5,y:5},Kiri.Dungeons.get(s.dungeonId),'wallWraith');enemy.spawnSleep=false;enemy.awake=true;enemy.wokeOnTurn=-1;s.enemies=[enemy];s.map[5][4]=0;
+let acts=0,originalAct=Kiri.Entities.enemyAct;Kiri.Entities.enemyAct=function(){acts++;};Kiri.Entities.takeEnemyTurns(s);assert.equal(acts,2,'壁際では最大2回行動');
+acts=0;enemy.energy=0;s.map[5][4]=1;Kiri.Entities.takeEnemyTurns(s);assert.equal(acts,1,'壁から離れると通常速度');Kiri.Entities.enemyAct=originalAct;
+s.player.x=3;s.player.y=5;s.map[5][4]=0;enemy.x=5;enemy.y=5;Kiri.Entities.enemyAct(s,enemy);assert.notDeepStrictEqual({x:enemy.x,y:enemy.y},{x:4,y:5},'壁へ侵入しない');assert(Kiri.Map.walkable(s,enemy.x,enemy.y),'移動後も床または通路にいる');
+
+console.log('stage 36 smoke: monster roles, specials, wall sprint, line-of-sight, stealing and split limits passed');

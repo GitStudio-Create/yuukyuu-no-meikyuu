@@ -27,4 +27,10 @@ assert.equal(JSON.stringify({floor:JSON.parse(store.eternal_labyrinth_normal_sav
 let a,b;Kiri.GM.seeded('12345',()=>{a=Kiri.Map.generate();});Kiri.GM.seeded('12345',()=>{b=Kiri.Map.generate();});assert.deepStrictEqual(a.tiles,b.tiles);assert.deepStrictEqual(a.rooms,b.rooms);
 global.matchMedia=()=>({matches:false});assert.equal(Kiri.GM.shortcut(event),false,'mobile input cannot reveal GM controls');assert.equal(Kiri.GM.openCurrent(),false,'mobile input cannot enter GM mode');
 
+const gmSource=fs.readFileSync('js/gm-mode.js','utf8'),campaignSource=fs.readFileSync('js/campaign.js','utf8'),hungerSource=fs.readFileSync('js/stage40-floor-hunger-shortcuts.js','utf8');
+assert(gmSource.includes('data-gm-turn-count')&&gmSource.includes('max="10000"')&&gmSource.includes('data-gm-turn-custom'),'arbitrary 1-10000 turn UI exists');
+assert(gmSource.includes('setTimeout(chunk,0)'),'large turn batches yield to the browser');
+assert(campaignSource.includes('<details class="gm-save-details">')&&campaignSource.includes('<summary>セーブデータ確認</summary>'),'save debug starts collapsed');
+assert(!hungerSource.includes('data-gm-place-foot-item')&&!hungerSource.includes('data-gm-equip-leather'),'duplicate item controls removed from hunger section');
+
 console.log('stage 31 smoke: hidden PC shortcut, mobile lockout, non-persistent mode and save separation passed');

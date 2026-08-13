@@ -5,7 +5,7 @@
   function abilityName(a){return{
     none:'なし',poisonTouch:'毒攻撃',sleepTouch:'睡眠攻撃',confuseTouch:'混乱攻撃',confuseGaze:'混乱にらみ',
     weakenGear:'装備弱化',hungerDrain:'満腹度低下',split:'分裂',warpHit:'被弾ワープ',
-    phase:'壁抜け',rangedShot:'直線遠距離',fireBreath:'炎ブレス',staffCast:'妨害術',roomShot:'部屋内光線',steal:'盗み'
+    phase:'壁抜け',wallSprint:'壁際高速移動',rangedShot:'直線遠距離',fireBreath:'炎ブレス',staffCast:'妨害術',roomShot:'部屋内光線',steal:'盗み'
   }[a]||a||'なし';}
   function selectedDef(panel){var sel=panel&&panel.querySelector('[data-gm-enemy]');return sel?K.EnemyCatalog.get(sel.value):K.EnemyCatalog.list[0];}
   function selectedExisting(panel,state){var sel=panel&&panel.querySelector('[data-gm-existing-enemy]'),i=sel&&sel.value;return state&&state.enemies?state.enemies[Number(i)]:null;}

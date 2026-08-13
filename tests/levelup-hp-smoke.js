@@ -25,4 +25,15 @@ assert.equal(player.maxHp,39);
 assert.equal(player.hp,14);
 assert.equal(player.food,88);
 
-console.log('levelup hp smoke: HP increases only by max HP gain and food stays unchanged');
+player={level:1,exp:0,hp:24,maxHp:24,food:55};
+Kiri.Progression.setLevel(player,20);
+assert.equal(player.level,20);
+assert.equal(player.exp,Kiri.Progression.EXP_TABLE[19]);
+assert.equal(player.maxHp,81);
+assert.equal(player.hp,81);
+assert.equal(Kiri.Progression.remaining(player),Kiri.Progression.EXP_TABLE[20]-Kiri.Progression.EXP_TABLE[19]);
+assert.equal(player.food,55);
+Kiri.Progression.setLevel(player,3);
+assert.deepStrictEqual({level:player.level,exp:player.exp,maxHp:player.maxHp,hp:player.hp},{level:3,exp:30,maxHp:30,hp:30});
+
+console.log('levelup hp smoke: normal growth and GM level synchronization passed');

@@ -113,7 +113,7 @@
   function gameOver(state){state.gameOver=true;K.AdventureBooks.saveBase(state);setScreen('game-over','<small>GAME OVER</small><h2>冒険はここまで</h2><p>'+state.floor+'Fで力尽きました。挑戦中の記録は終了しました。</p><button data-campaign="base">戻る</button>');}
   function boot(){
     root=document.querySelector('#campaignScreen');gameShell=document.querySelector('.game-shell');
-    var gmGrid=document.querySelector('#gmPanel .gm-grid');if(gmGrid&&!gmGrid.querySelector('[data-campaign-debug]'))gmGrid.insertAdjacentHTML('beforeend','<section><h3>冒険の書デバッグ</h3><pre data-campaign-debug></pre></section>');startScreen();
+    var gmGrid=document.querySelector('#gmPanel .gm-grid');if(gmGrid&&!gmGrid.querySelector('[data-campaign-debug]'))gmGrid.insertAdjacentHTML('beforeend','<section><h3>セーブデータ</h3><details class="gm-save-details"><summary>セーブデータ確認</summary><pre data-campaign-debug></pre></details></section>');startScreen();
     root.addEventListener('click',click);root.addEventListener('pointerover',function(e){var selector=screenMenuSelector(screen),title=e.target.closest('[data-title-action]'),card=e.target.closest('[data-book-card]'),menu=selector?e.target.closest(selector):null;if(title){var titles=Array.prototype.slice.call(root.querySelectorAll('[data-title-action]'));updateTitleSelection(titles.indexOf(title));}else if(card)updateBookSelection(Number(card.dataset.bookCard)-1,false);else if(menu){var items=Array.prototype.slice.call(root.querySelectorAll(selector));updateScreenSelection(items.indexOf(menu),false);}});addEventListener('keydown',keys,true);addEventListener('popstate',function(){if(screen==='dungeon')suspendConfirm();else if(screen!=='start')startScreen();});
   }
   function click(e){
