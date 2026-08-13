@@ -15,26 +15,36 @@ function arena(level,power,weaponBonus,enemyDefense){
   if(weaponBonus!==null&&weaponBonus!==undefined)s.player.equipment.weapon={bonus:weaponBonus};
   return s;
 }
-function reed(){const a=Kiri.Items.create('reedArrow',undefined,undefined,'normalDungeon');a.quantity=10;return a;}
-function shootDamage(state){
-  const random=Math.random;Math.random=()=>.5;
+function arrow(id){const a=Kiri.Items.create(id,undefined,undefined,'normalDungeon');a.quantity=10;return a;}
+function shootDamage(state,id='reedArrow',randomValue=.5){
+  const random=Math.random;Math.random=()=>randomValue;
   try{
-    const before=state.enemies[0].hp,arrow=reed();
-    state.inventory=[arrow];
-    Kiri.ItemActions.perform('shoot',state,arrow);
+    const before=state.enemies[0].hp,shot=arrow(id);
+    state.inventory=[shot];
+    Kiri.ItemActions.perform('shoot',state,shot);
     return before-state.enemies[0].hp;
   }finally{Math.random=random;}
 }
 
-let s=arena(1,8,0,0),arrow=reed();
-assert.equal(arrow.arrowStrength,4);
-assert.equal(Kiri.Items.arrowAttackPower(s,arrow),4);
-s=arena(14,8,0,0);assert.equal(Kiri.Items.baseAttackForLevel(14),46);assert.equal(Kiri.Items.arrowAttackPower(s,arrow),34);
-s=arena(16,8,0,0);assert.equal(Kiri.Items.baseAttackForLevel(16),56);assert.equal(Kiri.Items.arrowAttackPower(s,arrow),42);
+const expected={
+  reedArrow:{strength:4,powers:{1:4,10:22,20:55,30:70}},
+  ironArrow:{strength:12,powers:{1:6,10:36,20:93,30:118}},
+  pierceArrow:{strength:12,powers:{1:6,10:36,20:93,30:118}}
+};
+Object.entries(expected).forEach(([id,data])=>{
+  const shot=arrow(id);assert.equal(shot.arrowStrength,data.strength);
+  Object.entries(data.powers).forEach(([level,power])=>assert.equal(Kiri.Items.arrowAttackPower(arena(Number(level),8,0,0),shot),power));
+});
 
-assert.equal(Kiri.Items.arrowAttackPower(arena(14,8,0,0),arrow),Kiri.Items.arrowAttackPower(arena(14,8,20,0),arrow));
-assert.equal(Kiri.Items.arrowAttackPower(arena(14,8,0,0),arrow),Kiri.Items.arrowAttackPower(arena(14,4,0,0),arrow));
+let s=arena(14,8,0,0),shot=arrow('ironArrow'),baseline=Kiri.Items.arrowAttackPower(s,shot);
+assert.equal(baseline,Kiri.Items.arrowAttackPower(arena(14,4,20,0),shot));
+s=arena(14,20,99,0);s.player.maxPower=20;s.player.equipment.ring={effect:'maxPower'};
+assert.equal(baseline,Kiri.Items.arrowAttackPower(s,shot));
 assert(shootDamage(arena(16,8,0,0))>shootDamage(arena(1,8,0,0)));
 assert(shootDamage(arena(14,8,0,10))<shootDamage(arena(14,8,0,0)));
+assert.equal(shootDamage(arena(10,8,0,0),'ironArrow',.01),35);
+assert.equal(shootDamage(arena(10,8,0,0),'ironArrow',.5),36);
+assert.equal(shootDamage(arena(10,8,0,0),'ironArrow',.99),37);
+assert.equal(shootDamage(arena(1,8,0,999),'reedArrow',.01),1);
 
-console.log('arrow damage smoke: arrow strength formula, rounding, level scaling and defense passed');
+console.log('arrow damage smoke: all arrow strengths, level scaling, independence, variance, defense and minimum damage passed');

@@ -13,7 +13,7 @@ function equip(s,id,slot){const item=Kiri.Items.create(id,undefined,undefined,s.
 function fixedEnemy(s,id,x=3,y=2){const e=Kiri.Entities.createEnemy(20,{x,y},Kiri.Dungeons.get(s.dungeonId),id);e.hp=e.maxHp=999;e.defense=0;s.enemies=[e];return e;}
 
 // New weapons, values, tags and staged floor availability.
-assert.equal(Kiri.Items.definitions.barkShield.basePower,1);assert.equal(Kiri.Items.definitions.pierceArrow.arrowStrength,7);
+assert.equal(Kiri.Items.definitions.barkShield.basePower,1);assert.equal(Kiri.Items.definitions.pierceArrow.arrowStrength,12);
 assert.equal(Kiri.Balance.itemTable('normalDungeon',4).beastBlade,0);assert(Kiri.Balance.itemTable('normalDungeon',5).beastBlade>0);
 assert.equal(Kiri.Balance.itemTable('normalDungeon',14).magicBlade,0);assert(Kiri.Balance.itemTable('normalDungeon',15).magicBlade>0);
 assert.equal(Kiri.Balance.itemTable('normalDungeon',24).dragonBlade,0);assert(Kiri.Balance.itemTable('normalDungeon',25).dragonBlade>0);
@@ -56,12 +56,12 @@ s=arena();target=fixedEnemy(s,'bileToad',4,2);staff=Kiri.Items.create('invisible
 s=arena();const invisibleHerb=Kiri.Items.create('invisibleHerb');s.inventory=[invisibleHerb];Kiri.ItemActions.perform('drink',s,invisibleHerb);assert.equal(s.player.status.invisible,8);
 
 // Revised details describe the actual effects and unchanged arrow strength.
-assert.equal(Kiri.Items.definitions.ironArrow.arrowStrength,9);
+assert.equal(Kiri.Items.definitions.ironArrow.arrowStrength,12);
 ['levelHerb','poisonHerb','weaponScroll','shieldScroll','chargeScroll','flameHerb'].forEach(id=>assert(Kiri.Items.definitions[id].description&&Kiri.Items.definitions[id].description.length>10));
 assert(Kiri.Items.definitions.levelHerb.description.includes('レベルが1上がる'));assert(Kiri.Items.definitions.flameHerb.description.includes('満腹度が1'));
 
 // Old saves receive current definitions without losing enhancement values.
-const legacy=Kiri.State.fresh();const oldSword=Kiri.Items.create('emberBlade');oldSword.modifier=2;oldSword.bonus=oldSword.basePower+2;legacy.inventory=[oldSword];store[Kiri.Config.saveKey]=JSON.stringify(legacy);assert(Kiri.State.load());assert.equal(Kiri.State.data.inventory[0].modifier,2);assert.equal(Kiri.State.data.inventory[0].bonus,Kiri.Items.definitions.emberBlade.basePower+2);
+const legacy=Kiri.State.fresh();const oldSword=Kiri.Items.create('emberBlade'),oldPierce=Kiri.Items.create('pierceArrow');oldSword.modifier=2;oldSword.bonus=oldSword.basePower+2;oldPierce.arrowStrength=7;legacy.inventory=[oldSword,oldPierce];store[Kiri.Config.saveKey]=JSON.stringify(legacy);assert(Kiri.State.load());assert.equal(Kiri.State.data.inventory[0].modifier,2);assert.equal(Kiri.State.data.inventory[0].bonus,Kiri.Items.definitions.emberBlade.basePower+2);assert.equal(Kiri.State.data.inventory[1].arrowStrength,12);
 
 Math.random=oldRandom;
 console.log('item revision smoke: weapons, shields, poison, map, sight, staff and save migration passed');

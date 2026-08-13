@@ -32,7 +32,7 @@ let arrows=item('reedArrow',s);result=Kiri.ItemActions.perform('shoot',s,arrows)
 assert(result.success);assert(arrowDrop);assert.equal(arrowDrop.x+','+arrowDrop.y,'4,3');
 
 s=arena();blockWallAt(s,5,2);let iron=item('ironArrow',s);result=Kiri.ItemActions.perform('shoot',s,iron);arrowDrop=s.groundItems.find(i=>i.id==='ironArrow');
-assert(result.success);assert(arrowDrop);assert.equal(arrowDrop.x+','+arrowDrop.y,'4,2');assert.equal(iron.arrowStrength,9);
+assert(result.success);assert(arrowDrop);assert.equal(arrowDrop.x+','+arrowDrop.y,'4,2');assert.equal(iron.arrowStrength,12);
 
 s=arena();let pierce=item('pierceArrow',s);s.enemies=[{x:4,y:2,hp:30,maxHp:30,power:1,defense:0,status:{}},{x:7,y:2,hp:30,maxHp:30,power:1,defense:0,status:{}}];
 result=Kiri.ItemActions.perform('shoot',s,pierce);
