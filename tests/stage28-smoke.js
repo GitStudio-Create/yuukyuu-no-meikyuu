@@ -37,15 +37,15 @@ assert(Kiri.ItemDetails.forItem(weapon).metadata.some(row=>row.indexOf('呪い:'
 Kiri.ItemActions.perform('unequip',s,weapon);
 assert(Kiri.ItemDetails.forItem(weapon).metadata.some(row=>row.indexOf('呪い:')===0));
 
-assert.equal(Kiri.EnemyCatalog.list.length,25);
+assert.equal(Kiri.EnemyCatalog.list.length,33);
 assert(Kiri.EnemyCatalog.list.every(enemy=>Number.isFinite(enemy.exp)&&enemy.exp>0));
 assert(Kiri.EnemyCatalog.list.every(enemy=>Kiri.MonsterExp[enemy.id]===enemy.exp));
 assert.equal(Kiri.EnemyCatalog.get('dewMote').name,'まるスライム');
-assert.equal(Kiri.EnemyCatalog.get('wallWraith').name,'すりぬけ影');
-assert.equal(Kiri.EnemyCatalog.get('reedSniper').exp,28);
-assert.equal(Kiri.EnemyCatalog.get('wallWraith').exp,90);
-assert.equal(Kiri.EnemyCatalog.get('emberHorn').exp,110);
-assert.equal(Kiri.EnemyCatalog.get('frostCrown').exp,170);
+assert.equal(Kiri.EnemyCatalog.get('wallWraith').name,'壁すべり');
+assert.equal(Kiri.EnemyCatalog.get('reedSniper').exp,32);
+assert.equal(Kiri.EnemyCatalog.get('wallWraith').exp,105);
+assert.equal(Kiri.EnemyCatalog.get('emberHorn').exp,125);
+assert.equal(Kiri.EnemyCatalog.get('frostCrown').exp,190);
 assert.equal(Kiri.EnemyCatalog.get('wallWraith').dropRate,.12);
 assert.equal(Kiri.EnemyCatalog.get('hungerShade').dropRate,.08);
 assert.deepStrictEqual(Kiri.EnemyCatalog.get('hungerShade').dropCategories,['goodFood','scroll']);

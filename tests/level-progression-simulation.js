@@ -23,7 +23,8 @@ function bandFor(floor){const b=BANDS.find(([a,z])=>floor>=a&&floor<=z);return b
 function killEnemy(result,def,floor,profile,source,splitSensitivity,splitRandom){
   result.exp+=def.exp;add(result.enemyExp,def.name,def.exp);add(result.enemyKills,def.name,1);add(result.bandExp,bandFor(floor),def.exp);
   if(splitSensitivity&&def.specialAbility==='split'&&splitRandom()<(def.splitChance||0)&&splitRandom()<profile.initialKill){
-    result.exp+=def.exp;add(result.enemyExp,def.name,def.exp);add(result.enemyKills,def.name,1);add(result.bandExp,bandFor(floor),def.exp);add(result.splitExtra,def.name,def.exp);
+    const cloneExp=Math.max(1,Math.floor(def.exp/4));
+    result.exp+=cloneExp;add(result.enemyExp,def.name,cloneExp);add(result.enemyKills,def.name,1);add(result.bandExp,bandFor(floor),cloneExp);add(result.splitExtra,def.name,cloneExp);
   }
 }
 function simulate(dungeonId,profile,seed,options={}){

@@ -8,12 +8,12 @@ function has(id,floor,dungeon='normalDungeon'){return Kiri.EnemyCatalog.tableFor
 function share(ids,floor){const pool=Kiri.EnemyCatalog.tableFor('normalDungeon',floor),total=pool.reduce((n,e)=>n+Kiri.EnemyCatalog.spawnWeightFor(e,floor),0),part=pool.filter(e=>ids.includes(e.id)).reduce((n,e)=>n+Kiri.EnemyCatalog.spawnWeightFor(e,floor),0);return part/total;}
 
 assert.equal(Kiri.EnemyCatalog.list.length,33);
-assert(!has('rockDragon',22));assert(has('rockDragon',23));assert(has('rockDragon',40));assert(!has('rockDragon',41));
-assert(!has('flameDragon',24));assert(has('flameDragon',25));assert(has('flameDragon',60));assert(!has('flameDragon',61));
+assert(!has('rockDragon',22));assert(has('rockDragon',23));assert(has('rockDragon',44));assert(!has('rockDragon',45));
+assert(!has('flameDragon',24));assert(has('flameDragon',25));assert(has('flameDragon',69));assert(!has('flameDragon',70));
 assert(!has('shadowDragon',49));assert(has('shadowDragon',50));assert(has('shadowDragon',99));
 const rock=Kiri.EnemyCatalog.get('rockDragon'),flame=Kiri.EnemyCatalog.get('flameDragon');
 assert.equal(Kiri.EnemyCatalog.spawnWeightFor(rock,23),1);assert.equal(Kiri.EnemyCatalog.spawnWeightFor(rock,24),2);assert.equal(Kiri.EnemyCatalog.spawnWeightFor(rock,25),5);
-assert.equal(Kiri.EnemyCatalog.spawnWeightFor(flame,25),1);assert.equal(Kiri.EnemyCatalog.spawnWeightFor(flame,26),2);assert.equal(Kiri.EnemyCatalog.spawnWeightFor(flame,27),4);
+assert.equal(Kiri.EnemyCatalog.spawnWeightFor(flame,25),1);assert.equal(Kiri.EnemyCatalog.spawnWeightFor(flame,26),2);assert.equal(Kiri.EnemyCatalog.spawnWeightFor(flame,27),3);
 assert(share(['rockDragon'],23)<.1);assert(share(['rockDragon'],24)<.15);assert(share(['rockDragon','flameDragon'],25)<.25);assert(share(['rockDragon','flameDragon'],26)<.25);
 const floor27=Kiri.EnemyCatalog.tableFor('normalDungeon',27);assert(floor27.some(e=>e.id==='rockDragon')&&floor27.some(e=>e.id==='flameDragon'));assert(floor27.some(e=>!e.tags.includes('dragon')));assert(share(['rockDragon','flameDragon'],27)<.3);
 
