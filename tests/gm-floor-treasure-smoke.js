@@ -11,7 +11,7 @@ function enter(id){Kiri.Mode.set('normal');Kiri.State.reset(id);Kiri.State.save(
 function has(id){return Kiri.State.data.groundItems.some(item=>item&&item.id===id);}
 let s=enter('tutorialDungeon');assert(Kiri.GM.jumpFloor(10));assert.equal(s.floor,10);assert(has('trialTreasure'));assert.equal(s.stairs.disabled,true);assert.equal(Kiri.GM.jumpFloor(27),false);assert.equal(s.floor,10);
 s=enter('normalDungeon');assert(Kiri.GM.jumpFloor(27));assert.equal(s.floor,27);assert(has('eternalTreasure'));
-s=enter('mysteryDungeon');assert(Kiri.GM.jumpFloor(27));assert.equal(s.floor,27);assert(has('deepTreasure'));assert(Kiri.GM.jumpFloor(50));assert(has('deepTreasure')&&has('moonTreasure'));assert(Kiri.GM.jumpFloor(99));assert(has('deepTreasure')&&has('abyssTreasure'));
+s=enter('mysteryDungeon');assert(Kiri.GM.jumpFloor(27));assert.equal(s.floor,27);assert(!has('deepTreasure'));assert(Kiri.GM.jumpFloor(30));assert(has('deepTreasure'));assert(Kiri.GM.jumpFloor(50));assert(has('deepTreasure')&&has('moonTreasure'));assert(Kiri.GM.jumpFloor(99));assert(has('deepTreasure')&&has('abyssTreasure'));
 s.player.hp=1;s.player.food=1;assert(Kiri.GM.heal());assert(Kiri.GM.feed());assert.equal(s.player.hp,s.player.maxHp);assert.equal(s.player.food,s.player.maxFood);assert(s.enemies.length>0);assert(Kiri.GM.clearEnemies());assert.equal(s.enemies.length,0);
 assert(store.eternal_labyrinth_normal_save,'normal state is saved before GM entry');assert(store.eternal_labyrinth_gm_save,'GM floors use only the GM save');
 console.log('GM floor smoke: normal floor generation, limits and objective treasure placement passed');

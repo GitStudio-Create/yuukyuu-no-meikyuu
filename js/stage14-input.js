@@ -73,6 +73,7 @@
         return true;
       }
       if(runNext){
+        if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();
         actions.run(d[0],d[1]);
         resetNext();
         return true;
@@ -103,6 +104,11 @@
         actions.suspend();
       }
     });
+    addEventListener('keyup',function(e){
+      if((e.key==='b'||e.key==='B')&&K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();
+    });
+    var legacyRunButton=document.querySelector('[data-action="run"]');
+    if(legacyRunButton)legacyRunButton.addEventListener('pointerdown',function(){if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();},true);
 
     document.querySelectorAll('[data-dir]').forEach(function(button){
       button.addEventListener('pointerdown',function(e){
@@ -121,11 +127,11 @@
     });
     document.addEventListener('pointerup',stopRepeat);
     document.addEventListener('pointercancel',stopRepeat);
-    addEventListener('blur',stopRepeat);
+    addEventListener('blur',function(){stopRepeat();if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();});
     document.addEventListener('visibilitychange',function(){if(document.hidden)stopRepeat();});
     K.Input.cancelHeldMovement=stopRepeat;
     var oldResetModes=K.Input.resetModes;
-    K.Input.resetModes=function(){stopRepeat();return oldResetModes.apply(this,arguments);};
+    K.Input.resetModes=function(){stopRepeat();if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();return oldResetModes.apply(this,arguments);};
 
     document.querySelector('[data-floor-pickup]').addEventListener('click',actions.pickup);
     document.querySelector('[data-floor-stairs]').addEventListener('click',function(){

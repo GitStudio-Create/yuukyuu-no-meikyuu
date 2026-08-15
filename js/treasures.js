@@ -3,7 +3,7 @@
   var CONFIG={
     tutorialDungeon:[{floor:10,item:'trialTreasure',returning:true}],
     normalDungeon:[{fromFloor:27,item:'eternalTreasure',returning:true}],
-    mysteryDungeon:[{fromFloor:27,item:'deepTreasure',returning:true},{floor:50,item:'moonTreasure',rank:'50F'},{floor:99,item:'abyssTreasure',rank:'99F'}]
+    mysteryDungeon:[{fromFloor:30,item:'deepTreasure',returning:true},{floor:50,item:'moonTreasure',rank:'50F'},{floor:99,item:'abyssTreasure',rank:'99F'}]
   };
   function list(state){return CONFIG[state.dungeonId]||[];}
   function hasItem(state,id){

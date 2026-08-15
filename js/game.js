@@ -1,6 +1,6 @@
 (function(K){
   'use strict';
-  var S=K.State,U=K.Util,selectedIndex=-1,enemyTurnTimer=null,enemyTurnToken=0,runActionBatch=false,runSpawnCounted=false;
+  var S=K.State,U=K.Util,selectedIndex=-1,enemyTurnTimer=null,enemyTurnToken=0,runActionBatch=false,runSpawnCounted=false,runEntranceBlocked=false;
 
   function clearEnemyTurnTimer(){
     if(enemyTurnTimer){clearTimeout(enemyTurnTimer);enemyTurnTimer=null;}
@@ -13,6 +13,7 @@
 
   function buildFloor(){
     clearEnemyTurnTimer();
+    runEntranceBlocked=false;
     if(K.Input&&K.Input.cancelHeldMovement)K.Input.cancelHeldMovement();
     if(K.ActionSequence&&K.ActionSequence.flush)K.ActionSequence.flush();
     if(K.Animation&&K.Animation.clearProjectiles)K.Animation.clearProjectiles();
@@ -111,14 +112,17 @@
   function inRoom(s,x,y){return s.rooms.some(function(r){return x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h;});}
   function visibleEnemyNear(s){return s.enemies.some(function(e){return s.seen[U.key(e.x,e.y)]&&U.distance(e,s.player)<=5;});}
   function branches(s,x,y){var n=0;[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){if(K.Map.walkable(s,x+d[0],y+d[1]))n++;});return n;}
+  function crossesRoomEntrance(s,x,y,nx,ny){return inRoom(s,x,y)!==inRoom(s,nx,ny);}
   function stopBeforeRun(s,dx,dy,steps){
     var p=s.player,nx=p.x+dx,ny=p.y+dy;
     if(!K.Map.canStep(s,nx,ny,dx,dy)||!s.seen[U.key(nx,ny)])return true;
     if(s.enemies.some(function(e){return e.x===nx&&e.y===ny;})||visibleEnemyNear(s))return true;
+    if(steps>0&&crossesRoomEntrance(s,p.x,p.y,nx,ny))return true;
     if(steps>0&&!inRoom(s,p.x,p.y)&&branches(s,p.x,p.y)!==2)return true;
     return false;
   }
-  function run(dx,dy){if(isInputLocked()||dx&&dy)return;if(!dx&&!dy)return;var s=S.data;runActionBatch=true;runSpawnCounted=false;try{for(var steps=0;steps<40;steps++){if(stopBeforeRun(s,dx,dy,steps))break;var result=move(dx,dy);if(!result.moved||result.event||visibleEnemyNear(s)||s.gameOver)break;}}finally{runActionBatch=false;runSpawnCounted=false;}}
+  function run(dx,dy){if(isInputLocked()||runEntranceBlocked||dx&&dy)return;if(!dx&&!dy)return;var s=S.data,stoppedAtEntrance=false;runActionBatch=true;runSpawnCounted=false;try{for(var steps=0;steps<40;steps++){if(stopBeforeRun(s,dx,dy,steps)){var p=s.player;stoppedAtEntrance=steps>0&&crossesRoomEntrance(s,p.x,p.y,p.x+dx,p.y+dy);if(stoppedAtEntrance)runEntranceBlocked=true;break;}var result=move(dx,dy);if(!result.moved||result.event||visibleEnemyNear(s)||s.gameOver)break;}}finally{runActionBatch=false;runSpawnCounted=false;}return{stoppedAtEntrance:stoppedAtEntrance};}
+  function releaseRunEntranceStop(){runEntranceBlocked=false;}
   function clearDungeon(){var s=S.data;clearEnemyTurnTimer();if(K.Campaign&&K.Campaign.onDungeonReturn)return K.Campaign.onDungeonReturn(s);s.gameOver=true;S.clearSave();K.UI.draw(s);if(K.UI.showEscape){K.UI.showEscape(s);var text=document.querySelector('#overlayText');if(text&&K.Treasures)text.textContent=K.Treasures.clearMessage(s);}return true;}
   function descend(){var s=S.data;if(isInputLocked()||!s.stairs||s.stairs.disabled||s.player.x!==s.stairs.x||s.player.y!==s.stairs.y)return false;clearEnemyTurnTimer();K.UI.closeStairs();if(s.stairs.type==='up'){s.floor--;if(s.floor<=0)return clearDungeon();s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}var mode=K.Dungeons.get(s.dungeonId),max=mode.maxFloor||99;s.floor=s.floor>=max?max:s.floor+1;s.player.hp=Math.min(s.player.maxHp,s.player.hp+3);buildFloor();return true;}
   function stayStairs(){K.UI.closeStairs();return true;}
@@ -229,6 +233,6 @@
   function newGame(id){clearEnemyTurnTimer();S.reset(typeof id==='string'?id:K.Config.defaultDungeon);K.Input.resetModes();K.UI.hideOverlay();K.UI.closeStatus();K.UI.closeItemMenu();K.UI.closeStairs();buildFloor();}
   function toggleStatus(){K.UI.toggleStatus(S.data);}
   function sortInventory(){var s=S.data;if(isInputLocked())return false;K.Inventory.manualSort(s);S.addLog('道具袋を整理した。');S.save();K.UI.draw(s);return true;}
-  K.Game={actions:{move:move,run:run,face:face,attack:attack,shootArrow:shootArrow,step:step,pickup:pickupAction,suspend:suspend,resume:resume,openItem:openItem,itemAction:itemAction,newGame:newGame,toggleStatus:toggleStatus,descend:descend,stayStairs:stayStairs,sortInventory:sortInventory},buildFloor:buildFloor,endTurn:endTurn,endTurnDelayed:function(){return endTurn({delayEnemy:true});},isInputLocked:isInputLocked,cancelPendingEnemyTurn:clearEnemyTurnTimer,enemyCountFor:K.Spawns.enemyCount};
+  K.Game={actions:{move:move,run:run,face:face,attack:attack,shootArrow:shootArrow,step:step,pickup:pickupAction,suspend:suspend,resume:resume,openItem:openItem,itemAction:itemAction,newGame:newGame,toggleStatus:toggleStatus,descend:descend,stayStairs:stayStairs,sortInventory:sortInventory},buildFloor:buildFloor,endTurn:endTurn,endTurnDelayed:function(){return endTurn({delayEnemy:true});},isInputLocked:isInputLocked,cancelPendingEnemyTurn:clearEnemyTurnTimer,releaseRunEntranceStop:releaseRunEntranceStop,enemyCountFor:K.Spawns.enemyCount};
   addEventListener('DOMContentLoaded',function(){K.UI.init();K.Input.init(K.Game.actions);if(K.Campaign&&K.Campaign.boot){K.Campaign.boot();return;}if(!S.load())buildFloor();else{if(K.MonsterHouse)K.MonsterHouse.normalize(S.data);K.Map.reveal(S.data);K.UI.draw(S.data);if(K.Audio)K.Audio.setForState?K.Audio.setForState(S.data):K.Audio.setTheme(S.data.floor);}});
 })(window.Kiri=window.Kiri||{});

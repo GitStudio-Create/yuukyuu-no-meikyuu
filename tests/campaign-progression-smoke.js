@@ -98,7 +98,7 @@ assert(root.className.includes('castle-open-chest'),'opening the treasure update
 story.cleared.tutorialDungeon=true;
 root.listeners.click({target:{closest:()=>({dataset:{campaign:'dungeons'}})}});
 assert(root.innerHTML.includes('<strong>もっと不思議</strong>'));
-assert(root.innerHTML.includes('27Fへ行くと、不思議な宝があるとの噂があるらしい。'));
+assert(root.innerHTML.includes('30Fへ行くと、不思議な宝があるとの噂があるらしい。'));
 assert(!root.innerHTML.includes('99F'));
 
 const deathState={dungeonId:'normalDungeon',floor:8,gameOver:false,player:{level:2}};
