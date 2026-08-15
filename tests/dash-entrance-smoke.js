@@ -39,4 +39,13 @@ Kiri.Game.releaseRunEntranceStop();
 result=Kiri.Game.actions.run(-1,0);
 assert.equal(state.player.x,4,'corridor to room stops on the corridor-side entrance');
 assert(result.stoppedAtEntrance);
+
+state=entranceMap(2);
+Kiri.Game.releaseRunEntranceStop();
+for(let x=1;x<=9;x++)state.map[1][x]=0;
+result=Kiri.Game.actions.run(1,0);
+assert.equal(state.player.x,3,'a dash starts beside a room wall and still stops at the entrance');
+Kiri.Game.releaseRunEntranceStop();
+result=Kiri.Game.actions.run(1,0);
+assert.equal(state.player.x,6,'wall adjacency does not prevent the next legal corridor dash');
 console.log('dash entrance smoke: both entrance directions, held dash lock and normal movement passed');

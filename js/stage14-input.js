@@ -89,6 +89,9 @@
     }
 
     addEventListener('keydown',function(e){
+      if((e.key==='b'||e.key==='B')&&!e.repeat&&K.Game&&K.Game.releaseRunEntranceStop){
+        K.Game.releaseRunEntranceStop();
+      }
       if(K.UI.isSuspendOpen&&K.UI.isSuspendOpen()){
         if(e.key==='Escape'||e.key==='Enter'||e.key==='q'||e.key==='Q'){
           e.preventDefault();
