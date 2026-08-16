@@ -20,7 +20,7 @@ global.setTimeout=(fn,ms)=>{const id=nextTimer++;timers.set(id,{fn,ms});return i
 global.clearTimeout=id=>timers.delete(id);
 function next(ms){const match=[...timers.entries()].find(([,timer])=>timer.ms===ms);assert(match,'expected '+ms+'ms timer');timers.delete(match[0]);match[1].fn();}
 
-let locked=false,moves=[],runReleases=0;
+let locked=false,moves=[],runs=[],runReleases=0;
 global.Kiri={
   Directions:{N:[0,-1],S:[0,1],W:[-1,0],E:[1,0],NW:[-1,-1],NE:[1,-1],SW:[-1,1],SE:[1,1]},
   Input:{init(){},resetModes(){}},
@@ -29,12 +29,16 @@ global.Kiri={
   State:{data:{player:{x:0,y:0},stairs:{x:9,y:9}}}
 };
 vm.runInThisContext(fs.readFileSync('js/stage14-input.js','utf8'),{filename:'js/stage14-input.js'});
-const actions={move:(dx,dy)=>moves.push([dx,dy]),face(){},run(){},pickup(){},step(){},attack(){},shootArrow(){},toggleStatus(){},suspend(){},resume(){}};
+const actions={move:(dx,dy)=>moves.push([dx,dy]),face(){},run:(dx,dy)=>runs.push([dx,dy]),pickup(){},step(){},attack(){},shootArrow(){},toggleStatus(){},suspend(){},resume(){}};
 Kiri.Input.init(actions);
 windowListeners.keydown.forEach(fn=>fn({key:'b',repeat:false,preventDefault(){}}));
 assert.equal(runReleases,1,'a fresh B press clears a stale entrance stop');
 windowListeners.keydown.forEach(fn=>fn({key:'b',repeat:true,preventDefault(){}}));
 assert.equal(runReleases,1,'B key repeat keeps the held entrance stop');
+windowListeners.keyup.forEach(fn=>fn({key:'b'}));
+windowListeners.keydown.forEach(fn=>fn({key:'ArrowRight',repeat:false,preventDefault(){}}));
+windowListeners.keydown.forEach(fn=>fn({key:'b',repeat:false,preventDefault(){}}));
+assert.deepStrictEqual(runs,[[1,0]],'a fresh B press starts a dash when a direction remains held');
 assert.deepStrictEqual(leftActions.children,[hooks['[data-floor-step]'],hooks['[data-floor-shoot]'],hooks['[data-floor-status]'],hooks['[data-floor-map-only]']]);
 assert.deepStrictEqual(rightActions.children,[hooks['[data-floor-pickup]'],hooks['[data-floor-stairs]'],hooks['[data-floor-face]'],hooks['[data-floor-map]']]);
 

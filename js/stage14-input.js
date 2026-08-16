@@ -22,6 +22,7 @@
     if(mobileLayout){if(mobileLayout.addEventListener)mobileLayout.addEventListener('change',arrangeActionButtons);else if(mobileLayout.addListener)mobileLayout.addListener(arrangeActionButtons);}
 
     var faceNext=false,runNext=false,diagonalNext=false;
+    var desktopHeld={},desktopDirections={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};
     var faceButton,runButton,diagonalButton;
     var repeatDelayTimer=null,repeatTimer=null,repeatButton=null;
 
@@ -89,8 +90,11 @@
     }
 
     addEventListener('keydown',function(e){
+      if(desktopDirections[e.key])desktopHeld[e.key]=true;
       if((e.key==='b'||e.key==='B')&&!e.repeat&&K.Game&&K.Game.releaseRunEntranceStop){
         K.Game.releaseRunEntranceStop();
+        var dx=0,dy=0;Object.keys(desktopHeld).forEach(function(key){if(desktopHeld[key]&&desktopDirections[key]){dx+=desktopDirections[key][0];dy+=desktopDirections[key][1];}});dx=Math.sign(dx);dy=Math.sign(dy);
+        if((dx===0)!==(dy===0))actions.run(dx,dy);
       }
       if(K.UI.isSuspendOpen&&K.UI.isSuspendOpen()){
         if(e.key==='Escape'||e.key==='Enter'||e.key==='q'||e.key==='Q'){
@@ -108,6 +112,7 @@
       }
     });
     addEventListener('keyup',function(e){
+      if(desktopDirections[e.key])delete desktopHeld[e.key];
       if((e.key==='b'||e.key==='B')&&K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();
     });
     var legacyRunButton=document.querySelector('[data-action="run"]');
@@ -130,7 +135,7 @@
     });
     document.addEventListener('pointerup',stopRepeat);
     document.addEventListener('pointercancel',stopRepeat);
-    addEventListener('blur',function(){stopRepeat();if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();});
+    addEventListener('blur',function(){desktopHeld={};stopRepeat();if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();});
     document.addEventListener('visibilitychange',function(){if(document.hidden)stopRepeat();});
     K.Input.cancelHeldMovement=stopRepeat;
     var oldResetModes=K.Input.resetModes;

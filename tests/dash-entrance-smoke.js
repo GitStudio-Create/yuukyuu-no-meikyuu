@@ -19,6 +19,13 @@ function entranceMap(startX){
   return state;
 }
 
+function wallRoom(){
+  const state=Kiri.State.reset('normalDungeon');state.map=Array.from({length:24},()=>Array(32).fill(0));
+  for(let y=1;y<=6;y++)for(let x=1;x<=8;x++)state.map[y][x]=1;
+  state.rooms=[{x:1,y:1,w:8,h:6}];state.player.x=2;state.player.y=2;state.stairs={x:20,y:20,type:'down'};state.groundItems=[];state.enemies=[];state.traps=[];state.seen={};
+  for(let y=1;y<=6;y++)for(let x=1;x<=8;x++)state.seen[x+','+y]=1;Kiri.State.data=state;return state;
+}
+
 let state=entranceMap(1),result=Kiri.Game.actions.run(1,0);
 assert.equal(state.player.x,3,'room to corridor stops on the room-side entrance');
 assert(result.stoppedAtEntrance);
@@ -48,4 +55,8 @@ assert.equal(state.player.x,3,'a dash starts beside a room wall and still stops 
 Kiri.Game.releaseRunEntranceStop();
 result=Kiri.Game.actions.run(1,0);
 assert.equal(state.player.x,6,'wall adjacency does not prevent the next legal corridor dash');
+
+state=wallRoom();Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(1,0);assert.equal(state.player.x,8,'wall-side dash reaches the right wall');
+Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(-1,0);assert.equal(state.player.x,1,'a fresh opposite dash starts after a wall stop');
+Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(0,1);assert.equal(state.player.y,6,'a fresh 90-degree dash starts after a wall stop');
 console.log('dash entrance smoke: both entrance directions, held dash lock and normal movement passed');
