@@ -22,7 +22,7 @@
     if(mobileLayout){if(mobileLayout.addEventListener)mobileLayout.addEventListener('change',arrangeActionButtons);else if(mobileLayout.addListener)mobileLayout.addListener(arrangeActionButtons);}
 
     var faceNext=false,runNext=false,diagonalNext=false;
-    var desktopHeld={},desktopDirections={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};
+    var desktopHeld={},desktopBHeld=false,desktopDirections={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]},desktopDirect={Numpad8:[0,-1],Numpad9:[1,-1],Numpad6:[1,0],Numpad3:[1,1],Numpad2:[0,1],Numpad1:[-1,1],Numpad4:[-1,0],Numpad7:[-1,-1]};
     var faceButton,runButton,diagonalButton;
     var repeatDelayTimer=null,repeatTimer=null,repeatButton=null;
 
@@ -90,11 +90,21 @@
     }
 
     addEventListener('keydown',function(e){
+      var dashDirection=desktopDirect[e.code]||desktopDirections[e.key];
       if(desktopDirections[e.key])desktopHeld[e.key]=true;
+      if(e.key==='b'||e.key==='B')desktopBHeld=true;
       if((e.key==='b'||e.key==='B')&&!e.repeat&&K.Game&&K.Game.releaseRunEntranceStop){
         K.Game.releaseRunEntranceStop();
         var dx=0,dy=0;Object.keys(desktopHeld).forEach(function(key){if(desktopHeld[key]&&desktopDirections[key]){dx+=desktopDirections[key][0];dy+=desktopDirections[key][1];}});dx=Math.sign(dx);dy=Math.sign(dy);
-        if((dx===0)!==(dy===0))actions.run(dx,dy);
+        if(dx||dy)actions.run(dx,dy);
+      }else if(desktopBHeld&&dashDirection){
+        e.preventDefault();e.stopImmediatePropagation();
+        if(e.repeat)return;
+        if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();
+        var next=desktopDirect[e.code];
+        if(!next){var nx=0,ny=0;Object.keys(desktopHeld).forEach(function(key){if(desktopHeld[key]&&desktopDirections[key]){nx+=desktopDirections[key][0];ny+=desktopDirections[key][1];}});next=[Math.sign(nx),Math.sign(ny)];}
+        if(next[0]||next[1])actions.run(next[0],next[1]);
+        return;
       }
       if(K.UI.isSuspendOpen&&K.UI.isSuspendOpen()){
         if(e.key==='Escape'||e.key==='Enter'||e.key==='q'||e.key==='Q'){
@@ -110,11 +120,11 @@
         e.preventDefault();
         actions.suspend();
       }
-    });
+    },true);
     addEventListener('keyup',function(e){
       if(desktopDirections[e.key])delete desktopHeld[e.key];
-      if((e.key==='b'||e.key==='B')&&K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();
-    });
+      if(e.key==='b'||e.key==='B'){desktopBHeld=false;if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();}
+    },true);
     var legacyRunButton=document.querySelector('[data-action="run"]');
     if(legacyRunButton)legacyRunButton.addEventListener('pointerdown',function(){if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();},true);
 
@@ -135,7 +145,7 @@
     });
     document.addEventListener('pointerup',stopRepeat);
     document.addEventListener('pointercancel',stopRepeat);
-    addEventListener('blur',function(){desktopHeld={};stopRepeat();if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();});
+    addEventListener('blur',function(){desktopHeld={};desktopBHeld=false;stopRepeat();if(K.Game&&K.Game.releaseRunEntranceStop)K.Game.releaseRunEntranceStop();});
     document.addEventListener('visibilitychange',function(){if(document.hidden)stopRepeat();});
     K.Input.cancelHeldMovement=stopRepeat;
     var oldResetModes=K.Input.resetModes;

@@ -31,14 +31,19 @@ global.Kiri={
 vm.runInThisContext(fs.readFileSync('js/stage14-input.js','utf8'),{filename:'js/stage14-input.js'});
 const actions={move:(dx,dy)=>moves.push([dx,dy]),face(){},run:(dx,dy)=>runs.push([dx,dy]),pickup(){},step(){},attack(){},shootArrow(){},toggleStatus(){},suspend(){},resume(){}};
 Kiri.Input.init(actions);
-windowListeners.keydown.forEach(fn=>fn({key:'b',repeat:false,preventDefault(){}}));
+windowListeners.keydown.forEach(fn=>fn({key:'b',code:'KeyB',repeat:false,preventDefault(){},stopImmediatePropagation(){}}));
 assert.equal(runReleases,1,'a fresh B press clears a stale entrance stop');
-windowListeners.keydown.forEach(fn=>fn({key:'b',repeat:true,preventDefault(){}}));
+windowListeners.keydown.forEach(fn=>fn({key:'b',code:'KeyB',repeat:true,preventDefault(){},stopImmediatePropagation(){}}));
 assert.equal(runReleases,1,'B key repeat keeps the held entrance stop');
 windowListeners.keyup.forEach(fn=>fn({key:'b'}));
-windowListeners.keydown.forEach(fn=>fn({key:'ArrowRight',repeat:false,preventDefault(){}}));
-windowListeners.keydown.forEach(fn=>fn({key:'b',repeat:false,preventDefault(){}}));
+windowListeners.keydown.forEach(fn=>fn({key:'ArrowRight',code:'ArrowRight',repeat:false,preventDefault(){},stopImmediatePropagation(){}}));
+windowListeners.keydown.forEach(fn=>fn({key:'b',code:'KeyB',repeat:false,preventDefault(){},stopImmediatePropagation(){}}));
 assert.deepStrictEqual(runs,[[1,0]],'a fresh B press starts a dash when a direction remains held');
+windowListeners.keydown.forEach(fn=>fn({key:'ArrowDown',code:'ArrowDown',repeat:false,preventDefault(){},stopImmediatePropagation(){}}));
+assert.deepStrictEqual(runs.at(-1),[1,1],'a new diagonal direction starts a dash while B remains held');
+const runCount=runs.length;
+windowListeners.keydown.forEach(fn=>fn({key:'ArrowDown',code:'ArrowDown',repeat:true,preventDefault(){},stopImmediatePropagation(){}}));
+assert.equal(runs.length,runCount,'direction key repeat cannot restart a held dash');
 assert.deepStrictEqual(leftActions.children,[hooks['[data-floor-step]'],hooks['[data-floor-shoot]'],hooks['[data-floor-status]'],hooks['[data-floor-map-only]']]);
 assert.deepStrictEqual(rightActions.children,[hooks['[data-floor-pickup]'],hooks['[data-floor-stairs]'],hooks['[data-floor-face]'],hooks['[data-floor-map]']]);
 

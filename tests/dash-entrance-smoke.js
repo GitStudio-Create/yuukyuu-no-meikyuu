@@ -59,4 +59,5 @@ assert.equal(state.player.x,6,'wall adjacency does not prevent the next legal co
 state=wallRoom();Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(1,0);assert.equal(state.player.x,8,'wall-side dash reaches the right wall');
 Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(-1,0);assert.equal(state.player.x,1,'a fresh opposite dash starts after a wall stop');
 Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(0,1);assert.equal(state.player.y,6,'a fresh 90-degree dash starts after a wall stop');
+state=wallRoom();state.player.x=2;state.player.y=2;Kiri.Game.releaseRunEntranceStop();Kiri.Game.actions.run(1,1);assert.equal(state.player.x,6,'a diagonal dash is accepted');assert.equal(state.player.y,6,'a diagonal dash follows normal diagonal traversal');
 console.log('dash entrance smoke: both entrance directions, held dash lock and normal movement passed');
